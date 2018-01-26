@@ -1,0 +1,31 @@
+---
+layout: compress
+---
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
+	
+	{% include head.html %}
+
+	<body>
+
+		<!-- TODO: Clean this up -->
+		<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<div id="path" class="navbar-left"></div>
+				</div>
+				<div class="collapse navbar-collapse">
+					<div id="authorisation" class="navbar-right"></div>
+				</div>
+			</div>
+		</nav>
+		
+		<div class="container content">
+			{{ content }}
+		</div>
+		
+		{% if site.analytics.enable %}{% include analytics.html %}{% endif %}
+  
+	</body>
+
+</html>
