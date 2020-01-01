@@ -36,7 +36,11 @@ author:
 version:							"0.1.0"
 launched:							"2017"
 fonts:								"Anonymous+Pro:400|Inconsolata:400|Roboto:400,700|Roboto+Mono:400|Fira+Mono:400|Space+Mono:400"
-
+debug:                "debug"
+performance:          "perf"
+compress:             "compress"
+array:                []
+highlight:            "af0ad9"
 # Extras
 analytics:
   enable:							false
