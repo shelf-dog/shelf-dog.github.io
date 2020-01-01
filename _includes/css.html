@@ -1,0 +1,23 @@
+{% assign imports = false %}
+
+{% if page.imports %}
+	{% assign imports = page.imports %}
+{% elsif layout.imports %}
+	{% assign imports = layout.imports %}
+{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}
+	{% assign imports = site.data.apps[page.app].imports %}
+{% elsif page.for and page.for != "" and site.data.apps[page.for].imports %}
+	{% assign imports = site.data.apps[page.for].imports %}
+{% endif %}
+
+{% if imports %}
+
+	{% for import in imports %}
+
+		{% for css in site.data.imports[import.name].css %}
+ 			{% include_relative _sass/{{ css }}.scss %}
+		{% endfor %}
+
+	{% endfor %}
+
+{% endif %}
