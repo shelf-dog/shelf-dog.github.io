@@ -42,6 +42,20 @@ author:
   name:								"Shelf.dog"
   url:								https://github.com/shelf-dog
 
+# Collections
+collections:
+  apps:
+    output: true
+
+# Collection Defaults
+defaults:
+  - scope:
+      path: ""
+      type: tests
+    values:
+      sitemap:
+        exclude: true
+        
 # Custom variables
 version:							"0.1.0"
 launched:							"2017"

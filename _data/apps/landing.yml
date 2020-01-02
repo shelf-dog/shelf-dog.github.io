@@ -1,0 +1,91 @@
+##################################################################
+#                                                                #
+#   db       .d8b.  d8b   db d8888b. d888888b d8b   db  d888b    #
+#   88      d8' `8b 888o  88 88  `8D   `88'   888o  88 88' Y8b   #
+#   88      88ooo88 88V8o 88 88   88    88    88V8o 88 88        #
+#   88      88~~~88 88 V8o88 88   88    88    88 V8o88 88  ooo   #
+#   88booo. 88   88 88  V888 88  .8D   .88.   88  V888 88. ~8~   #
+#   Y88888P YP   YP VP   V8P Y8888D' Y888888P VP   V8P  Y888P    #
+#                                                                #
+##################################################################
+
+name: App
+link: /app/
+css:
+  primary:
+  secondary:
+    - material/menu
+    - material/general
+    - custom/mixins/transitions
+    - custom/mixins/gradients
+    - custom/variables
+    - custom/fonts
+imports:
+  - name: underscore
+    load: first
+  - name: jquery_slim
+    load: first
+  - name: popper
+    load: first
+  - name: day
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: google
+    load: lazy
+helpers:
+  - network
+  - google/sheets/notation
+  - google/sheets/metadata
+  - google/sheets/grid
+  - google/sheets/format
+  - google
+  - data
+  - css
+  - fields
+  - dialog
+  - colours
+  - handlebars
+modules:
+  - flags
+  - controller
+  - display
+  - service
+  - main
+  - router
+scripts: 
+  - extends/regex
+  - extends/array
+templates:
+docs:
+  - landing/PUBLIC
+  - landing/FEATURES
+  - landing/INSTRUCTIONS
+  - landing/TUTORIALS
+  - landing/README
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+keys:
+  google:
+      general: 
+      oauth: 740623674895-qo8s1af5d5aufl6v1uqrfr38tulia1r5.apps.googleusercontent.com

@@ -1,0 +1,63 @@
+---
+layout: compress
+css:
+  primary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/root
+    - bootstrap/reboot
+    - bootstrap/type
+    - bootstrap/images
+    - bootstrap/grid
+    - bootstrap/nav
+    - bootstrap/navbar
+    - bootstrap/jumbotron
+    - bootstrap/utilities
+    - bootstrap/buttons
+    - bootstrap/dropdown
+    - material/buttons
+    - material/navbar
+    - custom/mixins/gradients
+    - custom/variables
+    - custom/fonts
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/transitions
+    - bootstrap/alert
+    - bootstrap/close
+    - bootstrap/modal
+    - bootstrap/tables
+    - bootstrap/forms
+    - bootstrap/breadcrumb
+    - bootstrap/button-group
+    - bootstrap/input-group
+    - bootstrap/tooltip
+    - bootstrap/card
+    - bootstrap/popover
+    - bootstrap/badge
+    - bootstrap/list-group
+    - bootstrap/custom-forms
+    - material/menu
+    - material/general
+    - custom/mixins/gradients
+    - custom/mixins/transitions
+    - custom/mixins/transforms
+    - custom/mixins/animations
+    - custom/variables
+---
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
+	{% include head.html %}
+	<body>
+		{% include nav.html %}
+    {% if page.app and site.data.apps[page.app].templates contains 'notify' %}<div
+    	aria-live="polite" aria-atomic="true"
+      id="{{page.app}}_Notify" class="notifications"><div class="holder"></div></div>{% endif %}
+		<div id="{{ site.app.content }}" class="content">{{ content }}</div>
+		{% include footer.html type="app" %}
+    {% include breakpoints.html %}
+	</body>
+</html>

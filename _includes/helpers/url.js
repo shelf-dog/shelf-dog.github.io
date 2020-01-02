@@ -1,16 +1,12 @@
-Url = options => {
+Url = () => {
   "use strict";
 
   /* <!-- HELPER: Provides url helper methods --> */
-  /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
-  /* <!-- @options.default: Default Colour ([R,G,B] Array, CSS Colour String or Name) [Optional] --> */
 
   /* <!-- Internal Constants --> */
-  const DEFAULTS = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Variables --> */

@@ -17,6 +17,15 @@ Handlebars = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _bytes = (bytes, decimals) => {
+    if (!bytes || _.isNaN(bytes) || bytes === 0 || bytes === "0") return "";
+    var k = 1024,
+      dm = decimals || 2,
+      sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+      i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+  };
+  
   var _compile = (name, raw) => {
 
     var __compile = html => {
