@@ -8,4 +8,4 @@ css:
     - custom/home
 simple: true
 ---
-<div class="t"><div class="c"><div class="i">{% include images/logo.svg %}</div><h1>Coming Soon ...</h1></div></div>
+<div class="t"><div class="c"><div class="i">{% include images/logo.svg %}</div><h1 class="font-sensitive">Coming Soon ...</h1></div></div>
