@@ -1,21 +1,31 @@
 # Global
 safe:									true
-exclude:							[CNAME, LICENSE]
-include:							[_pages]
+exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock, __tests__]
+include:							[_pages, _apps, _others, _extras, _scripts]
 timezone:							Europe/London
 
 # Dependencies
 markdown:							kramdown
-
+  
 # Styling
 sass:
   sass_dir:						_sass
+  load_paths:
+                      - _sass
+                      - _sass/bootstrap
+                      - _sass/material
+                      - _sass/custom
   style:							compressed
 
 # Compression
 compress_html:
   comments:						all
   clippings:					all
+  startings:					[]
+  endings:            []
+  artifacts:          [" /* */ ", " /* */", "/* */ ", "/* */", "/*jshint ignore:start*/", "/*jshint ignore:end*/"]
+  ignore:
+    envs:             [debug]
 
 # Permalinks
 permalink:						pretty
@@ -41,7 +51,13 @@ performance:          "perf"
 compress:             "compress"
 array:                []
 highlight:            "af0ad9"
+
 # Extras
 analytics:
   enable:							false
   id:									"UA-53673057-8"
+  
+app:
+  content:            content
+  namespace:          shelf_dog
+  tests:              _tests

@@ -1,7 +1,11 @@
 "Material Icons":
   safe: "Material+Icons"
   for: [all]
-"Economica":
-  safe: "Economica"
+"Amatic SC":
+  safe: "Amatic+SC"
+  weights: "400,700"
+  for: [all]
+"Playfair Display":
+  safe: "Playfair+Display"
   weights: "400,700"
   for: [all]

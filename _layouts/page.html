@@ -1,5 +1,23 @@
 ---
 layout: compress
+modules:
+  - controller
+  - service
+imports:
+- name: underscore
+  load: first
+- name: jquery_slim
+  load: first
+- name: popper
+  load: first
+- name: bootstrap-js
+  load: last
+- name: urlparser
+  load: last
+- name: waves-css
+  load: last
+- name: waves-js
+  load: last
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
@@ -24,8 +42,8 @@ layout: compress
 			{{ content }}
 		</div>
 		
-		{% if site.analytics.enable %}{% include analytics.html %}{% endif %}
-  
+    {% include footer.html type="page" %}		
+    
 	</body>
 
 </html>
