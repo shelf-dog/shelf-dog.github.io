@@ -6,6 +6,6 @@ css:
     - custom/variables
     - custom/fonts
     - custom/home
+simple: true
 ---
-
-### Coming Soon ...
+<div class="t"><div class="c"><div class="i"><h3>Coming Soon ...</h3></div></div></div>

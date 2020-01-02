@@ -20,7 +20,7 @@ layout: compress
 			</div>
 		</nav>
 		
-		<div class="container content">
+		<div class="container{% unless page.simple %} content{% endunless %}">
 			{{ content }}
 		</div>
 		
