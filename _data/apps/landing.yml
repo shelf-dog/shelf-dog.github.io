@@ -88,4 +88,6 @@ scopes:
 keys:
   google:
       general: 
-      oauth: 740623674895-qo8s1af5d5aufl6v1uqrfr38tulia1r5.apps.googleusercontent.com
+      oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com
+published: true
+scoped: true

@@ -1,0 +1,30 @@
+<nav id="site_nav" class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+  <button class="navbar-toggler navbar-toggler-right css-sensitive" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <a class="navbar-brand logo jump" href="/" data-toggle="tooltip" title="Return to App Landing Page"><span class="sr-only css-sensitive">Return to App Landing Page</span>{% include images/logo.svg %}</a>
+
+  <div class="collapse navbar-collapse" id="main_Nav">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/app/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/library/">Library</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/manage/">Manage</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about/">About</a>
+      </li>
+    </ul>
+    <form class="form-inline">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+
+</nav>

@@ -1,16 +1,16 @@
-##############################################################
-#                                                            #
-#   d8888b. d8888b.  .d88b.  db   d8b   db .d8888. d88888b   #
-#   88  `8D 88  `8D .8P  Y8. 88   I8I   88 88'  YP 88'       #
-#   88oooY' 88oobY' 88    88 88   I8I   88 `8bo.   88ooooo   #
-#   88~~~b. 88`8b   88    88 Y8   I8I   88   `Y8b. 88~~~~~   #
-#   88   8D 88 `88. `8b  d8' `8b d8'8b d8' db   8D 88.       #
-#   Y8888P' 88   YD  `Y88P'   `8b8' `8d8'  `8888Y' Y88888P   #
-#                                                            #
-##############################################################
+#################################################################
+#                                                               #
+#   db      d888888b d8888b. d8888b.  .d8b.  d8888b. db    db   #
+#   88        `88'   88  `8D 88  `8D d8' `8b 88  `8D `8b  d8'   #
+#   88         88    88oooY' 88oobY' 88ooo88 88oobY'  `8bd8'    #
+#   88         88    88~~~b. 88`8b   88~~~88 88`8b      88      #
+#   88booo.   .88.   88   8D 88 `88. 88   88 88 `88.    88      #
+#   Y88888P Y888888P Y8888P' 88   YD YP   YP 88   YD    YP      #
+#                                                               #
+#################################################################
 
-name: Browse
-link: /app/browse/
+name: Library
+link: /app/library/
 css:
   primary:
   secondary:
@@ -70,11 +70,11 @@ scripts:
   - extends/array
 templates:
 docs:
-  - browse/PUBLIC
-  - browse/FEATURES
-  - browse/INSTRUCTIONS
-  - browse/TUTORIALS
-  - browse/README
+  - library/PUBLIC
+  - library/FEATURES
+  - library/INSTRUCTIONS
+  - library/TUTORIALS
+  - library/README
 scopes:
   google:
     - scope: email
@@ -88,4 +88,6 @@ scopes:
 keys:
   google:
       general: 
-      oauth: 740623674895-qo8s1af5d5aufl6v1uqrfr38tulia1r5.apps.googleusercontent.com
+      oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com
+published: true
+scoped: true

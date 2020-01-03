@@ -1,0 +1,22 @@
+// -- Google Button -- //
+.google-logo-wrapper {
+	padding: 10px 12px 10px 10px;
+	background: $colour-background;
+	float: left;
+  .google-logo {
+		width: 18px;
+		height: 18px;
+    svg {vertical-align: initial;}
+	}
+}
+// -- Google Button -- //
+
+
+// -- Outline Letter Logo -- //
+a.navbar-brand.logo, .navbar-brand a.logo {
+	svg {
+		height: 40px;	
+		pointer-events: visible;
+  }
+}
+// -- Outline Letter Logo -- //
