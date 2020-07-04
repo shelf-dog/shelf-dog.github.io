@@ -1,4 +1,4 @@
-# Last Updated: 2020-06-16
+# Last Updated: 2020-06-21
 
 localstorage:
   name: localStorage
@@ -897,6 +897,7 @@ moment:
       integrity: sha256-5oApc/wMda1ntIEK4qoWJ4YItnV4fBHMwywunj8gPqc=
       crossorigin: anonymous
       bulk: 58.9
+      map: true
       id: __moment
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.js
@@ -919,6 +920,7 @@ moment_all:
       integrity: sha256-4HOrwHz9ACPZBxAav7mYYlbeMiAL0h6+lZ36cLNpR+E=
       crossorigin: anonymous
       bulk: 356
+      map: true
       id: __moment
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment-with-locales.js
@@ -1656,8 +1658,8 @@ day:
           crossorigin: anonymous
           bulk: 0.306
           id: __day_3
-        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/isSameOrBefore.js
-          integrity: sha256-Cgv1f1ZBQ2TxBlUqau/j+RtKB2N7upl6OfmjPiqxcc0=
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.28/plugin/isSameOrBefore.js
+          integrity: sha256-G/G3wr7Ebl7nXX2pPyRRmdyi1vgGLhfrtP3W/4mwr8g=
           crossorigin: anonymous
           bulk: 0.309
           id: __day_4
@@ -1693,7 +1695,7 @@ day:
       bulk: 6.6
       id: __day_1
       dependencies:
-        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/relativeTime.js
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.28/plugin/relativeTime.js
           integrity: sha256-tMJ/JI74gvcd/JCL4zekEwHfyHfT2XKUd5GAZn6fJOU=
           crossorigin: anonymous
           bulk: 1.3
@@ -1708,7 +1710,7 @@ day:
           crossorigin: anonymous
           bulk: 0.31
           id: __day_4
-        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/customParseFormat.js
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.28/plugin/customParseFormat.js
           integrity: sha256-T7pBODwQ9tnEMgLeu0QxLZRBkSeZueAn9K2DB4EPTUc=
           crossorigin: anonymous
           bulk: 3.0
@@ -2017,3 +2019,93 @@ humanize-duration:
       crossorigin: anonymous
       bulk: 34
       id: __humanizeduration
+      
+instascan:
+  name: QR Cam Scanner
+  desc: Webcam-driven QR code scanner.
+  url: https://cdnjs.com/libraries/instascan
+  project: https://github.com/schmich/instascan
+  version: 2.0.0-rc.4
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/instascan/2.0.0-rc.4/instascan.min.js
+      integrity: sha256-TPAopxWuAwkNun2LYxG6KIwEWAU07u/VGuViKksATx4=
+      crossorigin: anonymous
+      bulk: 1564
+      id: __instascan
+  dev:
+    - url: https://gist.githubusercontent.com/chris-gunawardena/15d507d11dc09ef8f7653f1005eda203/raw/9ee3e38c57f2b1b7dc034fcf4c0dc48a2126a67c/instascan.min.js
+      crossorigin: anonymous
+      bulk: 1564
+      id: __instascan
+      
+jsqr:
+  name: QR Code Reading
+  desc: A pure javascript QR code reading library
+  url: https://www.jsdelivr.com/package/npm/jsqr
+  project: https://github.com/cozmo/jsQR
+  version: 1.3.1
+  license: Apache-2.0
+  type: js
+  prod:
+    - url: https://cdn.jsdelivr.net/npm/jsqr@1.3.1/dist/jsQR.js
+      integrity: sha256-WZjYWhu0ZfavKsNtUWMFYSibq3Tz8vDMaZ9NwTMsA0U=
+      crossorigin: anonymous
+      bulk: 262
+      id: __jsqr
+  dev:
+    - url: https://cdn.jsdelivr.net/npm/jsqr@1.3.1/dist/jsQR.js
+      integrity: sha256-WZjYWhu0ZfavKsNtUWMFYSibq3Tz8vDMaZ9NwTMsA0U=
+      crossorigin: anonymous
+      bulk: 262
+      id: __jsqr
+
+qrscanner:
+  name: QR Cam Scanner
+  desc: A javascript QR scanner library
+  url: https://www.jsdelivr.com/package/npm/qr-scanner
+  project: https://github.com/nimiq/qr-scanner
+  version: 1.1.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdn.jsdelivr.net/npm/qr-scanner@1.1.1/qr-scanner.min.js
+      integrity: sha256-NdYxBG6VSZY8RbaINYhMdMISu6rdzPtfLiI5arxjxrc=
+      crossorigin: anonymous
+      bulk: 5.5
+      overrides:
+        - replace: e.WORKER_PATH="qr-scanner-worker.min.js";
+          with: e.WORKER_PATH="https://cdn.jsdelivr.net/npm/qr-scanner@1.1.1/qr-scanner-worker.min.js";
+      id: __qrscanner
+      map: true
+  dev:
+    - url: https://cdn.jsdelivr.net/npm/qr-scanner@1.1.1/src/qr-scanner.js
+      integrity: sha256-lSApcuaPTTujMJpGsHEpVbX8KRfJRKt+EPduRh7k6HU=
+      crossorigin: anonymous
+      bulk: 12.3
+      overrides:
+        - replace: QrScanner.WORKER_PATH = 'qr-scanner-worker.min.js';
+          with: QrScanner.WORKER_PATH = 'https://cdn.jsdelivr.net/npm/qr-scanner@1.1.1/qr-scanner-worker.min.js';
+      id: __qrscanner
+
+ion-sound:
+  name: ION Sound
+  desc: JavaScript plugin for playing sounds and music in web
+  url: https://cdnjs.com/libraries/ion-sound
+  project: https://github.com/IonDen/ion.sound
+  version: 3.0.7
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/js/ion.sound.min.js
+      integrity: sha512-k0RyhyJoNdQfdrx7Yb5+zbrtFp8CVsGMJPlQkcNsNZi82GS0R09TG1F/Ar1LuUSXrkVMuk7SftnrXK35nAfdYg==
+      crossorigin: anonymous
+      bulk: 13.4
+      id: __ionsound
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/js/ion.sound.js
+      integrity: sha512-AfbeL/zgYsRxWTRRLEVHanxsjsv2288WJxqxIulPmqdL2BXBbePerjJeNy3LkBIZ1/F7DgyhtQ9zm/6fF2TTAA==
+      crossorigin: anonymous
+      bulk: 28.7
+      id: __ionsound

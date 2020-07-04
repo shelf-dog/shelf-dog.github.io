@@ -1,6 +1,7 @@
 ---
 layout: app
 app: landing
-title: App
+auth: app
+title: .
 permalink: /app/
 ---

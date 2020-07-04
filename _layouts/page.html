@@ -1,8 +1,16 @@
 ---
 layout: compress
 modules:
-  - controller
-  - service
+  - generic/flags
+  - generic/controller
+  - generic/service
+  - page
+helpers:
+  - strings
+  - handlebars
+  - backgrounds
+scripts:
+  - extends/math
 imports:
 - name: underscore
   load: first
@@ -18,31 +26,79 @@ imports:
   load: last
 - name: waves-js
   load: last
+css:
+  primary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/root
+    - bootstrap/reboot
+    - bootstrap/type
+    - bootstrap/images
+    - bootstrap/grid
+    - bootstrap/nav
+    - bootstrap/navbar
+    - bootstrap/jumbotron
+    - bootstrap/utilities
+    - bootstrap/buttons
+    - bootstrap/dropdown
+    - material/buttons
+    - material/navbar
+    - custom/variables
+    - custom/fonts
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/transitions
+    - bootstrap/alert
+    - bootstrap/close
+    - bootstrap/modal
+    - bootstrap/tables
+    - bootstrap/forms
+    - bootstrap/breadcrumb
+    - bootstrap/button-group
+    - bootstrap/input-group
+    - bootstrap/tooltip
+    - bootstrap/card
+    - bootstrap/popover
+    - bootstrap/badge
+    - bootstrap/list-group
+    - bootstrap/custom-forms
+    - material/menu
+    - material/general
+    - custom/mixins/gradients
+    - custom/mixins/transitions
+    - custom/mixins/transforms
+    - custom/mixins/animations
+    - custom/variables
+    - custom/background
+    - custom/common
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
 	
-	{% include head.html %}
+	{% include plumbing/head.html %}
 
-	<body>
-
-		<!-- TODO: Clean this up -->
-		<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<div id="path" class="navbar-left"></div>
-				</div>
-				<div class="collapse navbar-collapse">
-					<div id="authorisation" class="navbar-right"></div>
-				</div>
-			</div>
-		</nav>
+	<body class="bg-transparent">
+    
+    {% unless page.simple %}<a class="skippy sr-only sr-only-focusable" href="#{{ site.app.content }}">
+      <span class="skippy-text">Skip to main content</span>
+    </a>{% endunless %}
+    
+		{% unless page.navless %}{% include nav.html type="sticky-top" %}{% endunless %}
+    
+    {% unless page.simple %}<p class="titles display-4 bg-dark text-white ml-3 ml-xl-4 px-2 py-1 rounded">{{ page.title }}</p>{% endunless %}
+    
+		<div id="{{ site.app.content }}" class="container">
+      <div{% unless page.simple %} class="bg-page p-2"{% endunless %}>
+        {{ content }}
+      </div>
+    </div>
 		
-		<div class="container{% unless page.simple %} content{% endunless %}">
-			{{ content }}
-		</div>
-		
-    {% include footer.html type="page" %}		
+    {% unless page.simple %}{% include copyright.html class="mt-2 mt-lg-3 mt-xl-4" %}{% endunless %}
+    
+    {% include plumbing/footer.html type="page" %}
     
 	</body>
 

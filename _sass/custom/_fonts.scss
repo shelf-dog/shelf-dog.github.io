@@ -12,16 +12,19 @@ html {
 }
 
 body {	
-	font-size: 12px; // font-size: 100%;
-  -webkit-text-size-adjust: 100%;
-  & > * {font-size: 100%; color: $colour-foreground;}
+	font-size: 14px;
+  & > * {color: $colour-foreground;}
 }
 
 h1 {color: $colour-highlight;}
-h2, h3, h4, h5, h6 {color: $colour-emphasis;}
 h1, h2, h3, h4, h5, h6 {
-	letter-spacing: $font-spacing-heading;
-  font-family: $font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  &.brand {
+    letter-spacing: $font-spacing-heading;
+  }
+  font-family: $font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  &.price, .price {
+    font-family: $font-general, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  }
   font-weight: $font-weight-heading;
   margin: 0.6em 0 0.2em 0;
 	a {
@@ -30,9 +33,33 @@ h1, h2, h3, h4, h5, h6 {
 	}
 }
 
+// -- Font Sizes -- //
 h6 {font-size: 100%};
 h5 {font-size: 105%};
 h4 {font-size: 110%};
 h3 {font-size: 120%};
-h2 {font-size: 150%};
+h2 {font-size: 160%};
 h1 {font-size: 300%};
+
+$larger-sizes: ("300": 300%, "200": 200%, "150": 150%);
+
+$smaller-sizes: ("90": 90%, "80": 80%, "70": 70%, "60": 60%, "50": 50%, "40": 40%, "30": 30%, "20": 20%, "10": 10%);
+
+@each $name, $size in $smaller-sizes {
+  .font-smaller-#{$name} {
+    font-size: $size;
+  }
+  .line-height-smaller-#{$name} {
+    line-height: $size;
+  }
+}
+
+@each $name, $size in $larger-sizes {
+  .font-larger-#{$name} {
+    font-size: $size
+  }
+  .line-height-larger-#{$name} {
+    line-height: $size;
+  }
+}
+// -- Font Sizes -- //

@@ -5,7 +5,8 @@ Handlebars = (options, factory) => {
   /* <!-- PARAMETERS: Options (see below) --> */
 
   /* <!-- Internal Constants --> */
-  const DEFAULTS = {};
+  const DEFAULTS = {},
+        STRINGS = factory.Strings();
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -210,7 +211,8 @@ Handlebars = (options, factory) => {
         if (typeof variable === "undefined" ||
           variable === null ||
           (variable.constructor === Object && Object.keys(variable).length === 0) ||
-          (variable.constructor === Array && variable.length === 0)) {
+          (variable.constructor === Array && variable.length === 0) ||
+          ((typeof variable === "string" || variable instanceof String) && variable == "")) {
           return options.fn ? options.fn(this) : true;
         } else {
           return options.inverse ? options.inverse(this) : false;
@@ -221,7 +223,8 @@ Handlebars = (options, factory) => {
         if (typeof variable !== "undefined" &&
           variable !== null &&
           !(variable.constructor === Object && Object.keys(variable).length === 0) &&
-          !(variable.constructor === Array && variable.length === 0)) {
+          !(variable.constructor === Array && variable.length === 0) && 
+          !((typeof variable === "string" || variable instanceof String) && variable == "")) {
           return options.fn ? options.fn(this) : true;
         } else {
           return options.inverse ? options.inverse(this) : false;
@@ -238,39 +241,9 @@ Handlebars = (options, factory) => {
             "is" : "===";
         }
 
-        var operators = {
-          "==": (a, b) => a == b,
-          "===": (a, b) => a === b,
-          "!=": (a, b) => a != b,
-          "!==": (a, b) => a !== b,
-          "<": (a, b) => a < b,
-          "lt": (a, b) => a < b,
-          ">": (a, b) => a > b,
-          "gt": (a, b) => a > b,
-          "<=": (a, b) => a <= b,
-          "lte": (a, b) => a <= b,
-          ">=": (a, b) => a = b,
-          "gte": (a, b) => a = b,
-          "~=": (a, b) => a == b || a && b && a.toUpperCase() == b.toUpperCase(),
-          "typeof": (a, b) => typeof a == b,
-          "and": (a, b) => a && b,
-          "or": (a, b) => a || b,
-          "is": (a, b) => (a % 2 === 0 ? b.toLowerCase() == "even" : b.toLowerCase() == "odd"),
-          "in": (a, b) => {
-            var _b, _a = String(a);
-            try {
-              _b = JSON.parse(b);
-            } catch (e) {
-              b = {};
-            }
-            return _b[_a];
-          },
-          "eq": (a, b) => _.isEqual(a, b),
-          "neq": (a, b) => !_.isEqual(a, b)
-        };
-
-        if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);
-        return operators[operator](v1, v2) ?
+        var fn = STRINGS.operators[operator];
+        if (!fn) throw new Error(`IS doesn't understand the operator ${operator}`);
+        return fn(v1, v2) ?
           options.fn ? options.fn(this) : true :
           options.inverse ? options.inverse(this) : false;
 
@@ -286,6 +259,8 @@ Handlebars = (options, factory) => {
         return _b[_a] ? _b[_a] : _default ? _default : "";
       });
 
+      Handlebars.registerHelper("length", variable => variable ? variable.length !== null && variable.length !== undefined ? variable.length : _.isObject(variable) ? _.keys(variable).length : 0 : 0);
+      
       Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
 
       Handlebars.registerHelper("add", (add, a, b) => add ? a + b : a);
@@ -325,7 +300,18 @@ Handlebars = (options, factory) => {
         if (typeof(number) === "undefined" || number === null) return null;
         return number + (options && options.hash.inc || 1);
       });
+      
+      Handlebars.registerHelper("truncate", (value, length, ending) =>
+        value && _.isString(value) ? value.length > length ? `${value.substring(0, length - 1)}${ending}` : value : "");
 
+      Handlebars.registerHelper("lowercase", value => value && value.toLowerCase ? value.toLowerCase() : value);
+      
+      Handlebars.registerHelper("uppercase", value => value && value.toUpperCase ? value.toUpperCase() : value);
+
+      Handlebars.registerHelper("falsy", value => !value);
+      
+      Handlebars.registerHelper("truthy", value => !!value);
+      
       /* <!-- Map all templates as Partials too --> */
       if (Handlebars.templates) Handlebars.partials = Handlebars.templates;
 

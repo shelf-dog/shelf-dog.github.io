@@ -53,6 +53,8 @@ globals:
   quotedPrintable: false
   jsyaml: false
   d3: false
+  importScripts: false
+  jsQR: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -148,3 +150,6 @@ globals:
   Hookup: true
   Render: true
   Url: true
+  Backgrounds: true
+  Exporter: true
+  Tabulate: true

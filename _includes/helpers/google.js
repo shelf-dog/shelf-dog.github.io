@@ -12,6 +12,8 @@ Google_API = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {};
+  
+  const STRINGS = factory.Strings();
 
   const LAST_RESORT_TIMEOUT = 60000,
     PAGE_SIZE = 200,
@@ -55,6 +57,8 @@ Google_API = (options, factory) => {
 
   const TEAM = (id, team, start) =>
     team ? `${start ? "?" : start !== null && start !== undefined ? "&" : ""}${id !== team ? team !== true ? `teamDriveId=${team}&` : "" :""}supportsTeamDrives=true&supportsAllDrives=true` : "";
+  
+  const BATCH = idempotent => !idempotent && Promise.each ? Promise.each : Promise.all;
   /* <!-- Internal Constants --> */
 
   /* <!-- Network Constants --> */
@@ -79,8 +83,8 @@ Google_API = (options, factory) => {
     url: "https://sheets.googleapis.com/",
     rate: 4,
     /* <!-- 100 per 100 seconds --> */
-    concurrent: 2,
-    timeout: 30000,
+    concurrent: 4,
+    timeout: 120000, /* <!-- Longer Timeout for big sheet operations! --> */
   };
   const SCRIPTS_URL = {
     name: "scripts",
@@ -99,8 +103,8 @@ Google_API = (options, factory) => {
   const CLASSROOM_URL = {
     name: "classroom",
     url: "https://classroom.googleapis.com/",
-    rate: 1,
-    concurrent: 1,
+    rate: 4,
+    concurrent: 8,
     timeout: 30000,
   };
   const URLS = [GENERAL_URL, PERMISSIONS_URL, SHEETS_URL, SCRIPTS_URL, ADMIN_URL, CLASSROOM_URL];
@@ -153,8 +157,12 @@ Google_API = (options, factory) => {
   }, {});
   /* <!-- Network Variables --> */
 
+  /* <!-- User & Scope Variables --> */
+  var _user, _scopes;
+  /* <!-- User & Scope Variables --> */
+  
   /* <!-- Internal Functions --> */
-  var _init = (token, type, expires, user, update) => {
+  var _init = (token, type, expires, user, update, scopes) => {
 
     /* <!-- Check Function to ensure token validity --> */
     _check = ((e, u) => force => {
@@ -192,6 +200,12 @@ Google_API = (options, factory) => {
 
     _token = (t => () => t)(token);
 
+    /* <!-- Store User Number (used for thumbnail calls etc.) --> */
+    _user = user;
+    
+    /* <!-- Store Scopes --> */
+    _scopes = scopes;
+    
     /* <!-- Before Network Call : Request Authorisation Closure --> */
     _.each(NETWORKS, network => {
       network.before(_before);
@@ -202,8 +216,8 @@ Google_API = (options, factory) => {
 
   var _arrayize = (value, test) => value && test(value) ? [value] : !value ? [] : value;
 
-  var _list = (method, url, property, list, data, next) => {
-
+  var _list = (method, url, property, list, data, next, filter, progress) => {
+ 
     return new Promise((resolve, reject) => {
 
       _check().then(() => {
@@ -218,10 +232,26 @@ Google_API = (options, factory) => {
 
         method(url, data).then(value => {
 
-          list = list.concat(value[property]);
+          /* <!-- Filtered represents whether the filter is clear (e.g. we should proceed) --> */
+          var _filtered = true,
+              _value = value[property];
+          
+          if (filter && _value) {
+            /* <!-- Run the filter if present --> */
+            var _fn = STRINGS.operators[filter.operator],
+                _length = _value.length;
+            _value = _.filter(_value, value => _fn ? value ? _fn(value[filter.property], filter.value) : false : true);
+            _filtered = (_value.length == _length);
+          }
+          
+          list = list ? list.concat(_value) : _value;
+          
+          /* <!-- Raise Event if supplied --> */
+          if (progress && list && list.length) progress(list.length);
 
-          value.nextPageToken ?
-            _list(method, url, property, list, data, value.nextPageToken).then(list => resolve(list)) : resolve(list);
+          value.nextPageToken && _filtered ?
+            _list(method, url, property, list, data, value.nextPageToken, filter).then(list => resolve(_.compact(list))) :
+            resolve(_.compact(list));
 
         }).catch(e => reject(e));
 
@@ -521,6 +551,15 @@ Google_API = (options, factory) => {
       `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${TEAM(id, team, false)}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + BOUNDARY(), null, "application/binary");
 
   };
+  
+  var _scoped = (scopes, any) => {
+    
+    if (!_scopes || _scopes.length === 0) return false;
+    var _match = scope => _.find(_scopes, value => value && value.equals ? value.equals(scope, true) : value == scope);
+    scopes = _.isArray(scopes) ? scopes : [scopes];
+    return any ? _.some(scopes, _match) : _.every(scopes, _match);
+    
+  };                                         
   /* <!-- Internal Functions --> */
 
   /* <!-- Internal Visibility --> */
@@ -529,20 +568,24 @@ Google_API = (options, factory) => {
   return {
 
     /* <!-- External Functions --> */
-    initialise: function(token, type, expires, user, update, key, client_id) {
+    initialise: function(token, type, expires, user, update, key, client_id, scopes) {
 
       /* <!-- Set the Important Constants --> */
       KEY = key, CLIENT_ID = client_id;
 
       /* <!-- Run the Initialisation --> */
-      _init(token, type, expires, user, update);
+      _init(token, type, expires, user, update, scopes);
 
       /* <!-- Return for Chaining --> */
       return this;
 
     },
 
+    user: () => _user,
+    
     networks: () => _.map(NETWORKS, network => network.details()),
+    
+    scoped: _scoped,
 
     /* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
     me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json"),
@@ -676,7 +719,7 @@ Google_API = (options, factory) => {
 
         return _call(
           NETWORKS.general.post, `gmail/v1/users/${user ? user : "me"}/messages/send?alt=json`, {
-            raw: factory.Strings().base64.encode(_message)
+            raw: STRINGS.base64.encode(_message)
               .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
           });
 
@@ -773,7 +816,7 @@ Google_API = (options, factory) => {
 
       comments: file => {
 
-        const FIELDS = "kind,id,createdTime,modifiedTime,author,content,anchor,deleted,resolved";
+        const FIELDS = "kind,id,createdTime,modifiedTime,author,htmlContent,content,anchor,deleted,resolved,replies";
 
         var fn = {
 
@@ -788,6 +831,12 @@ Google_API = (options, factory) => {
               content: content,
             })),
 
+          resolve: (id, content) => _call(NETWORKS.general.patch,
+            `drive/v3/files/${file && file.id ? file.id : file}/comments/${id}?fields=${FIELDS}`, STRIP_NULLS({
+              content: content,
+              resolved: true,
+            })),
+          
           delete: id => _call(NETWORKS.general.delete,
             `drive/v3/files/${file && file.id ? file.id : file}/comments/${id}`),
 
@@ -795,13 +844,49 @@ Google_API = (options, factory) => {
             `drive/v3/files/${file && file.id ? file.id : file}/comments`, "comments", [], STRIP_NULLS({
               fields: `kind,nextPageToken,comments(${FIELDS})`
             })),
+          
+          replies: (comment) => {
+        
+            const FIELDS = "kind,id,createdTime,modifiedTime,author,htmlContent,content,deleted,action";
+
+            var fn = {
+
+              create: (content, resolved, reopened) => _call(NETWORKS.general.post,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies?fields=${FIELDS}`, STRIP_NULLS({
+                  content: content,
+                  action: resolved ? "resolve" : reopened ? "reopen" : null,
+                })),
+
+              update: (id, content) => _call(NETWORKS.general.patch,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies/${id}?fields=${FIELDS}`, STRIP_NULLS({
+                  content: content,
+                })),
+
+              delete: id => _call(NETWORKS.general.delete,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies/${id}`),
+
+              list: () => _list(NETWORKS.general.get,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies`, "replies", [], STRIP_NULLS({
+                  fields: `kind,nextPageToken,comments(${FIELDS})`,
+              })),
+
+              resolve: () => _call(NETWORKS.general.post,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies?fields=${FIELDS}`, {
+                  action: "resolve",
+                }),
+
+            };
+
+            return fn;
+            
+          },
 
         };
 
         return fn;
 
       },
-
+      
       revisions: file => {
 
         const FIELDS = "kind,id,mimeType,modifiedTime,md5Checksum,size";
@@ -867,6 +952,24 @@ Google_API = (options, factory) => {
 
       },
       
+      permissions: {
+        
+        create: (id, data, notify) => _call(NETWORKS.general.post, 
+          `calendar/v3/calendars/${encodeURIComponent(id)}/acl?sendNotifications=${notify ? "true" : "false"}`, data, "application/json"),
+        
+        delete: (id, rule) => _call(NETWORKS.general.delete, `calendar/v3/calendars/${encodeURIComponent(id)}/acl/${rule}`),
+        
+        get: (id, rule) => _call(NETWORKS.general.get, `calendar/v3/calendars/${encodeURIComponent(id)}/acl/${rule}`),
+        
+        list: id => _list(NETWORKS.general.get, `calendar/v3/calendars/${encodeURIComponent(id)}/acl`, "items", [], {
+          maxResults: 250,
+          showDeleted: false,
+        }),
+        
+        update: (id, rule, data) => _call(NETWORKS.general.patch, `calendar/v3/calendars/${encodeURIComponent(id)}/acl/${rule}`, data, "application/json"),
+        
+      },
+      
       busy: (ids, start, end, zone) => {
         var _limit = 50,
             _action = identifiers => _call(NETWORKS.general.post, "calendar/v3/freeBusy", {
@@ -891,39 +994,309 @@ Google_API = (options, factory) => {
           fields: "id,summary,summaryOverride,description,accessRole",
         }),
       
+      add: (id, data) => _call(NETWORKS.general.post, "calendar/v3/users/me/calendarList",
+                               data ? _.defaults({id: id}, data) : {id: id}, "application/json"),
+      
+      remove: id => _call(NETWORKS.general.delete, `calendar/v3/users/me/calendarList/${encodeURIComponent(id)}`),
+      
       list: () => _list(
         NETWORKS.general.get, "calendar/v3/users/me/calendarList", "items", [], {
           orderBy: "summary",
           fields: "kind,nextPageToken,items(id,summary,summaryOverride,description,accessRole)",
+        }),
+      
+      update: (id, data) => _call(NETWORKS.general.patch, `calendar/v3/users/me/calendarList/${encodeURIComponent(id)}`, data, "application/json"),
+      
+      notifications: id  => _call(NETWORKS.general.get, `calendar/v3/users/me/calendarList/${encodeURIComponent(id)}`, {
+          fields: "id,notificationSettings",
         }),
 
     },
 
     classrooms: {
 
-      list: state => _list(
-        NETWORKS.classroom.get, "/v1/courses", "courses", [], {
+      last: (state, fields, number, teacher, student) => _call(NETWORKS.classroom.get, "/v1/courses", STRIP_NULLS({
           courseStates: state || "ACTIVE",
-          fields: "nextPageToken,courses(id,name,section,description,calendarId,teacherFolder)",
+          teacherId: teacher || null,
+          studentId: student || null,
+          fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description,calendarId,teacherFolder,creationTime"})`}`,
+          pageSize: number
+        })),
+      
+      list: (state, fields, since, teacher, student, progress) => _list(
+        NETWORKS.classroom.get, "/v1/courses", "courses", [], STRIP_NULLS({
+          courseStates: state || "ACTIVE",
+          teacherId: teacher || null,
+          studentId: student || null,
+          fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description,calendarId,teacherFolder,creationTime"})`}`,
+        }), null, since ? {
+          operator : "gte",
+          property : "creationTime",
+          value : since
+        } : null, progress),
+      
+      names: (state, fields, progress) => _list(NETWORKS.classroom.get, "/v1/courses", "courses", [], {
+          courseStates: state || "ACTIVE",
+          fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description"})`}`,
+        }, null, null, progress),
+
+      person: person => _call(NETWORKS.classroom.get, `v1/userProfiles/${encodeURIComponent(person)}`, {
+          fields: "id,name,verifiedTeacher",
         }),
-
-      work: classroom => {
-
-        var _id = classroom && classroom.id ? classroom.id : classroom,
-          _url = `v1/courses/${_id}/courseWork`;
-
+      
+      guardians: student => {
+        
+        var _id = student && student.$id ? student.$id : student && student.id ? student.id : student,
+            _url = `v1/userProfiles/${encodeURIComponent(_id)}/guardianInvitations`,
+                _fields = "invitationId,invitedEmailAddress,state,creationTime",
+                _params = (state, fields) => STRIP_NULLS({
+                  states: state || "COMPLETE",
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,guardianInvitations(${fields ? fields.join(",") : _fields})`,
+                });
+        
         return {
-
-          list: state => _list(
-            NETWORKS.classroom.get, _url, "courseWork", [], {
-              courseWorkStates: state || "PUBLISHED",
-              orderBy: "dueDate",
-              fields: "nextPageToken,courseWork(id,title,dueDate,dueTime,workType,alternateLink)",
-            }),
-
+          
+          authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.guardianlinks.students" :
+                                                "https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly"),
+          
+          list : (state, fields) => _list(NETWORKS.classroom.get, _url, "guardianInvitations", [], _params(state, fields)),
+          
         };
-
+          
       },
+      
+      due: (value, or) => value.dueDate ? new Date(
+            value.dueDate.year,
+            value.dueDate.month - 1,
+            value.dueDate.day,
+            value.dueTime ? value.dueTime.hours || 0 : 0,
+            value.dueTime ? value.dueTime.minutes || 0 : 0,
+            value.dueTime ? value.dueTime.seconds || 0 : 0
+          ) : or === undefined ? new Date() : or,
+
+      classroom: classroom => {
+        
+        var _id = classroom && classroom.$id ? classroom.$id : classroom && classroom.id ? classroom.id : classroom;
+        
+        return {
+          
+          update: data => _call(NETWORKS.classroom.patch, `v1/courses/${encodeURIComponent(_id)}?updateMask=${_.keys(data).join(",")}`, 
+                                  data, "application/json"),
+          
+          announcements: () => {
+          
+            var _url = `v1/courses/${encodeURIComponent(_id)}/announcements`,
+                _fields = "id,text,creationTime,updateTime,scheduledTime,alternateLink,creatorUserId,courseId",
+                _params = (state, fields) => STRIP_NULLS({
+                  announcementStates: state || "PUBLISHED",
+                  orderBy: "updateTime desc",
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,announcements(${fields ? fields.join(",") : _fields})`,
+                });
+            
+            return {
+              
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.announcements" :
+                                                "https://www.googleapis.com/auth/classroom.announcements.readonly"),
+              
+              last: (state, fields, number) => _call(NETWORKS.classroom.get, _url, _.extend( _params(state, fields), {
+                pageSize: number || 5
+              })).then(value => value ? value.announcements : value),
+              
+              list: (state, fields, since) => _list(NETWORKS.classroom.get, _url, "announcements", [], _params(state, fields), null, since ? {
+                operator : "gte",
+                property : "creationTime",
+                value : since
+              } : null),
+            
+            };
+            
+          },
+          
+          invitations: () => {
+          
+            var _url = "v1/invitations",
+                _fields = "id,userId,role",
+                _params = fields => STRIP_NULLS({
+                  courseId: _id,
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,invitations(${fields ? fields.join(",") : _fields})`,
+                });
+            
+            return {
+             
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.rosters" :
+                                                "https://www.googleapis.com/auth/classroom.rosters.readonly"),
+              
+              list: fields => _list(NETWORKS.classroom.get, _url, "invitations", [], _params(fields)),
+            
+            };
+            
+          },
+          
+          students: () => {
+            
+            var _url = `v1/courses/${encodeURIComponent(_id)}/students`,
+                _fields = "userId,profile(id,name),studentWorkFolder",
+                _params = fields => STRIP_NULLS({
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,students(${fields ? fields.join(",") : _fields})`,
+                });
+            
+            return {
+
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.rosters" :
+                                                "https://www.googleapis.com/auth/classroom.rosters.readonly"),
+              
+              add: (student, code) => _call(NETWORKS.classroom.post, code ? `${_url}?enrollmentCode=${encodeURIComponent(code)}`: _url,
+                               {"userId": student}, "application/json"),
+              
+              remove: student => _call(NETWORKS.classroom.delete, `${_url}/${encodeURIComponent(student)}`),
+              
+              invite: student => _call(NETWORKS.classroom.post, "v1/invitations", {
+                "courseId": _id.toString(), 
+                "userId": student,
+                "role": "STUDENT"
+              }, "application/json"),
+              
+              list: fields => _list(NETWORKS.classroom.get, _url, "students", [], _params(fields)),
+
+            };
+            
+          },
+          
+          teachers: () => {
+            
+            var _url = `v1/courses/${encodeURIComponent(_id)}/teachers`,
+                _fields = "userId,profile(id,name,verifiedTeacher)",
+                _params = fields => STRIP_NULLS({
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,teachers(${fields ? fields.join(",") : _fields})`,
+                });
+            
+            return {
+
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.rosters" :
+                                                "https://www.googleapis.com/auth/classroom.rosters.readonly"),
+              
+              add: teacher => _call(NETWORKS.classroom.post, _url, {"userId": teacher}, "application/json"),
+              
+              remove: teacher => _call(NETWORKS.classroom.delete, `${_url}/${encodeURIComponent(teacher)}`),
+              
+              invite: teacher => _call(NETWORKS.classroom.post, "v1/invitations", {
+                "courseId": _id.toString(),
+                "userId": teacher,
+                "role": "TEACHER"
+              }, "application/json"),
+              
+              list: fields => _list(NETWORKS.classroom.get, _url, "teachers", [], _params(fields)),
+
+            };
+            
+          },
+          
+          topics: () => {
+              
+            var _url = `v1/courses/${encodeURIComponent(_id)}/topics`,
+                _fields = "topicId,name,updateTime,courseId",
+                _params = fields => STRIP_NULLS({
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,topic(${fields ? fields.join(",") : _fields})`,
+                });
+            
+            return {
+
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.topics" :
+                                                "https://www.googleapis.com/auth/classroom.topics.readonly"),
+              
+              last: (fields, number) => _call(NETWORKS.classroom.get, _url, _.extend( _params(fields), {
+                pageSize: number || 5
+              })).then(value => value ? value.topic : value),
+              
+              list: fields => _list(NETWORKS.classroom.get, _url, "topic", [], _params(fields)),
+
+            };
+            
+          },
+          
+          work: () => {
+          
+            var _url = `v1/courses/${_id}/courseWork`,
+                _fields = "id,title,creationTime,updateTime,scheduledTime,assigneeMode,dueDate,dueTime,workType,alternateLink,creatorUserId,courseId",
+                _params = (state, fields, order) => STRIP_NULLS({
+                  courseWorkStates: state || "PUBLISHED",
+                  orderBy: order || "updateTime desc",
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,courseWork(${fields ? fields.join(",") : _fields})`,
+                });
+
+            return {
+
+              authorised : editable => editable ?
+                _scoped([
+                  "https://www.googleapis.com/auth/classroom.coursework.students",
+                  "https://www.googleapis.com/auth/classroom.student-submissions.students"
+                ], true) : _scoped([
+                  "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
+                  "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly"
+                ], true),
+              
+              last: (state, fields, number, order) => _call(NETWORKS.classroom.get, _url, _.extend( _params(state, fields, order), {
+                pageSize: number || 5
+              })).then(value => value ? value.courseWork : value),
+              
+              list: (state, fields, since) => _list(NETWORKS.classroom.get, _url, "courseWork", [], _params(state, fields), null, since ? {
+                operator : "gte",
+                property : "creationTime",
+                value : since
+              } : null),
+
+            };
+
+          },
+          
+          submissions: work => {
+        
+            var _work = work && work.$id ? work.$id : work && work.id ? work.id : work,
+                _url = `v1/courses/${_id}/courseWork/${_work}/studentSubmissions`,
+                _fields = "id,userId,creationTime,updateTime,state,late,draftGrade,assignedGrade,alternateLink",
+                _params = (states, late, fields) => STRIP_NULLS({
+                  states: states || null,
+                  late: late || null,
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,studentSubmissions(${fields ? fields.join(",") : _fields})`,
+                });
+        
+            return {
+              
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.student-submissions.students" :
+                                                "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly"),
+              
+              /* <!-- STATES Enum --> */
+              /* <!-- NEW	= The student has never accessed this submission. Attachments are not returned and timestamps is not set. --> */
+              /* <!-- CREATED	= Has been created.. --> */
+              /* <!-- TURNED_IN	= Has been turned in to the teacher. --> */
+              /* <!-- RETURNED	= Has been returned to the student. --> */
+              /* <!-- RECLAIMED_BY_STUDENT	= Student chose to "unsubmit" the assignment. --> */
+              
+              /* <!-- LATE Enum --> */
+              /* <!-- LATE_ONLY = Return Student Submissions where late is true. --> */
+              /* <!-- NOT_LATE_ONLY = Return Student Submissions where late is false. --> */
+              
+              last: (states, late, fields, number) => _call(NETWORKS.classroom.get, _url, _.extend( _params(states, late, fields), {
+                pageSize: number || 5
+              })).then(value => value ? value.studentSubmissions : value),
+              
+              list: (states, late, fields) => _list(NETWORKS.classroom.get, _url, "studentSubmissions", [], _params(states, late, fields)),
+              
+            };
+            
+          }
+          
+        };
+        
+      }
+
     },
 
     admin: {
@@ -946,6 +1319,10 @@ Google_API = (options, factory) => {
       },
   
       calendars: {
+        
+        get: (id, customer) => _call(NETWORKS.admin.get, `directory/v1/customer/${customer || "my_customer"}/resources/calendars/${encodeURIComponent(id)}`, {
+          fields: "*",
+        }),
         
         insert: (resource, customer) => _call(NETWORKS.admin.post, `directory/v1/customer/${customer || "my_customer"}/resources/calendars`, resource, "application/json"),
         
@@ -978,6 +1355,10 @@ Google_API = (options, factory) => {
         
         delete: (key, customer) => _call(NETWORKS.admin.delete,
             `directory/v1/customer/${customer || "my_customer"}/resources/features/${key}`),
+        
+        rename: (old_name, new_name, customer) => _call(NETWORKS.admin.post, `directory/v1/customer/${customer || "my_customer"}/resources/features/${encodeURIComponent(old_name)}/rename`, {
+            newName: new_name
+          }, "application/json"),
         
       },
       
@@ -1066,6 +1447,53 @@ Google_API = (options, factory) => {
           "visibility": meta.visibility ? meta.visibility : "DOCUMENT"
         }));
         return _call(NETWORKS.sheets.post, "v4/spreadsheets", _data, "application/json");
+      },
+      
+      /* <!-- Add a tab to an existing Spreadsheet --> */
+      tab: (spreadsheet, id, name, colour, meta) => {
+       
+        var identified = (id !== null && id !== undefined),
+            metadata = (id, meta) => meta ? _.map((_.isArray(meta) ? meta : [meta]), meta => ({
+              "createDeveloperMetadata" : {
+                "developerMetadata": {
+                  "metadataId": meta.id,
+                  "metadataKey": meta.key,
+                  "metadataValue": String(meta.value),
+                  "visibility": meta.visibility ? meta.visibility : "DOCUMENT",
+                  "location": {
+                    "sheetId" : id
+                  }
+                }
+              }
+            })) : [],
+            properties = {
+              "tabColor": colour ? colour : {
+                    "red": 0.0,
+                    "green": 0.0,
+                    "blue": 0.0
+                  }
+            };
+        
+        if (identified) properties.sheetId = id;
+        if (name) properties.title = name;
+        
+        var updates = [{
+            "addSheet" : {
+              "properties": properties
+            },
+          }];
+        
+        return _call(NETWORKS.sheets.post, `v4/spreadsheets/${spreadsheet}:batchUpdate`, {
+          "requests": identified && meta ? updates.concat(metadata(id, meta)) : updates,
+          "includeSpreadsheetInResponse": identified || !meta,
+          "responseIncludeGridData": false,
+        }, "application/json").then(sheet => !identified && meta && sheet && sheet.replies ?
+            _call(NETWORKS.sheets.post, `v4/spreadsheets/${spreadsheet}:batchUpdate`, {
+              "requests": metadata(sheet.replies[0].properties.sheetId, meta),
+              "includeSpreadsheetInResponse": true,
+              "responseIncludeGridData": false,
+            }, "application/json").then(sheet => sheet.updatedSpreadsheet) : sheet.updatedSpreadsheet);
+          
       },
 
       get: (id, all, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}${all ?
@@ -1171,11 +1599,24 @@ Google_API = (options, factory) => {
 
       },
 
-      batch: (id, updates, returnSheet, returnData) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
-        "requests": _arrayize(updates, value => !_.isArray(value)),
-        "includeSpreadsheetInResponse": returnSheet ? true : false,
-        "responseIncludeGridData": returnData ? true : false,
-      }, "application/json"),
+      /* <!-- Setting Idempotent means batches of updates may be executed simultaneously (e.g. before each has finished) --> */
+      batch: (id, updates, returnSheet, returnData, idempotent) => {
+        var _run = _updates => () => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
+            "requests": _arrayize(_updates, value => !_.isArray(value)),
+            "includeSpreadsheetInResponse": returnSheet ? true : false,
+            "responseIncludeGridData": returnData ? true : false,
+          }, "application/json"),
+            _limit = 500;
+        if (!updates) return Promise.resolve();
+        if (updates.length > _limit) {
+          var _batch = BATCH(idempotent);
+          return _batch(_.map(_.chunk(updates, 500), _run))
+            .then(results => results && results.length === 1 ? 
+                results[0] : _.tap(results[results.length - 1], result => result.replies = _.flatten(_.pluck(results, "replies"))));
+        } else {
+          return _run(updates)();
+        }
+      },
 
       metadata: {
 

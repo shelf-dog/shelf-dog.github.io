@@ -47,27 +47,29 @@ imports:
     load: lazy
 helpers:
   - network
-  - google/sheets/notation
-  - google/sheets/metadata
-  - google/sheets/grid
-  - google/sheets/format
+  - strings
   - google
-  - data
   - css
+  - data
   - fields
   - dialog
   - colours
   - handlebars
+  - backgrounds
+  - network
 modules:
-  - flags
-  - controller
-  - display
-  - service
-  - main
-  - router
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
+  - shared/states
 scripts: 
   - extends/regex
   - extends/array
+  - extends/math
 templates:
 docs:
   - library/PUBLIC
@@ -86,8 +88,7 @@ scopes:
       reason: In order to display your name on the navigation menu, once you have signed in.
       request: login
 keys:
-  google:
-      general: 
+  google: 
       oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com
 published: true
 scoped: true

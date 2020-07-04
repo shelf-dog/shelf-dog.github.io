@@ -109,7 +109,7 @@ Fields = (options, factory) => {
     form.find("select[data-updates], input[data-updates]").change(e => {
       var _this = $(e.currentTarget),
         _val = val => val == _this.data("default") ? "" : val;
-      $(`#${_this.data("updates")}`).val(_val(_this.val()));
+      $(`#${_this.data("updates")}`).val(_val(_this.val())).change();
     });
 
   };
@@ -150,8 +150,8 @@ Fields = (options, factory) => {
                 _initial_Date.clone().add(-1, _span).add(1, "d") :
                 _initial_Date.clone().add(1, _span).subtract(1, "d");
 
-              _initial.val(_initial_Date.format(DATE_FORMAT_M));
-              _derived.val(_dervied_Date.format(DATE_FORMAT_M));
+              _initial.val(_initial_Date.format(DATE_FORMAT_M)).change();
+              _derived.val(_dervied_Date.format(DATE_FORMAT_M)).change();
 
               ((start, span, end) => {
                 start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {
@@ -159,9 +159,9 @@ Fields = (options, factory) => {
                   if (_value) {
                     _value = factory.Dates.parse(_value);
                     if (_value.isValid())
-                      end.val(_value.add(1, span).subtract(1, "d").format(DATE_FORMAT_M));
+                      end.val(_value.add(1, span).subtract(1, "d").format(DATE_FORMAT_M)).change();
                   } else {
-                    end.val("");
+                    end.val("").change();
                   }
                 });
               })(_start, _span, _end);
@@ -178,10 +178,10 @@ Fields = (options, factory) => {
                   if (_value_S.isValid()) {
                     var _value_E = factory.Dates.parse(end.val());
                     if (!end.val() || (_value_E.isValid() && _value_E.isSameOrBefore(_value_S)))
-                      end.val(factory.Dates.parse(_value_S).add(1, "d").format(DATE_FORMAT_M));
+                      end.val(factory.Dates.parse(_value_S).add(1, "d").format(DATE_FORMAT_M)).change();
                   }
                 } else {
-                  end.val("");
+                  end.val("").change();
                 }
               });
             })(_start, _end);
@@ -191,6 +191,8 @@ Fields = (options, factory) => {
         }
 
       }
+      
+      factory.Display.tidy();
 
     };
 
@@ -215,7 +217,7 @@ Fields = (options, factory) => {
           _range = _range.split(";");
           _value = _range[Number(_value)];
         }
-        _target.val(`${_value}${_suffix ? `${_suffix.length > 1 ? " " : ""}${_suffix}` : ""}`);
+        _target.val(`${_value}${_suffix ? `${_suffix.length > 1 ? " " : ""}${_suffix}` : ""}`).change();
       }
     };
 
@@ -246,7 +248,7 @@ Fields = (options, factory) => {
 
           var _start = _target.find(`input[name='${_target.attr("id")}_start']`),
             _start_Date = _start.val() ? factory.Dates.parse(_start.val()) : factory.Dates.now();
-          _start.val(_start_Date.add(_value, _span).format(DATE_FORMAT_M)).trigger(EVENT_CHANGE_DT);
+          _start.val(_start_Date.add(_value, _span).format(DATE_FORMAT_M)).trigger(EVENT_CHANGE_DT).change();
 
         } else {
 
@@ -255,6 +257,9 @@ Fields = (options, factory) => {
         }
 
       }
+      
+      factory.Display.tidy();
+      
     });
 
   };
@@ -296,6 +301,7 @@ Fields = (options, factory) => {
 
   };
 
+  
   var _radio = form => {
 
     /* <!-- Wire up radio fields --> */
@@ -307,9 +313,9 @@ Fields = (options, factory) => {
         _this.siblings(".to-dim").removeClass("md-inactive");
 
         if (_this.data("value") && _this.prop("checked")) {
-          autosize.update($(`#${_this.data("targets")}`).val(_this.data("value")));
+          autosize.update($(`#${_this.data("targets")}`).val(_this.data("value")).change());
         } else {
-          autosize.update($(`#${_this.data("targets")}`).val(""));
+          autosize.update($(`#${_this.data("targets")}`).val("").change());
         }
 
       }
@@ -323,10 +329,16 @@ Fields = (options, factory) => {
       var _this = $(e.currentTarget),
         _targets = _this.data("targets"),
         _value = _this.data("value");
-      if (_this.data("targets") && _this.data("value")) {
-        e.preventDefault();
-        var _elements = form.find(`#${_targets}, #${_targets}:first-child`);
-        _elements.html(_elements.html().replace(_elements.text(), _value));
+      
+      if (_targets && _value) {
+        var _process = _.reduce(["g-picker", "g-file", "web", "paper", "offline"], (memo, css_class) => !memo || _this.hasClass(css_class) ? false : memo, true);
+        if (_process) {
+          e.preventDefault();
+          _targets = _targets.indexOf("||") > 0 ? _targets.split("||") : [_targets];
+          var _selector = _.reduce(_targets, (memo, id) => `${memo ? `${memo}, `: ""}#${id}, #${id}:first-child`, ""),
+              _elements = form.find(_selector);
+          _.each(_elements, element => (element = $(element)).html(element.html().replace(element.text(), _value))); 
+        }
       }
     });
 
@@ -353,6 +365,22 @@ Fields = (options, factory) => {
 
   };
 
+  var _change = form => {
+
+    /* <!-- Wire up event / change listeners --> */
+    form.find("input[type='checkbox'][data-for][data-on][data-off]")
+      .off("change.change").on("change.change", e => {
+        var _this = $(e.currentTarget),
+            _on = _this.data("on"),
+            _off = _this.data("off"),
+            _target = $(_this.data("for"));
+        _this.prop("checked") === true ? 
+          _target.removeClass(_off).addClass(_on) :
+          _target.removeClass(_on).addClass(_off);
+      });
+
+  };
+  
   var _dim = form => {
 
     /* <!-- Wire up event / visibility listeners --> */
@@ -369,9 +397,9 @@ Fields = (options, factory) => {
   var _me = form => {
 
     form.find(".textual-input-button[data-action='me']").off("click.me")
-      .on("click.me", e => $(`#${$(e.currentTarget).data("targets")}`).val(options.me()));
+      .on("click.me", e => $(`#${$(e.currentTarget).data("targets")}`).val(options.me()).change());
 
-    form.find("input[data-input-default='me'], textarea[data-input-default='me']").val((index, value) => value ? value : options.me());
+    form.find("input[data-input-default='me'], textarea[data-input-default='me']").val((index, value) => value ? value : options.me()).change();
 
   };
 
@@ -422,7 +450,7 @@ Fields = (options, factory) => {
     var _handlers = {
 
       default: e => $(_.tap(e, e => e.preventDefault()).currentTarget).parents(options.list_holder),
-
+      
       add: (value, list, check) => {
 
         if (check !== false) {
@@ -507,7 +535,7 @@ Fields = (options, factory) => {
           });
         }).catch(e => e ? factory.Flags.error("Displaying File Upload Prompt", e) :
           factory.Flags.log("File Upload Cancelled"));
-        _upload(_handlers.default(e));
+        _upload(_handlers.default(e)).then();
       },
 
       web: e => {
@@ -597,7 +625,7 @@ Fields = (options, factory) => {
               reject(e)) : reject();
         });
       }).then(text => {
-        var _$ = $(`#${$(e.target).data("targets")}`).val(text);
+        var _$ = $(`#${$(e.target).data("targets")}`).val(text).change();
         if (_$.is("textarea.resizable") && window && window.autosize) autosize.update(_$[0]);
         finish ? finish() : true;
       }).catch(() => finish ? finish() : false);
@@ -743,7 +771,7 @@ Fields = (options, factory) => {
         FN.generate(_template, _list);
         
         /* <!-- Clear Up ready for next list item --> */
-        _holder.off("change.validity.test").val("")
+        _holder.off("change.validity.test").val("").change()
           .removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
         
         var _eraser = _field.find(".eraser:visible");
@@ -760,6 +788,8 @@ Fields = (options, factory) => {
 
       }
 
+      factory.Display.tidy();
+      
     });
 
   };
@@ -797,7 +827,7 @@ Fields = (options, factory) => {
       _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _me, _datetime,
       _spans, _list, _doc, _updates, _range,
-      _toggles, _load
+      _toggles, _load, _change
     ];
     STEPS.refresh = [_list],
     STEPS.last = [_deletes, _autosize];
@@ -831,6 +861,12 @@ Fields = (options, factory) => {
     
     validate: FN.validate,
 
+    types: {
+      
+      datetime: _datetime,
+      
+    },
+    
   };
   /* <!-- External Visibility --> */
 

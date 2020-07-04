@@ -1,0 +1,96 @@
+// -- Regular Elements -- //
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, body {
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+html { 
+  background-colour: $black;
+}
+
+body {
+  margin: 0;
+	&:-webkit-full-screen {
+  	margin-top: 20px;
+	}
+}
+
+p {margin: 0.5em 0.5em;}
+
+a {text-decoration: none; color: inherit;}
+// -- Regular Elements -- //
+
+// -- Highlight Elements -- //
+.bg-highlight {
+  background-color: $colour-highlight;
+}
+
+.text-highlight {
+  color: $colour-highlight;
+}
+// -- Highlight Elements -- //
+
+// -- Scrollbars -- //
+::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.8);
+}
+
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(100, 100, 100, 0.4);
+}
+// -- Scrollbars -- //
+
+// -- Content Area -- //
+.content {
+	width: 100%;
+}
+
+.bg-page {
+  background-color: transparentize($dark, 0.1) !important;
+}
+// -- Content Area -- //
+
+// -- Outline Letter Logo -- //
+a.navbar-brand.logo, .navbar-brand a.logo {
+	svg {
+		height: 40px;	
+		pointer-events: visible;
+  }
+}
+// -- Outline Letter Logo -- //
+
+// -- Navigation Bar -- //
+.sd-navbar {
+  min-height: 4rem;
+  background-color: $colour-header;
+  box-shadow: -0.5rem 0.5rem 1rem rgba(0,0,0,0.4), inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+// -- Navigation Bar -- //
+
+// -- Titles and Content -- //
+.features, .titles {
+  width: fit-content;
+}
+
+.titles, .copyright {
+  border-left-color: $colour-highlight;
+  border-left-width: thick;
+  border-left-style: solid;
+}
+// -- Titles and Content -- //

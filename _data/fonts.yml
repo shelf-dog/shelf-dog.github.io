@@ -3,13 +3,13 @@
   for: [all]
 "Raleway":
   safe: "Raleway"
-  weights: "400,700"
+  weights: "400;700"
   for: [all]
 "Amatic SC":
   safe: "Amatic+SC"
-  weights: "400,700"
+  weights: "400;700"
   for: [all]
 "Playfair Display":
   safe: "Playfair+Display"
-  weights: "400,700"
+  weights: "400;700"
   for: [all]

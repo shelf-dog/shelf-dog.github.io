@@ -11,12 +11,110 @@
 }
 // -- Google Button -- //
 
+// -- General Buttons -- //
+.btn {
+  text-transform: none;
+}
+// -- General Buttons -- //
 
-// -- Outline Letter Logo -- //
-a.navbar-brand.logo, .navbar-brand a.logo {
-	svg {
-		height: 40px;	
-		pointer-events: visible;
+// -- Checking -- //
+.checking:after {
+  content: "Checking" !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+}
+// -- Checking -- //
+
+// -- Ellipsis Waiting -- //
+.waiting {
+  margin-right: 1em;
+  &:after {
+    margin-right: -2.5em;
+    margin-left: 0.25em;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    @include animation(ellipsis steps(6,end) 1.5s infinite 400ms);
+    content: "\2026";
+    width: 0px;
   }
 }
-// -- Outline Letter Logo -- //
+
+@include animation-keyframes(ellipsis) {
+  to {width: 1.25em;}
+}
+// -- Ellipsis Waiting -- //
+
+// -- Action Buttons -- //
+#sign_in .btn, #sign_out .btn {
+	border-radius: 2px;
+  .google-logo-wrapper {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+  }
+}
+
+#sign_in .btn {
+	background-color: $colour-background;
+	padding: 0;
+  
+	span {
+		font-size:16px;
+		line-height:38px;
+		padding-left: 12px;
+		padding-right: 8px;
+    letter-spacing: .21px;
+    vertical-align: top;
+	}
+}
+
+.btn-outline-status {
+  @include transition(opacity 1.5s ease-in-out);
+}
+
+.btn-outline-action {
+  color: $colour-highlight;
+  border-color: $colour-highlight;
+	&:hover {
+    color: $colour-background;
+		border-color: $colour-highlight;
+		background-color: $colour-highlight !important;
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+	}
+}
+
+.btn-action {
+  color: $colour-background !important;
+  border-color: $colour-highlight;
+	background-color: $colour-highlight;
+	&:hover {
+		border-color: darken($colour-highlight, 10%);
+		background-color: darken($colour-highlight, 10%) !important;
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+	}
+}
+
+.btn-action-dark {
+  color: $colour-background !important;
+  border-color: darken($colour-highlight, 10%);
+	background-color: darken($colour-highlight, 10%);
+	&:hover {
+		border-color: darken($colour-highlight, 20%);
+		background-color: darken($colour-highlight, 20%) !important;
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
+	}
+}
+// -- Action Buttons -- //

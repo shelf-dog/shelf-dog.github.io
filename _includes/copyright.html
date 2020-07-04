@@ -1,0 +1,5 @@
+<div class="{% if include.class %}{{include.class}}{% else %}fixed-bottom{% endif %} d-flex mb-2 mb-xl-3 justify-content-end" style="z-index: 3 !important;">
+  <div class="p-1 mr-0 bg-light o-60 rounded-left copyright">
+     <p class="text-dark o-90">&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a class="text-decoration-none" href="{{site.baseurl}}about"><strong>{{site.author.name | downcase }}</strong></a> | <a class="text-decoration-none" href="{{site.baseurl}}privacy">privacy</a></p> 
+  </div>
+</div>

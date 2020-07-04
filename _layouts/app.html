@@ -21,7 +21,6 @@ css:
     - custom/mixins/gradients
     - custom/variables
     - custom/fonts
-    - custom/app
   secondary:
     - bootstrap/functions
     - bootstrap/variables
@@ -48,17 +47,30 @@ css:
     - custom/mixins/transforms
     - custom/mixins/animations
     - custom/variables
+    - custom/background
+    - custom/common
+    - custom/app
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
-	{% include head.html %}
-	<body>
-		{% include nav.html %}
+	
+	{% include plumbing/head.html %}
+
+	<body class="bg-transparent">
+    
+    <a class="skippy sr-only sr-only-focusable" href="#{{ site.app.content }}">
+      <span class="skippy-text">Skip to main content</span>
+    </a>
+    
+		{% include nav.html type="sticky-top" %}
+    
     {% if page.app and site.data.apps[page.app].templates contains 'notify' %}<div
     	aria-live="polite" aria-atomic="true"
       id="{{page.app}}_Notify" class="notifications"><div class="holder"></div></div>{% endif %}
-		<div id="{{ site.app.content }}" class="content">{{ content }}</div>
-		{% include footer.html type="app" %}
-    {% include breakpoints.html %}
+		
+    <div id="{{ site.app.content }}" class="app {{ site.app.content }} mt-2 mt-xl-3">{{ content }}</div>
+		
+    {% include plumbing/footer.html type="app" %}
+    {% include plumbing/breakpoints.html %}
+    
 	</body>
-</html>

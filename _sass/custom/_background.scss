@@ -1,0 +1,33 @@
+// -- Backgrounds -- //
+// ls -m | sed -e 's/\.jpg//g' //
+// for F in *.jpg; do primitive -i $F -o `basename ${F%.jpg}`.svg -n 120 -m 0; done //
+$backgrounds: (alvan-nee-9M0tSjb-cpA-unsplash, alvan-nee-eoqnr8ikwFE-unsplash,
+alvan-nee-LHeDYF6az38-unsplash, berkay-gumustekin-ngqyo2AYYnE-unsplash,
+bharathi-kannan-BrtCGcrZd10-unsplash,
+braedon-mcleod-jSUsJWvnnEA-unsplash,
+chris-arthur-collins-qGkVJ7Tx36s-unsplash,
+dong-cheng-u8bLZX6q3E4-unsplash, jairo-alzate-sssxyuZape8-unsplash,
+joe-caione-qO-PIF84Vxg-unsplash,
+magdalena-smolnicka-wfXIDJkq1TM-unsplash,
+marieke-koenders--36fsA0wDLA-unsplash,
+matt-botsford-8Ja70K5VvoI-unsplash, patrick-kool-06EFQVjKIB8-unsplash,
+shane-guymon-KCdYn0xu2fU-unsplash, tijana-drinic-AyjZ3FD2AFg-unsplash,
+t-r-photography-TzjMd7i5WQI-unsplash,
+victor-grabarczyk-N04FIfHhv_k-unsplash);
+
+@for $i from 1 through length($backgrounds) {
+  $background: nth($backgrounds, $i);
+  .background-#{$i} {
+    background: url("/backgrounds/#{$background}.svg") no-repeat center center fixed, $black;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+}
+
+:root {
+  --background-min:1;
+  --background-max:#{length($backgrounds)};
+}
+// -- Backgrounds -- //

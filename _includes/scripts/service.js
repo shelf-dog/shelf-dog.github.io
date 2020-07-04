@@ -84,10 +84,9 @@
         throw new NetworkError('Incorrect response status');
       }
 
-      /* <!-- TODO: check that requests don't overwrite one another (don't think this is possible to polyfill due to opaque responses) --> */
       return Promise.all(
         responses.map(function(response, i) {
-          return cache.put(requests[i], response);
+          return response.ok ? cache.put(requests[i], response) : response;
         })
       );
     }).then(function() {
@@ -119,13 +118,16 @@ var CURRENT_CACHES = {
 {% endfor %}
 {% assign imports = imports | uniq %}
 
+{% include plumbing/fonts.html all="true" %}
+
 {% assign fonts = "" %}{% for font in site.data.fonts %}{% if forloop.first %}{% assign fonts = fonts | append: font[1].safe | append: ":" | append: font[1].weights %}{% else %}{% assign fonts = fonts | append: "|" | append: font[1].safe | append: ":" | append: font[1].weights %}{% endif %}{% endfor %}
-var FONT_URL = "https://fonts.googleapis.com/css";
+
+var FONT_URL = "https://fonts.googleapis.com/css2";
 var URLS = [
   {% for page in site.pages %}{% if page.layout != "app" and page.permalink != "/service.js" and page.permalink != "/version.json" and page.permalink != "/_redirects" %}{url : "{{ page.permalink }}"},{% endif %}{% endfor %}
   {% for app in site.data.apps %}{% if app[1].ext != true %}{url : "{{ app[1].link }}"},{% endif %}{% endfor %}
   {% for import in imports %}{% if jekyll.environment == "debug" %}{% for import_script in site.data.imports[import].dev %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% else %}{% for import_script in site.data.imports[import].prod %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% endif %}{% endfor %}
-  {url : FONT_URL + "?family={{ fonts }}"}
+  {url : FONT_URL + "?{{ fonts }}&display=swap"}
 ];
 /*jshint ignore:end*/
 
@@ -163,15 +165,13 @@ var cache_Promises = function(now, cache) {
                 var css_url = new URL(css_urls[1], location.href);
                 css_url.search += (css_url.search ? "&" : "?") + "timestamp=" + now;
                 fetch(new Request(css_url, {mode: fetch_mode ? fetch_mode : "cors"})).then(function(css_response) {
-                  if (css_response.status < 400) {
-                    cache.put(css_response.url.split("?")[0], css_response);
-                  }
+                  if (css_response.status < 400) cache.put(css_response.url.split("?")[0], css_response);
                 });
               }
             }
           });
         }
-        return cache.put(fetch_url.url, response);
+        return response.status < 400 ? cache.put(fetch_url.url, response) : response;
       }).catch(function(e) {
         if (!fetch_mode)  {
            console.error("Failed to cache (trying no-cors) " + fetch_url.url + ":", e);  
