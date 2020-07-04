@@ -2,7 +2,7 @@
   safe: "Material+Icons"
   for: [all]
 "Raleway":
-  safe: "Amatic+SC"
+  safe: "Raleway"
   weights: "400,700"
   for: [all]
 "Amatic SC":
