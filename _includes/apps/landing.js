@@ -51,7 +51,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each([], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Client"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -103,7 +103,19 @@ App = function() {
         state: ರ‿ರ,
         states: FN.states.all,
         start: FN.setup.routed,
-        routes: {},
+        routes: {
+          test: {
+            matches: /TEST/i,
+            length: 0,
+            requires: "fetchjsonp",
+            fn: () => FN.client.endpoints().then(value => {
+              ಠ_ಠ.Flags.log("ENDPOINTS:", value);
+              _.each(value.endpoints, 
+                endpoint => FN.client.action(endpoint.id, "GET_LIBRARY", endpoint.user, endpoint.key, endpoint.algorithm)
+                   .then(response => ಠ_ಠ.Flags.log(`ENDPOINT RESPONSE: ${endpoint.name}`, response)));
+            })
+          }
+        },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });
 

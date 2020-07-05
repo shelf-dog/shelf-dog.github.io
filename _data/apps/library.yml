@@ -43,6 +43,8 @@ imports:
     load: last
   - name: waves-js
     load: last
+  - name: fetchjsonp
+    load: lazy
   - name: google
     load: lazy
 helpers:
@@ -66,11 +68,13 @@ modules:
   - generic/main
   - generic/router
   - shared/states
+  - shared/client
 scripts: 
   - extends/regex
   - extends/array
   - extends/math
 templates:
+  - loader
 docs:
   - library/PUBLIC
   - library/FEATURES
@@ -91,4 +95,3 @@ keys:
   google: 
       oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com
 published: true
-scoped: true

@@ -1,5 +1,14 @@
 site :
-  0.0.1 :
+  0.0.3 :
+    name : Site v0.0.3
+    desc : Initial Version
+    numeric : 0.0.3.0
+    type:
+      - alpha
+    changes :
+      - Mobile Responsive Nav
+      - Service Indexing
+  0.0.2 :
     name : Site v0.0.2
     desc : Initial Version
     numeric : 0.0.2.0

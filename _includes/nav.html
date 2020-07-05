@@ -1,21 +1,25 @@
-<nav id="site_nav" class="navbar navbar-expand-lg navbar-dark sd-navbar">
-
-  <button class="navbar-toggler navbar-toggler-right css-sensitive" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <a class="navbar-brand logo jump" href="/" data-toggle="tooltip" title="Return to Home Page"><span class="sr-only css-sensitive">Return to Home Page</span>{% include images/logo.svg %}</a>
-
+<header class="navbar navbar-expand flex-column flex-md-row navbar-dark sd-navbar pt-1 pt-md-2">
+  
+  <a class="navbar-brand logo jump mr-3 d-none d-md-inline-block" href="/" data-toggle="tooltip" title="Return to Home Page">
+    <span class="sr-only css-sensitive">Return to Home Page</span>
+    {%- include images/logo.svg -%}
+  </a>
+  
   <div class="navbar-nav-scroll">
     <ul class="navbar-nav bd-navbar-nav flex-row">
+      <li class="nav-item d-md-none">
+        <a class="nav-link font-weight-bold" href="/">
+          <span class="bg-highlight text-dark p-1 rounded">SD</span>
+          <span class="sr-only css-sensitive">Return to Home Page</span></a>
+      </li>
       <li class="nav-item{% if page.app == 'landing' %} active{% endif %}">
-        <a class="nav-link" href="/app/">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="/app/">Home{% if page.app == 'landing' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
       <li class="nav-item{% if page.app == 'library' %} active{% endif %}">
-        <a class="nav-link disabled state-authenticated" href="/app/library/">Library</a>
+        <a class="nav-link disabled state-authenticated" href="/app/library/">Library{% if page.app == 'library' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
       <li class="nav-item{% if page.app == 'manage' %} active{% endif %}">
-        <a class="nav-link disabled state-authenticated" href="/app/manage/">Manage</a>
+        <a class="nav-link disabled state-authenticated" href="/app/manage/">Manage{% if page.app == 'manage' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/about/">About</a>
@@ -23,7 +27,7 @@
     </ul>
   </div>
   
-  {% if page.app and page.layout == "app" %}<div class="ml-md-auto d-flex">
+  {% if page.app and page.layout == "app" %}<div class="ml-md-auto d-flex flex-column flex-sm-row align-items-center">
     
     <ul class="navbar-nav flex-row d-none d-md-flex">
     
@@ -41,19 +45,25 @@
 
     </ul>
     
-    <div class="d-none show-library">
-      <form class="d-inline-flex flex-column flex-sm-row form-inline">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
-      </form>  
+    <div class="d-none show-library mr-sm-3 mr-md-0">
+      
+      <form class="d-inline-flex flex-row align-items-center">
+        <div class="input-group">
+          <input type="text" class="form-control" type="search" placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-outline-light" type="submit">Go</button>
+          </div>
+        </div>
+      </form>
+      
     </div>
     
-    <div class="d-inline-flex flex-column flex-sm-row align-items-center mb-1 mb-md-0 ml-md-3">
+    <div class="d-inline-flex flex-column align-items-center mb-1 mb-md-0 ml-md-3">
 
       <div id="auth_processing" class="form-inline mt-1 mt-md-0 text-muted font-weight-light waiting" style="display: none;">Checking</div>
 
       <form id="sign_out" class="form-inline mt-1 mt-md-0" style="display: none;">
-        <span class="navbar-text mr-2"><span class="d-inline d-md-none d-lg-inline">Signed in as </span><a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener" data-toggle="tooltip" ></a></span>
+        <span class="navbar-text mr-2"><span class="d-none d-lg-inline">Signed in as </span><a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener" data-toggle="tooltip" ></a></span>
         <a class="btn my-0 btn-outline-action" href="#" data-toggle="tooltip" ><span>Sign Out</span></a>
       </form>
 
@@ -70,5 +80,5 @@
     </div>
     
   </div>{% endif %}
-
-</nav>
+  
+</header>

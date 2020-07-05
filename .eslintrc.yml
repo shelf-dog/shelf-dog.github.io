@@ -153,3 +153,4 @@ globals:
   Backgrounds: true
   Exporter: true
   Tabulate: true
+  Client: true

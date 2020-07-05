@@ -31,13 +31,9 @@ compress_html:
 permalink:						pretty
 
 # Setup
-title:                Shelf-Dog
-byline:								""
-  
-description:					""
+title:                "Shelf Dog"
 url:									shelf.dog
 baseurl:							/
-cdn:                  https://cdnjs.cloudflare.com/ajax/libs
 author:
   name:								"Shelf.dog"
   url:								https://github.com/shelf-dog
