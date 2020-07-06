@@ -62,7 +62,7 @@ a {text-decoration: none; color: inherit;}
 }
 
 .bg-page {
-  background-color: transparentize($dark, 0.1) !important;
+  background-color: $colour-page !important; 
 }
 // -- Content Area -- //
 
@@ -82,6 +82,12 @@ a.navbar-brand.logo, .navbar-brand a.logo {
   box-shadow: -0.5rem 0.5rem 1rem rgba(0,0,0,0.4), inset 0 -1px 0 rgba(0,0,0,0.1);
 }
 // -- Navigation Bar -- //
+
+// -- General -- //
+.bg-dark {
+  background-color: $colour-dark !important; 
+}
+// -- General -- //
 
 // -- Titles and Content -- //
 .features, .titles {

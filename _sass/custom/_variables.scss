@@ -14,6 +14,8 @@ $colour-navigator-input:      rgba(#871f52, 0.2);
 $colour-emphasis: 						#cccccc;
 $colour-foreground: 					darken($colour-emphasis, 10%);
 $colour-header:               transparentize($colour-background, 0.4);
+$colour-page:                 transparentize($colour-background, 0.25);
+$colour-dark:                 transparentize($colour-background, 0.2);
 $colour-highlight: 						#fef513;
 $colour-debug: 								#888888;
 $colour-busy-line:            #646464;

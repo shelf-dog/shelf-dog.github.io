@@ -88,10 +88,10 @@ css:
     
 		{% unless page.navless %}{% include nav.html type="sticky-top" %}{% endunless %}
     
-    {% unless page.simple %}<p class="titles display-4 bg-dark text-white ml-3 ml-xl-4 px-2 py-1 rounded">{{ page.title }}</p>{% endunless %}
+    {% unless page.simple %}<p class="titles display-4 bg-dark text-white ml-3 ml-xl-4 px-2 py-1 rounded-lg">{{ page.title }}</p>{% endunless %}
     
 		<div id="{{ site.app.content }}" class="container">
-      <div{% unless page.simple %} class="bg-page p-2"{% endunless %}>
+      <div{% unless page.simple %} class="bg-page rounded-sm p-2"{% endunless %}>
         {{ content }}
       </div>
     </div>

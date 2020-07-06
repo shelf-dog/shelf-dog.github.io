@@ -1,13 +1,14 @@
 site :
-  0.0.3 :
-    name : Site v0.0.3
+  0.0.3a :
+    name : Site v0.0.3a
     desc : Initial Version
-    numeric : 0.0.3.0
+    numeric : 0.0.3.1
     type:
       - alpha
     changes :
       - Mobile Responsive Nav
       - Service Indexing
+      - Meta Endpoints
   0.0.2 :
     name : Site v0.0.2
     desc : Initial Version

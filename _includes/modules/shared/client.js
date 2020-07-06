@@ -21,7 +21,7 @@ Client = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.action = (endpoint, action, user, user_key, user_algorithm, params) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}&a=${action}${params ? _.reduce(params, (memo, key, value) => `${memo}&${key}=${value}`, "") : ""}`)
+  FN.action = (endpoint, user, user_key, user_algorithm) => (action, params) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}&a=${action}${params ? _.reduce(params, (memo, key, value) => `${memo}&p_${key}=${value}`, "") : ""}`)
     .then(response => response.json())
     .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
   

@@ -154,3 +154,5 @@ globals:
   Exporter: true
   Tabulate: true
   Client: true
+  Demo: true
+  Libraries: true

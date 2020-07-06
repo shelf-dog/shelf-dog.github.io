@@ -7,6 +7,7 @@ States = () => {
 
   /* <!-- Internal Constants --> */
   const STATE_LANDING = "landing",
+        STATE_LANDING_LIBRARIES = "landing-libaries",
         STATE_LIBRARY = "library",
         STATE_MANAGE = "manage",
         STATES = [
@@ -33,6 +34,7 @@ States = () => {
     
     landing : {
       in : STATE_LANDING,
+      libraries : STATE_LANDING_LIBRARIES,
     },
     
     library : {

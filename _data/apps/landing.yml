@@ -20,6 +20,7 @@ css:
     - custom/mixins/gradients
     - custom/variables
     - custom/fonts
+    - custom/library
 imports:
   - name: underscore
     load: first
@@ -44,7 +45,7 @@ imports:
   - name: waves-js
     load: last
   - name: fetchjsonp
-    load: lazy
+    load: last
   - name: google
     load: lazy
 helpers:
@@ -69,12 +70,16 @@ modules:
   - generic/router
   - shared/states
   - shared/client
+  - shared/demo
+  - shared/libraries
 scripts: 
   - extends/regex
   - extends/array
   - extends/math
 templates:
   - loader
+  - landing/libraries
+  - landing/library
 docs:
   - landing/PUBLIC
   - landing/FEATURES

@@ -51,7 +51,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Client"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Client", "Demo", "Libraries"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -76,7 +76,27 @@ App = function() {
         window.Mousetrap.unbind("esc");
         window.Mousetrap.bind("esc", () => $(".collapse.show").removeClass("show"));
       }
-        
+      
+      /* <!-- Load the Libraries --> */
+      var _libraries = $(".libraries");
+      ಠ_ಠ.Display.template.show({
+        template: "libraries",
+        libraries: _.times(_.random(1, 3), () => ({
+          name: "Loading Library ...",
+          loading: true
+        })),
+        target: _libraries,
+        clear: true
+      });
+      FN.libraries.all()
+        .then(libraries => ಠ_ಠ.Display.template.show({
+            template: "libraries",
+            libraries: libraries,
+            target: _libraries,
+            clear: true
+          }))
+        .then(() => ಠ_ಠ.Display.state().enter(FN.states.landing.libraries));
+      
     },
 
   };
@@ -107,13 +127,7 @@ App = function() {
           test: {
             matches: /TEST/i,
             length: 0,
-            requires: "fetchjsonp",
-            fn: () => FN.client.endpoints().then(value => {
-              ಠ_ಠ.Flags.log("ENDPOINTS:", value);
-              _.each(value.endpoints, 
-                endpoint => FN.client.action(endpoint.id, "GET_LIBRARY", endpoint.user, endpoint.key, endpoint.algorithm)
-                   .then(response => ಠ_ಠ.Flags.log(`ENDPOINT RESPONSE: ${endpoint.name}`, response)));
-            })
+            fn: command => ಠ_ಠ.Flags.log("Landing - TEST", command),
           }
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
