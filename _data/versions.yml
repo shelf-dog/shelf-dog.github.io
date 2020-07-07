@@ -1,4 +1,12 @@
 site :
+  0.0.3b :
+    name : Site v0.0.3b
+    desc : Initial Version
+    numeric : 0.0.3.2
+    type:
+      - alpha
+    changes :
+      - Updated Library Cards (with capabilities)
   0.0.3a :
     name : Site v0.0.3a
     desc : Initial Version

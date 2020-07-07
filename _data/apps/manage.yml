@@ -72,6 +72,7 @@ modules:
   - generic/main
   - generic/router
   - shared/states
+  - shared/events
   - shared/client
   - shared/demo
   - shared/libraries

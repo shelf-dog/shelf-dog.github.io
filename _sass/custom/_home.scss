@@ -56,6 +56,18 @@ h1, h2, h3, h4, h5, h6 {text-align: center;}
 }
 // -- Content Area -- //
 
+// -- Fonts -- //
+
+// -- Font Sizes -- //
+h6 {font-size: 100%};
+h5 {font-size: 105%};
+h4 {font-size: 110%};
+h3 {font-size: 120%};
+h2 {font-size: 160%};
+h1 {font-size: 300%};
+// -- Fonts -- //
+
+// -- Centering Element -- //
 .t {
   display:table;
   position:absolute;
@@ -73,3 +85,4 @@ h1, h2, h3, h4, h5, h6 {text-align: center;}
   margin-right:auto;
   max-width: 600px;
 }
+// -- Centering Element -- //

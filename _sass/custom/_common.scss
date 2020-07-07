@@ -89,6 +89,16 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 }
 // -- General -- //
 
+// -- Opacities -- //
+$opacities: ("10": 0.1, "25": 0.25, "40": 0.40, "50": 0.5, "60": 0.6, "70": 0.7, "75": 0.75, "80": 0.8, "90": 0.9, "100": 1);
+
+@each $name, $opacity in $opacities {
+  .o-#{$name} {
+    opacity: $opacity;
+  }
+}
+// -- Opacties -- //
+
 // -- Titles and Content -- //
 .features, .titles {
   width: fit-content;
@@ -96,7 +106,7 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 
 .titles, .copyright {
   border-left-color: $colour-highlight;
-  border-left-width: thick;
+  border-left-width: 4px;
   border-left-style: solid;
 }
 // -- Titles and Content -- //

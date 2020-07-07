@@ -1,3 +1,14 @@
 .library {
-  max-width: 22rem;
+  border-width: 2px !important;
+  min-width: 12rem;
+  max-width: 24rem;
+  &.hide {
+    @include animation(fadeOutGracefully 0.6s ease-in-out);
+    visibility: hidden;
+  }
+}
+
+@include animation-keyframes(fadeOutGracefully) {
+	0% {opacity: 1; visibility: visible;}
+  100% {opacity: 0; visibility: hidden;}
 }

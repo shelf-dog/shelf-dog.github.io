@@ -1,9 +1,16 @@
 /* == Fonts == */
-$font-heading:								"Amatic SC";
+$font-branding:               "Amatic SC";
+$font-heading:								"Acme";
 $font-subheading:							"Roboto", sans-serif;
-$font-general:								"Roboto", sans-serif;
+$font-general:								"Poppins", sans-serif;
+
+$fonts-branding:              $font-branding, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+$fonts-heading:               $font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+$fonts-subheading:            $font-subheading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+$fonts-general:               $font-general, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+
 $font-source:                 "Roboto Mono", "Anonymous Pro", "Space Mono", "Fira Mono", Inconsolata, monospace;
-$font-weight-heading:					700;
+$font-weight-heading:					400;
 $font-weight:									400;
 $font-spacing-heading:				0.1rem;
 
@@ -16,6 +23,7 @@ $colour-foreground: 					darken($colour-emphasis, 10%);
 $colour-header:               transparentize($colour-background, 0.4);
 $colour-page:                 transparentize($colour-background, 0.25);
 $colour-dark:                 transparentize($colour-background, 0.2);
+$colour-shadow:               transparentize($colour-background, 0.6);
 $colour-highlight: 						#fef513;
 $colour-debug: 								#888888;
 $colour-busy-line:            #646464;

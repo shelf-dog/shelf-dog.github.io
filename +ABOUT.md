@@ -1,6 +1,7 @@
 ---
 layout: page
 permalink: /about
+name: about
 title: About
 sitemap:
   priority: 0.9

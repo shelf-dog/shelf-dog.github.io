@@ -14,13 +14,8 @@ link: /app/
 css:
   primary:
   secondary:
-    - material/menu
-    - material/general
-    - custom/mixins/transitions
-    - custom/mixins/gradients
-    - custom/variables
-    - custom/fonts
     - custom/library
+    - custom/ribbons
 imports:
   - name: underscore
     load: first
@@ -69,6 +64,7 @@ modules:
   - generic/main
   - generic/router
   - shared/states
+  - shared/events
   - shared/client
   - shared/demo
   - shared/libraries

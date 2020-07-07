@@ -25,8 +25,9 @@ App = function() {
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
 
-      /* <!-- Set Up / Create the States Module --> */
+      /* <!-- Set Up / Create the States & Events Module --> */
       FN.states = ಠ_ಠ.States();
+      FN.events = ಠ_ಠ.Events();
       
       FN.backgrounds = ಠ_ಠ.Backgrounds();
 
@@ -78,16 +79,22 @@ App = function() {
       }
       
       /* <!-- Load the Libraries --> */
-      var _libraries = $(".libraries");
-      ಠ_ಠ.Display.template.show({
-        template: "libraries",
-        libraries: _.times(_.random(1, 3), () => ({
-          name: "Loading Library ...",
-          loading: true
-        })),
-        target: _libraries,
-        clear: true
-      });
+      var _libraries = $(".libraries"),
+          _placeholder = number => (ಠ_ಠ.Display.template.show({
+            template: "libraries",
+            libraries: _.times(number, () => ({
+              name: "Loading Library ...",
+              loading: true
+            })),
+            target: _libraries,
+            clear: true
+          }), number),
+          _current = _placeholder(_.random(4, 10)),
+          _loaded = e => _current > e.detail ? 
+            _libraries.find(`.library:gt(${e.detail - 1})`).addClass("hide") :
+            _placeholder(e.detail);
+      
+      window.addEventListener(FN.events.endpoints.loaded, _loaded, false);
       FN.libraries.all()
         .then(libraries => ಠ_ಠ.Display.template.show({
             template: "libraries",
@@ -95,7 +102,10 @@ App = function() {
             target: _libraries,
             clear: true
           }))
-        .then(() => ಠ_ಠ.Display.state().enter(FN.states.landing.libraries));
+        .then(() => {
+          window.removeEventListener(FN.events.endpoints.loaded, _loaded, false);
+          ಠ_ಠ.Display.state().enter(FN.states.landing.libraries);
+        });
       
     },
 

@@ -1,15 +1,14 @@
 "Material Icons":
   safe: "Material+Icons"
   for: [all]
-"Raleway":
-  safe: "Raleway"
+"Acme":
+  weights: "400"
+  for: [all]
+"Poppins":
+  safe: "Poppins"
   weights: "400;700"
   for: [all]
 "Amatic SC":
   safe: "Amatic+SC"
   weights: "400;700"
-  for: [all]
-"Playfair Display":
-  safe: "Playfair+Display"
-  weights: "400;700"
-  for: [all]
+  for: [home.md, +ABOUT.md, +PRIVACY.md]

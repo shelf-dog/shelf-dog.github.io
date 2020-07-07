@@ -1,8 +1,12 @@
-The web-app comprises two parts:
+The web-app comprises three parts:
 
-### Library
+### Main App
 
 To do
+
+### Library
+To do
+
 
 ### Manage
 

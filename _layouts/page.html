@@ -88,7 +88,7 @@ css:
     
 		{% unless page.navless %}{% include nav.html type="sticky-top" %}{% endunless %}
     
-    {% unless page.simple %}<p class="titles display-4 bg-dark text-white ml-3 ml-xl-4 px-2 py-1 rounded-lg">{{ page.title }}</p>{% endunless %}
+    {% unless page.simple %}<h1 class="titles display-4 bg-dark text-white mt-2 mt-lg-3 mt-xl-4 mx-1 ml-md-2 ml-lg-3 ml-xl-4 px-2 py-1 rounded-lg">{{ page.title }}</h1>{% endunless %}
     
 		<div id="{{ site.app.content }}" class="container">
       <div{% unless page.simple %} class="bg-page rounded-sm p-2"{% endunless %}>
@@ -101,5 +101,5 @@ css:
     {% include plumbing/footer.html type="page" %}
     
 	</body>
-
+  
 </html>
