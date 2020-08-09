@@ -1,4 +1,12 @@
 site :
+  0.0.4 :
+    name : Site v0.0.4
+    desc : Initial Version
+    numeric : 0.0.4
+    type:
+      - alpha
+    changes :
+      - Basic Library Opening and Search Functionality
   0.0.3b :
     name : Site v0.0.3b
     desc : Initial Version
