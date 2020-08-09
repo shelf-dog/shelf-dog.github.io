@@ -39,6 +39,8 @@ imports:
     load: last
   - name: waves-js
     load: last
+  - name: localforage
+    load: last
   - name: fetchjsonp
     load: last
   - name: google
@@ -66,6 +68,7 @@ modules:
   - shared/states
   - shared/events
   - shared/client
+  - shared/cache
   - shared/demo
   - shared/libraries
 scripts: 

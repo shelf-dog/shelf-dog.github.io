@@ -1,0 +1,14 @@
+{% raw %}
+<table class="table text-light table-responsive">
+  <thead>
+    <tr>
+      {{#each columns}}<th scope="col">{{this}}</th>{{/each}}
+    </tr>
+  </thead>
+  <tbody>
+    {{#each values}}<tr>
+      {{#each this}}{{#is @index 0}}<th scope="row"><a href="#book.{{this}}" class="text-decoration-none text-white">{{this}}</a></th>{{else}}<td>{{#present this}}{{#if (isArray this)}}<div class="d-flex flex-row flex-wrap">{{#each this}}<a href="#search.{{encode this}}" class="badge badge-light mb-1 mr-1">{{this}}</a>{{/each}}</div>{{else}}{{this}}{{/if}}{{/present}}</td>{{/is}}{{/each}}
+    </tr>{{/each}}
+  </tbody>
+</table>
+{% endraw %}

@@ -198,8 +198,7 @@
   .custom-control-input:checked ~ .custom-control-label {
     &::after {
       background-color: $custom-control-indicator-bg;
-      -webkit-transform: translateX($custom-switch-width - $custom-control-indicator-size);
-              transform: translateX($custom-switch-width - $custom-control-indicator-size);
+      transform: translateX($custom-switch-width - $custom-control-indicator-size);
     }
   }
 

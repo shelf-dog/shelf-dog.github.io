@@ -1,0 +1,5 @@
+<div id="{{ site.app.content }}" class="container{% if include.class%} {{ include.class }}{% endif %}">
+  <div{% unless include.simple %} class="bg-page rounded-sm p-2"{% endunless %}>
+    {{ content }}
+  </div>
+</div>

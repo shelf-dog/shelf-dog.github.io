@@ -1,0 +1,126 @@
+#######################################################################################
+#                                                                                     #
+#     ><< <<  ><<<<<<<<><<< ><<<<<<><<< ><<<<<<><<><<<     ><<   ><<<<     ><< <<     #
+#   ><<    ><<><<           ><<         ><<    ><<>< ><<   ><< ><    ><< ><<    ><<   #
+#    ><<      ><<           ><<         ><<    ><<><< ><<  ><<><<         ><<         #
+#      ><<    ><<<<<<       ><<         ><<    ><<><<  ><< ><<><<           ><<       #
+#         ><< ><<           ><<         ><<    ><<><<   >< ><<><<   ><<<<      ><<    #
+#   ><<    ><<><<           ><<         ><<    ><<><<    >< << ><<    >< ><<    ><<   #
+#     ><< <<  ><<<<<<<<     ><<         ><<    ><<><<      ><<  ><<<<<     ><< <<     #
+#                                                                                     #
+#######################################################################################
+
+name: Settings
+link: /app/settings
+css:
+  primary:
+  secondary:
+    - material/menu
+    - material/general
+    - custom/mixins/transitions
+    - custom/mixins/gradients
+    - custom/variables
+    - custom/fonts
+imports:
+  - name: underscore
+    load: first
+  - name: jquery_slim
+    load: first
+  - name: popper
+    load: first
+  - name: day
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: localforage
+    load: last
+  - name: fetchjsonp
+    load: last
+  - name: sql-js
+    load: last
+  - name: spark-md5
+    load: last
+  - name: google
+    load: lazy
+helpers:
+  - network
+  - strings
+  - google/sheets/notation
+  - google/sheets/metadata
+  - google/sheets/grid
+  - google/sheets/format
+  - google
+  - css
+  - data
+  - fields
+  - dialog
+  - colours
+  - handlebars
+  - backgrounds
+  - network
+  - config
+modules:
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
+  - shared/states
+  - shared/events
+  - shared/client
+  - shared/cache
+  - shared/configuration
+  - shared/demo
+  - shared/libraries
+  - shared/schema
+scripts: 
+  - extends/regex
+  - extends/array
+  - extends/math
+templates:
+  - loader
+  - shared/selector
+  - settings/personal
+  - settings/settings
+docs:
+  - settings/PUBLIC
+  - settings/FEATURES
+  - settings/INSTRUCTIONS
+  - settings/TUTORIALS
+  - settings/README
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.appdata
+      name: View and manage its own configuration data in your Google Drive
+      reason: In order to record your settings in Google Drive.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: To browse for database and folders
+      request: lazy
+keys:
+  google:
+      oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com
+published: true

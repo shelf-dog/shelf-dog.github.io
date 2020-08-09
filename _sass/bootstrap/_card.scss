@@ -244,10 +244,10 @@
   }
 
   @include media-breakpoint-up(sm) {
-    -webkit-column-count: $card-columns-count;
-            column-count: $card-columns-count;
-    -webkit-column-gap: $card-columns-gap;
-            column-gap: $card-columns-gap;
+    -moz-column-count: $card-columns-count;
+         column-count: $card-columns-count;
+    -moz-column-gap: $card-columns-gap;
+         column-gap: $card-columns-gap;
     orphans: 1;
     widows: 1;
 

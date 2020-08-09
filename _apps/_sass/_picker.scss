@@ -8,8 +8,12 @@
 	max-width: 100% !important;
 }
 
+.picker.picker-dialog-bg {
+  background-color: #000 !important;
+}
+
 @media screen and (max-width: 991px) {
- .picker {
+ .picker.picker-dialog {
 	  height: 80% !important; 
     max-width: 86% !important;
  }
@@ -19,8 +23,9 @@
 }
 
 @media screen and (min-width: 992px) {
- .picker {
+ .picker.picker-dialog {
     max-width: 60% !important;
  }
 }
 // -- Google Drive File Picker -- //
+

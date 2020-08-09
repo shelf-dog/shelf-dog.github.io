@@ -17,6 +17,35 @@ App = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
+  var _load = (number, force) => {
+    var _libraries = $(".libraries"),
+        _placeholder = number => (ಠ_ಠ.Display.template.show({
+          template: "libraries",
+          libraries: _.times(number, () => ({
+            name: "Loading Library ...",
+            loading: true
+          })),
+          target: _libraries,
+          clear: true
+        }), number),
+        _current = _placeholder(number || _.random(4, 10)),
+        _loaded = e => _current > e.detail ? 
+          _libraries.find(`.library:gt(${e.detail - 1})`).addClass("hide") :
+          _placeholder(e.detail);
+      
+    window.addEventListener(FN.events.endpoints.loaded, _loaded, false);
+    return FN.libraries.all(force)
+      .then(libraries => ಠ_ಠ.Display.template.show({
+          template: "libraries",
+          libraries: libraries,
+          query: window.location.search,
+          target: _libraries,
+          clear: true
+        }))
+      .then(() => {
+        window.removeEventListener(FN.events.endpoints.loaded, _loaded, false);
+      });
+  };
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */
@@ -52,7 +81,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Client", "Demo", "Libraries"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Cache", "Client", "Demo", "Libraries"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -79,33 +108,7 @@ App = function() {
       }
       
       /* <!-- Load the Libraries --> */
-      var _libraries = $(".libraries"),
-          _placeholder = number => (ಠ_ಠ.Display.template.show({
-            template: "libraries",
-            libraries: _.times(number, () => ({
-              name: "Loading Library ...",
-              loading: true
-            })),
-            target: _libraries,
-            clear: true
-          }), number),
-          _current = _placeholder(_.random(4, 10)),
-          _loaded = e => _current > e.detail ? 
-            _libraries.find(`.library:gt(${e.detail - 1})`).addClass("hide") :
-            _placeholder(e.detail);
-      
-      window.addEventListener(FN.events.endpoints.loaded, _loaded, false);
-      FN.libraries.all()
-        .then(libraries => ಠ_ಠ.Display.template.show({
-            template: "libraries",
-            libraries: libraries,
-            target: _libraries,
-            clear: true
-          }))
-        .then(() => {
-          window.removeEventListener(FN.events.endpoints.loaded, _loaded, false);
-          ಠ_ಠ.Display.state().enter(FN.states.landing.libraries);
-        });
+      _load().then(() => ಠ_ಠ.Display.state().enter(FN.states.landing.libraries));
       
     },
 
@@ -134,10 +137,35 @@ App = function() {
         states: FN.states.all,
         start: FN.setup.routed,
         routes: {
-          test: {
-            matches: /TEST/i,
+          refresh_all: {
+            matches: /REFRESH/i,
             length: 0,
-            fn: command => ಠ_ಠ.Flags.log("Landing - TEST", command),
+            fn: () => {
+              ಠ_ಠ.Display.tidy();
+              _load($(".libraries .library").length, true);
+            }
+          },
+          refresh_library: {
+            matches: /REFRESH/i,
+            length: 1,
+            fn: command => {
+              ಠ_ಠ.Display.tidy();
+              ಠ_ಠ.Display.template.show({
+                template: "library",
+                loading: true,
+                id: command,
+                target: $(`.libraries .library[data-index='${command}']`),
+                replace: true
+              });
+              FN.libraries.refresh(command)
+                .then(result => ಠ_ಠ.Display.template.show(_.extend({
+                  template: "library",
+                  id: command,
+                  query: window.location.search,
+                  target: $(`.libraries .library[data-index='${command}']`),
+                  replace: true
+                }, _.omit(result, ["api", "cache"]))));
+            },
           }
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
@@ -161,6 +189,9 @@ App = function() {
     
     /* <!-- Present Persistent State (for debugging etc) --> */
     persistent: ಱ,
+    
+    /* <!-- Logged Out / Clean --> */
+    clean: () => FN.cache && FN.cache.clear ? FN.cache.clear() : false,
     
 	};
 

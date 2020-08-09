@@ -1,0 +1,12 @@
+{% raw %}
+<div class="input-group">
+  <select class="custom-select" id="choose_Library" aria-label="Choose Library for Settings">
+    <option selected>Choose Library...</option>
+    {{#each libraries}}<option value="library.{{@index}}">{{name}}</option>{{/each}}
+  </select>
+  <div class="input-group-append">
+    {{~#if cancel}}<a class="btn btn-warning" href="{{cancel}}" role="button">Cancel</a>{{/if~}}
+    <a class="btn btn-dark disabled" href="{{select_url}}" data-href="{{select_url}}" role="button" data-role="select">{{select_text}}</a>
+  </div>
+</div>
+{% endraw %}

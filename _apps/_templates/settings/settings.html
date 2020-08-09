@@ -1,0 +1,117 @@
+{% raw %}
+<form class="bg-dark p-2 p-xl-3 mb-2 rounded-lg">
+  
+  <!-- LIBRARY DESCRIPTION -->
+  <div class="form-group" data-output-field="description">
+    <label for="settings_description">Description</label>
+    <textarea class="form-control" id="settings_description" rows="3" data-output-name="Value" data-output-always="true">{{#if description}}{{ description }}{{/if}}</textarea>
+    <small id="settings_description_HELP" class="form-text text-muted">Description for this library.</small>
+  </div>
+  
+  <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
+    
+    <!-- CAPABILITIES -->
+    <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark">Capabilities</h5>
+    
+    <!-- LOANS AVAILABLE -->
+    <div class="form-group form-check pl-2" data-output-field="capabilities_loan">
+      <div class="custom-control custom-checkbox mr-sm-2">
+          <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan" data-output-name="Value" data-output-always="true"{{#if capabilities_loan}} checked{{/if}}>
+          <label class="custom-control-label" for="settings_capabilities_loan">Loans?</label>
+      </div>
+      <small id="settings_contents_books_audio_HELP" class="form-text text-muted">Further details.</small>
+    </div>
+    
+  </div>
+  
+  <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
+    
+    <!-- CONTENTS -->
+    <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark">Contents</h5>
+    
+    <!-- AUDIO BOOKS -->
+    <div class="form-group form-check pl-2" data-output-field="contents_books_audio">
+      <div class="custom-control custom-checkbox mr-sm-2">
+          <input type="checkbox" class="custom-control-input" id="settings_contents_books_audio" data-output-name="Value" data-output-always="true"{{#if contents_books_audio}} checked{{/if}}>
+          <label class="custom-control-label" for="settings_contents_books_audio">Audio Books?</label>
+      </div>
+      <small id="settings_contents_books_audio_HELP" class="form-text text-muted">Further details.</small>
+    </div>
+
+    <!-- ELECTRONIC BOOKS -->
+    <div class="form-group form-check pl-2" data-output-field="contents_books_electronic">
+      <div class="custom-control custom-checkbox mr-sm-2">
+          <input type="checkbox" class="custom-control-input" id="settings_contents_books_electronic" data-output-name="Value" data-output-always="true"{{#if contents_books_electronic}} checked{{/if}}>
+          <label class="custom-control-label" for="settings_contents_books_electronic">Electronic Books?</label>
+      </div>
+      <small id="settings_contents_books_electronic_HELP" class="form-text text-muted">Further details.</small>
+    </div>
+
+    <!-- PHYSICAL BOOKS -->
+    <div class="form-group form-check pl-2" data-output-field="contents_books_physical">
+      <div class="custom-control custom-checkbox mr-sm-2">
+          <input type="checkbox" class="custom-control-input" id="settings_contents_books_physical" data-output-name="Value" data-output-always="true"{{#if contents_books_physical}} checked{{/if}}>
+          <label class="custom-control-label" for="settings_contents_books_physical">Physical Books?</label>
+      </div>
+      <small id="settings_contents_books_physical_HELP" class="form-text text-muted">Further details.</small>
+    </div>
+  
+  </div>
+  
+  <!-- LIBRARY DATABASE FILE -->
+  <div class="form-group" data-output-field="database">
+    <label for="settings_database">Database</label>
+    <div class="input-group">
+      <input type="text" class="form-control" id="settings_database" data-type="file" aria-describedby="settings_database_HELP" data-output-name="Value" data-output-always="true"{{#if database}} value="{{ database }}"{{/if}}>
+      <div class="input-group-append d-none d-md-flex">
+        <a class="btn btn-outline-light{{#unless database}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if database}}https://drive.google.com/file/d/{{database}}/view{{else}}#{{/if}}" role="button">View</a>
+        <a class="btn btn-outline-secondary" href="#google,select.database" role="button">Select</a>
+      </div>
+    </div>
+    <div class="d-flex">
+      <div role="group" class="btn-group float-right my-1 d-inline-flex ml-auto d-md-none">
+        <a class="btn btn-outline-light{{#unless database}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if database}}https://drive.google.com/file/d/{{database}}/view{{else}}#{{/if}}" role="button">View</a>
+        <a class="btn btn-outline-secondary" href="#google,select.database" role="button">Select</a>
+  	  </div>
+    </div>
+    <small id="settings_database_HELP" class="form-text text-muted">Database File.</small>
+  </div>
+  
+  <!-- LIBRARY FOLDER -->
+  <div class="form-group" data-output-field="folder">
+    <label for="settings_folder">Folder</label>
+    <div class="input-group">
+      <input type="text" class="form-control" id="settings_folder" data-type="folder" aria-describedby="settings_folder_HELP" data-output-name="Value" data-output-always="true"{{#if folder}} value="{{ folder }}"{{/if}}>
+      <div class="input-group-append d-none d-md-flex">
+        <a class="btn btn-outline-light{{#unless folder}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if folder}}https://drive.google.com/drive/folders/{{folder}}{{else}}#{{/if}}" role="button">View</a>
+        <a class="btn btn-outline-secondary" href="#google,select.folder" role="button">Select</a>
+      </div>
+    </div>
+    <div class="d-flex">
+      <div role="group" class="btn-group float-right my-1 d-inline-flex ml-auto d-md-none">
+        <a class="btn btn-outline-light{{#unless folder}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if folder}}https://drive.google.com/drive/folders/{{folder}}{{else}}#{{/if}}" role="button">View</a>
+        <a class="btn btn-outline-secondary" href="#google,select.folder" role="button">Select</a>
+  	  </div>
+    </div>
+    <small id="settings_folder_HELP" class="form-text text-muted">Library Folder.</small>
+  </div>
+  
+  <!-- MANAGERS -->
+  <div class="form-group" data-output-field="managers">
+    <label for="settings_managers">Managers</label>
+    <textarea class="form-control" id="settings_managers" rows="4" data-output-name="Value" data-output-always="true">{{#if managers}}{{ managers }}{{/if}}</textarea>
+    <small id="settings_managers_HELP" class="form-text text-muted">Managers for this library.</small>
+  </div>
+  
+  <!-- SAVE BUTTON -->
+  <button type="submit" class="btn btn-lg btn-primary waves-effect">
+    <i class="material-icons md-24 ml-2 float-right result result-success font-weight-bold d-none">check</i>
+    <i class="material-icons md-24 ml-2 float-right result result-failure d-none">error</i>
+    <span class="text">Save</span>
+  </button>
+  
+  <!-- CANCEL BUTTON -->
+  <a class="btn btn-outline-warning ml-2 waves-effect" href="#all" role="button">Cancel</a>
+  
+</form>
+{% endraw %}

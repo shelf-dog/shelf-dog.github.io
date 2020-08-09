@@ -1,0 +1,55 @@
+{% raw %}
+<form class="bg-dark p-2 p-xl-3 mb-2 rounded-lg">
+  
+  <!-- LIBRARY DATABASE FILE -->
+  <div class="form-group" data-output-field="log">
+    <label for="settings_log">Reading Log</label>
+    <div class="input-group">
+      <input type="text" class="form-control" id="settings_log" data-type="sheet" aria-describedby="settings_log_HELP" data-output-name="Value" data-output-always="true"{{#if this.log}} value="{{this.log}}"{{/if}}>
+      <div class="input-group-append d-none d-md-flex">
+        <a class="btn btn-outline-light{{#unless this.log}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if this.log}}https://docs.google.com/spreadsheets/d/{{this.log}}/edit{{else}}#{{/if}}" role="button">View</a>
+        <a class="btn btn-outline-primary" href="#google,create.log" role="button">Create</a>
+        <a class="btn btn-outline-secondary" href="#google,select.log" role="button">Select</a>
+      </div>
+    </div>
+    <div class="d-flex">
+      <div role="group" class="btn-group float-right my-1 d-inline-flex ml-auto d-md-none">
+        <a class="btn btn-outline-light{{#unless this.log}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if this.log}}https://docs.google.com/spreadsheets/d/{{this.log}}/edit{{else}}#{{/if}}" role="button">View</a>
+        <a class="btn btn-outline-primary" href="#google,create.log" role="button">Create</a>
+        <a class="btn btn-outline-secondary" href="#google,select.log" role="button">Select</a>
+  	  </div>
+    </div>
+    <small id="settings_log_HELP" class="form-text text-muted">Reading Log File.</small>
+  </div>
+  
+  <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
+    
+    <!-- OPTIONS -->
+    <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark">Options</h5>
+    
+    <!-- LOANS AVAILABLE -->
+    <div class="form-group form-check pl-2" data-output-field="loans">
+      <div class="custom-control custom-checkbox mr-sm-2">
+          <input type="checkbox" class="custom-control-input" id="settings_options_record_loans" data-output-name="Value" data-output-always="true"{{#if this.loans}} checked{{/if}}>
+          <label class="custom-control-label" for="settings_options_record_loans">Record Loans?</label>
+      </div>
+      <small id="settings_options_record_loans_HELP" class="form-text text-muted">Further details.</small>
+    </div>
+    
+  </div>
+  
+  <!-- SAVE BUTTON -->
+  <button type="submit" class="btn btn-lg btn-success waves-effect">
+    <i class="material-icons md-24 ml-2 float-right result result-success font-weight-bold d-none">check</i>
+    <i class="material-icons md-24 ml-2 float-right result result-failure d-none">error</i>
+    <span class="text">Save</span>
+  </button>
+  
+  <!-- CLEAR BUTTON -->
+  <button type="clear" class="btn btn-outline-danger ml-2 waves-effect">Clear</button>
+  
+  <!-- CANCEL BUTTON -->
+  <a class="btn btn-outline-warning ml-2 waves-effect" href="/app/settings" role="button">Cancel</a>
+  
+</form>
+{% endraw %}

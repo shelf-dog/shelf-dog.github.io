@@ -51,7 +51,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Client"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Cache", "Client", "Libraries"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -125,6 +125,9 @@ App = function() {
     
     /* <!-- Present Persistent State (for debugging etc) --> */
     persistent: ಱ,
+    
+    /* <!-- Logged Out / Clean --> */
+    clean: () => FN.cache && FN.cache.clear ? FN.cache.clear() : false,
     
 	};
 

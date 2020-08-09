@@ -590,17 +590,6 @@ Google_API = (options, factory) => {
     /* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
     me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json"),
 
-    execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, {
-      function: method,
-      parameters: data,
-    }),
-
-    scripts: () => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
-      q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
-      orderBy: "modifiedByMeTime desc,name",
-      fields: "files(description,id,modifiedByMeTime,name,version)",
-    }),
-
     pick: _pick,
 
     permissions: {
@@ -1669,6 +1658,30 @@ Google_API = (options, factory) => {
         longUrl: url
       }, "application/json"),
 
+    },
+    
+    scripts: {
+      
+      all: () => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
+        q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
+        orderBy: "modifiedByMeTime desc,name",
+        fields: "files(description,id,modifiedByMeTime,name,version)",
+      }),
+      
+      execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, {
+        function: method,
+        parameters: data,
+      }),
+
+      create: (title, parent) => _call(NETWORKS.scripts.post, "/v1/projects", STRIP_NULLS({
+        "title": title,
+        "parentId": parent
+      }), "application/json"),
+      
+      update: (id, files) => _call(NETWORKS.scripts.put, `/v1/scripts/${id}/content`, {
+        "files": _arrayize(files, _.isObject),
+      }, "application/json"),
+    
     },
 
     reader: READER,

@@ -55,6 +55,8 @@ globals:
   d3: false
   importScripts: false
   jsQR: false
+  initSqlJs: false
+  SparkMD5: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -156,3 +158,6 @@ globals:
   Client: true
   Demo: true
   Libraries: true
+  Cache: true
+  Catalog: true
+  Configuration: true
