@@ -2,6 +2,7 @@
   safe: "Material+Icons"
   for: [all]
 "Acme":
+  safe: "Acme"
   weights: "400"
   for: [all]
 "Poppins":
