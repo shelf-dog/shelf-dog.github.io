@@ -20,6 +20,7 @@ App = function() {
   var _holder = () => $(".library");
   
   var _all = () => FN.libraries.all()
+    .then(libraries => _.filter(libraries, library => library && library.state == "READY"))
     .then(libraries => {
         var _selector = ಠ_ಠ.Display.template.show({
               template: "selector",
