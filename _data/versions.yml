@@ -1,12 +1,15 @@
 site :
-  0.0.4 :
-    name : Site v0.0.4
+  0.0.4a :
+    name : Site v0.0.4a
     desc : Initial Version
-    numeric : 0.0.4
+    numeric : 0.0.4.1
     type:
       - alpha
     changes :
       - Basic Library Opening and Search Functionality
+      - Column Date Parsing
+      - Empty Column Removal
+      - Bug Fix in econding search terms
   0.0.3b :
     name : Site v0.0.3b
     desc : Initial Version

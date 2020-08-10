@@ -65,6 +65,7 @@ helpers:
   - handlebars
   - backgrounds
   - network
+  - url
 modules:
   - generic/dates
   - generic/flags

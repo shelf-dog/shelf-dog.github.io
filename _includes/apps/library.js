@@ -130,6 +130,8 @@ App = function() {
       /* <!-- Setup Helpers --> */
       _.each([{
         name: "Strings"
+      }, {
+        name: "Url"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
       /* <!-- Setup Function Modules --> */
@@ -202,7 +204,7 @@ App = function() {
             matches : /SEARCH/i,
             state : FN.states.library.loaded,
             length : 1,
-            fn : command => _search(decodeURIComponent(command)),
+            fn : command => _search(decodeURIComponent(ಱ.url.decode(command))),
           },
           library : {
             matches : /LIBRARY/i,
