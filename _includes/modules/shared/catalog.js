@@ -43,24 +43,29 @@ Catalog = (options, factory) => {
   
   var _process = (array_columns, date_columns, data) => {
     
-    /* <!-- Process Arrays --> */
-    if (array_columns && array_columns.length > 0) _.each(_columns(array_columns, data), column => _.each(data.values, row => row[column] = row[column] ? row[column].split("\n") : row[column]));
-    
-    /* <!-- Process Dates --> */
-    if (date_columns && date_columns.length > 0) _.each(_columns(date_columns, data), column => _.each(data.values, row => row[column] = row[column] ? factory.Dates.parse(row[column]) : row[column]));
-    
-    /* <!-- Clear Empty Columns --> */
-    var _all = _.range(data.columns.length);
-     _.each(data.values, row => {
-       if (_all.length === 0) return;
-       _.each(row, (value, index) => {
-         if (value) _all = _.reject(_all, value => value == index);
+    if (data) {
+      
+      /* <!-- Process Arrays --> */
+      if (array_columns && array_columns.length > 0) _.each(_columns(array_columns, data), column => _.each(data.values, row => row[column] = row[column] ? row[column].split("\n") : row[column]));
+
+      /* <!-- Process Dates --> */
+      if (date_columns && date_columns.length > 0) _.each(_columns(date_columns, data), column => _.each(data.values, row => row[column] = row[column] ? factory.Dates.parse(row[column]) : row[column]));
+
+      /* <!-- Clear Empty Columns --> */
+      var _all = _.range(data.columns.length);
+       _.each(data.values, row => {
+         if (_all.length === 0) return;
+         _.each(row, (value, index) => {
+           if (value) _all = _.reject(_all, value => value == index);
+         });
        });
-     });
-    if (_all.length > 0) _.each(_.sortBy(_all, value => 0 - value), index => {
-      data.columns.splice(index, 1);
-      _.each(data.values, row => row.splice(index, 1));
-    });
+      if (_all.length > 0) _.each(_.sortBy(_all, value => 0 - value), index => {
+        data.columns.splice(index, 1);
+        _.each(data.values, row => row.splice(index, 1));
+      });
+      
+    }
+    
     return data;
   };
   
@@ -100,7 +105,9 @@ Catalog = (options, factory) => {
           return memo;
         }, {});
         factory.Flags.log("META [Custom Columns]:", ರ‿ರ.custom);
-      } 
+      } else {
+        delete ರ‿ರ.custom;
+      }
     }
   };
   /* <!-- Internal Functions --> */
@@ -169,7 +176,7 @@ Catalog = (options, factory) => {
         "(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors,",
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers) : "",
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom) : "",
-        "(SELECT name FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
+        "(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
         "(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags",
         `FROM books WHERE Title like '%${terms}%' or Authors like '%${terms}%' or Tags like '%${terms}%'${ರ‿ರ.identifiers ? _builders.identifiers.search(ರ‿ರ.identifiers, terms) : ""}${ರ‿ರ.custom ? _builders.custom.search(ರ‿ರ.custom, terms) : ""}`
       ]).join("\n")))),
@@ -187,8 +194,8 @@ Catalog = (options, factory) => {
         "(SELECT name FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher,",
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers) : "",
         "(SELECT rating FROM ratings WHERE ratings.id IN (SELECT rating from books_ratings_link WHERE book = books.id)) Rating,",
-        "(SELECT name FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
-        "(SELECT name FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags,",
+        "(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
+        "(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags,",
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom) : "",
         "(SELECT GROUP_CONCAT(format, '\n') FROM data WHERE data.book = books.id) Formats",
         `FROM books WHERE ID = ${id}`

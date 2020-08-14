@@ -54,7 +54,34 @@ App = function() {
     .catch(e => ಠ_ಠ.Flags.error("Loading Libraries", e))
     .then(ಠ_ಠ.Main.busy("Loading Libraries", true));
   
+  var _overview = element => ಠ_ಠ.Display.template.show(_.extend({
+                template: "details",
+                target: element || _holder(),
+                clear: true
+              }, {
+                count: ರ‿ರ.db.count.books(),
+                tags: ರ‿ರ.db.count.tags()
+              }));
+  
+  var _book = id => Promise.resolve(ರ‿ರ.db.find.book(id))
+    .then(book => book ? _.tap(_.object(book.columns, book.values[0]), book => ಠ_ಠ.Flags.log("BOOK:", book)) : book)
+    .then(book => ($("header.navbar form[data-role='search'] input[role='search']").focus(), book))
+    .then(book => book ? Promise.resolve(ಠ_ಠ.Display.template.show({
+                  template: "item",
+                  target: _holder().find("#search-results .results"),
+                  data: book,
+                  clear: true
+                }))
+          .then(element => book && book.Cover === 1 ? FN.libraries.cover(ರ‿ರ.library, book.Path)
+                .then(cover => ಠ_ಠ.Display.template.show({
+                  template: "cover",
+                  target: element.find(".img-placeholder"),
+                  image: cover || "",
+                  replace: true
+                })) : book) : book);
+  
   var _library = index => FN.libraries.one(index)
+          .then(library => ರ‿ರ.library = library)
           .then(library => FN.libraries.db(library)
             .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
             .then(db => ರ‿ರ.db = db)
@@ -74,7 +101,8 @@ App = function() {
                     _results_element = _element.find("#search-results").removeClass("d-none").find(".results");
                 ಠ_ಠ.Flags.log("RESULTS:", _results);
                 _element.find("#library-details")[_results ? "addClass" : "removeClass"]("d-none");
-                _results ? ಠ_ಠ.Display.template.show(_.extend({
+                _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
+                ಠ_ಠ.Display.template.show(_.extend({
                   template: "results",
                   target: _results_element,
                   clear: true
@@ -85,25 +113,10 @@ App = function() {
                 });
               });
             
-              ಠ_ಠ.Display.template.show(_.extend({
-                template: "details",
-                target: _element,
-                clear: true
-              }, {
-                count: db.count.books(),
-                tags: db.count.tags()
-              }));
+              _overview(_element);
             
             }))
             .then(ಠ_ಠ.Main.busy("Opening Library", true));
-  
-  var _book = id => Promise.resolve(ರ‿ರ.db.find.book(id))
-    .then(book => book ? ಠ_ಠ.Display.template.show(_.extend({
-                  template: "results",
-                  target: _holder().find("#search-results .results"),
-                  clear: true
-                }, book)) : book)
-    .then(() => $("header.navbar form[data-role='search'] input[role='search']").focus());
   
   var _search = terms => $("header.navbar form[data-role='search'] input[role='search']").val(terms)
     .parents("form").find("button[type='submit']").click();
@@ -216,6 +229,12 @@ App = function() {
             matches : /ALL/i,
             length : 0,
             fn : _all,
+          },
+          overview : {
+            matches : /OVERVIEW/i,
+            state : FN.states.library.loaded,
+            length : 0,
+            fn : _overview,
           },
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */

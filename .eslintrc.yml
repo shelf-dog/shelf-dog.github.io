@@ -16,7 +16,7 @@ rules:
   semi:
     - error
     - always
-  no-cond-assign: [1, except-parens]
+  no-cond-assign: 0
   no-const-assign: 1
   no-useless-escape: 0
 globals:

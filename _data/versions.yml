@@ -1,4 +1,12 @@
 site :
+  0.0.4d :
+    name : Site v0.0.4d
+    desc : Initial Version
+    numeric : 0.0.4.4
+    type:
+      - alpha
+    changes :
+      - Book Cover Loading
   0.0.4c :
     name : Site v0.0.4c
     desc : Initial Version

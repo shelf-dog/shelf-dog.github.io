@@ -120,8 +120,6 @@ var CURRENT_CACHES = {
 
 {% include plumbing/fonts.html all="true" %}
 
-{% assign fonts = "" %}{% for font in site.data.fonts %}{% if forloop.first %}{% assign fonts = fonts | append: font[1].safe | append: ":" | append: font[1].weights %}{% else %}{% assign fonts = fonts | append: "|" | append: font[1].safe | append: ":" | append: font[1].weights %}{% endif %}{% endfor %}
-
 var FONT_URL = "https://fonts.googleapis.com/css2";
 var URLS = [
   {% for page in site.pages %}{% if page.layout != "app" and page.permalink != "/service.js" and page.permalink != "/version.json" and page.permalink != "/_redirects" %}{url : "{{ page.permalink }}"},{% endif %}{% endfor %}

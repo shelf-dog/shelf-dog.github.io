@@ -9,6 +9,7 @@ Libraries = (options, factory) => {
   const DEFAULTS = {
     cache: factory.Dates.duration("30", "minutes"),
     db_cache: factory.Dates.duration("15", "minutes"),
+    cover_cache: factory.Dates.duration("5", "minutes"),
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -94,6 +95,12 @@ Libraries = (options, factory) => {
       result.local_hash = spark_md5.end();
       return result;
     })));
+  
+  FN.cover = (value, path) => FN.select(value)
+    .then(library => options.functions.cache.get(library.cache(`COVER_${SparkMD5.hash(path)}`), options.cover_cache,
+                                                  () => library.api("COVER", {path: path, link: true}, 20000)))
+    .then(cover => cover && _.isArray(cover) ? 
+          URL.createObjectURL(new Blob([new Uint8Array(cover)], {"type": "image/jpeg"})) : cover);
   
   FN.settings = (value, settings) => FN.select(value).then(library => library.api("SETTINGS", settings));
   /* <!-- Public Functions --> */

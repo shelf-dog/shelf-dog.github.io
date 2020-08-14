@@ -91,6 +91,9 @@ templates:
   - library/details
   - library/results
   - library/empty
+  - library/item
+  - library/placeholder
+  - library/cover
 docs:
   - library/PUBLIC
   - library/FEATURES
