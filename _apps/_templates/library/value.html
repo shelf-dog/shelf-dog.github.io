@@ -1,0 +1,3 @@
+{% raw %}
+{{#present this}}{{#if (isArray this)}}<div class="d-flex flex-row flex-wrap">{{#each this}}<a href="#search.{{encode (either this.value this)}}" class="badge badge-light mb-1 mr-1 text-left text-wrap" style="max-width:10rem;">{{either this.text this}}</a>{{/each}}</div>{{else}}{{#if (all (isObject this) this.text this.url)}}<a href="{{url}}" target="_blank" class="badge badge-primary mb-1 mr-1 text-left text-wrap" style="max-width:10rem;">{{text}}</a>{{else}}<span class="font-weight-normal text-white">{{#if (isDate this)}}{{localeDate this true}}{{else}}{{either this.text this}}{{/if}}</span>{{/if}}{{/if}}{{/present}}
+{% endraw %}

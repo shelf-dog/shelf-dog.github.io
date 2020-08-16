@@ -94,6 +94,7 @@ templates:
   - library/item
   - library/placeholder
   - library/cover
+  - library/value
 docs:
   - library/PUBLIC
   - library/FEATURES

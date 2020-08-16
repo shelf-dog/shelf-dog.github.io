@@ -1,12 +1,13 @@
 site :
-  0.0.4d :
-    name : Site v0.0.4d
+  0.0.4e :
+    name : Site v0.0.4e
     desc : Initial Version
-    numeric : 0.0.4.4
+    numeric : 0.0.4.5
     type:
       - alpha
     changes :
       - Book Cover Loading
+      - Parsable attributes in Custom Columns
   0.0.4c :
     name : Site v0.0.4c
     desc : Initial Version

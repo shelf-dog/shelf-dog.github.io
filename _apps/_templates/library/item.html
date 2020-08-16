@@ -2,13 +2,16 @@
 <div class="d-flex flex-column flex-md-row align-items-center pb-3 pb-md-2">{{#with data}}
   {{~#is Cover 1}}<div class="m-2 mr-lg-3 mr-xl-4">{{> placeholder}}</div>{{/is~}}
   <div>
-    {{#each this}}
-    <div class="d-flex align-items-center">
-      <span class="font-weight-bold text-secondary">{{@key}}</span>
-      <span class="font-weight-light mx-1">:</span>
-      {{#present this}}{{#if (isArray this)}}<div class="d-flex-inline flex-row flex-wrap ml-1">{{#each this}}<a href="#search.{{encode this}}" class="badge badge-light mb-1 mr-1">{{this}}</a>{{/each}}</div>{{else}}<span class="font-weight-normal text-white">{{#if (isDate this)}}{{localeDate this true}}{{else}}{{this}}{{/if}}</span>{{/if}}{{/present}}
-    </div>
-    {{/each}}
+    <table>
+      {{#each this}}
+      <tr>
+        <td class="text-right border-dark border-right pr-2 pr-lg-3 pr-xl-4">
+          <span class="font-weight-bold text-secondary">{{@key}}</span>
+        </td>
+        <td class="pl-2 pl-lg-3 pl-xl-4">{{> value}}</td>
+      </tr>
+      {{/each}}
+    </table>
   </div>
 {{/with}}</div>
 {% endraw %}
