@@ -53,7 +53,7 @@ Controller = function() {
     if (g.css === true && g.fonts === true) {
       try {
         for (var k = 0; k < a.sheet.cssRules.length; k++) {
-          if (a.sheet.cssRules[k].type == 5) {
+          if (a.sheet.cssRules[k].type === 5) {
             if ("fontDisplay" in a.sheet.cssRules[k].style) {
               a.sheet.cssRules[k].style.fontDisplay = "block";
               _removeClass("font-sensitive");

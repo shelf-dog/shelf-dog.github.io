@@ -150,7 +150,7 @@ Google_API = (options, factory) => {
       per_sec: url.rate ? url.rate : 0,
       concurrent: url.concurrent ? url.concurrent : 0,
       retry: r =>
-        new Promise(resolve => r.status == 403 || r.status == 429 ?
+        new Promise(resolve => r.status === 403 || r.status === 429 ?
           r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false))
     }, factory);
     return networks;
@@ -333,7 +333,7 @@ Google_API = (options, factory) => {
           picker.addView((view = make(view)).setEnableTeamDrives ?
             view.setEnableTeamDrives(view.team !== undefined ? view.team : team) : view);
         });
-        if (views.length == 1 && !views[0].navigation) picker.enableFeature(FEATURE.NAV_HIDDEN);
+        if (views.length === 1 && !views[0].navigation) picker.enableFeature(FEATURE.NAV_HIDDEN);
       } else {
         picker.addView((views = make(views)).setEnableTeamDrives ?
           views.setEnableTeamDrives(views.team !== undefined ? views.team : team) : views);
@@ -465,7 +465,7 @@ Google_API = (options, factory) => {
 
     return new Promise(resolve => {
       if (parents && parents.length > 0) {
-        if (parents.length == 1) {
+        if (parents.length === 1) {
           _path(parents[0], chain).then(value => resolve(value));
         } else {
           var promises = [];
@@ -1476,12 +1476,17 @@ Google_API = (options, factory) => {
           "requests": identified && meta ? updates.concat(metadata(id, meta)) : updates,
           "includeSpreadsheetInResponse": identified || !meta,
           "responseIncludeGridData": false,
-        }, "application/json").then(sheet => !identified && meta && sheet && sheet.replies ?
+        }, "application/json").then(sheet => {
+          var sheetId = sheet.replies[0].addSheet.properties.sheetId,
+              sheetTitle = sheet.replies[0].addSheet.properties.title;
+          return (!identified && meta && sheet && sheet.replies ?
             _call(NETWORKS.sheets.post, `v4/spreadsheets/${spreadsheet}:batchUpdate`, {
               "requests": metadata(sheet.replies[0].properties.sheetId, meta),
               "includeSpreadsheetInResponse": true,
               "responseIncludeGridData": false,
-            }, "application/json").then(sheet => sheet.updatedSpreadsheet) : sheet.updatedSpreadsheet);
+            }, "application/json").then(sheet => sheet.updatedSpreadsheet) : Promise.resolve(sheet.updatedSpreadsheet))
+          .then(sheet => (sheet.sheetId = sheetId, sheet.sheetTitle = sheetTitle, sheet));
+        });
           
       },
 
@@ -1668,20 +1673,116 @@ Google_API = (options, factory) => {
         fields: "files(description,id,modifiedByMeTime,name,version)",
       }),
       
-      execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, {
+      execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, STRIP_NULLS({
         function: method,
-        parameters: data,
-      }),
+        parameters: data ? _.isArray(data) ? data : [data] : null,
+      })),
 
       create: (title, parent) => _call(NETWORKS.scripts.post, "/v1/projects", STRIP_NULLS({
         "title": title,
         "parentId": parent
       }), "application/json"),
       
-      update: (id, files) => _call(NETWORKS.scripts.put, `/v1/scripts/${id}/content`, {
-        "files": _arrayize(files, _.isObject),
-      }, "application/json"),
-    
+      content: script => {
+
+        var _id = script ? script.id ? script.id : script.scriptId ? script.scriptId : script : script,
+            _url = `v1/projects/${encodeURIComponent(_id)}/content`;
+        
+        return {
+        
+          get: version =>_call(NETWORKS.scripts.get, version ? `${_url}?versionNumber=${version}`: _url),
+          
+          update: files => _call(NETWORKS.scripts.put, _url, {
+            "files": files ? _.isArray(files) ? files : [files] : [],
+          }, "application/json"),
+          
+        };
+        
+      },
+      
+      deployments: script => {
+        
+        var _id = script ? script.id ? script.id : script.scriptId ? script.scriptId : script : script,
+            _deployment = deployment => deployment && deployment.id ? deployment.id : deployment,
+            _url = `v1/projects/${encodeURIComponent(_id)}/deployments`,
+            _fields = "*";
+        
+        return {
+          
+          create : (version, manifest, description) => _call(NETWORKS.scripts.post, _url, STRIP_NULLS({
+            "versionNumber": version,
+            "manifestFileName": manifest,
+            "description": description
+          }), "application/json"),
+
+          delete : deployment => _call(NETWORKS.general.delete, `${_url}/${encodeURIComponent(_deployment(deployment))}`),
+          
+          get : deployment =>  _call(NETWORKS.scripts.get, `${_url}/${encodeURIComponent(_deployment(deployment))}`),
+          
+          list : () => _list(NETWORKS.scripts.get, _url, "deployments", [], {fields: _fields}),
+          
+          update : (deployment, version, manifest, description) => _call(NETWORKS.scripts.put,
+            `${_url}/${encodeURIComponent(_deployment(deployment))}`, {"deploymentConfig": {
+                "scriptId": _id,
+                "versionNumber": version,
+                "manifestFileName": manifest,
+                "description": description
+              }}, "application/json"),
+
+        };
+        
+      },
+          
+      files: {
+      
+        html: (name) => ({
+          name: name,
+          type: "HTML",
+          source: ""
+        }),
+        
+        js: () => ({
+          name: name,
+          type: "SERVER_JS",
+          functionSet: {
+            "values": [
+              {
+                "name": ""
+              }
+            ]
+          }
+        }),
+        
+        json: () => ({
+          name: name,
+          type: "JSON",
+              source: ""
+        }),
+      
+      },
+      
+      versions : script => {
+        
+        var _id = script ? script.id ? script.id : script.scriptId ? script.scriptId : script : script,
+            _url = `v1/projects/${encodeURIComponent(_id)}/versions`,
+            _fields = "*";
+        
+        return {
+          
+          create : (version, description) => _call(NETWORKS.scripts.post, _url, STRIP_NULLS({
+            "versionNumber": version,
+            "description": description,
+            "createTime": new Date().toISOString()
+          }), "application/json"),
+          
+          get : version =>  _call(NETWORKS.scripts.get, `${_url}/${encodeURIComponent(version)}`),
+          
+          list : () => _list(NETWORKS.scripts.get, _url, "versions", [], {fields: _fields}),
+          
+        };
+        
+      },
+      
     },
 
     reader: READER,

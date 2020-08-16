@@ -46,7 +46,7 @@ Main = function() {
         .catch(e => ಠ_ಠ.Flags.error(`${name} List`, e).negative())
         .then(BUSY(`Loading ${name}s`))
         .then(options => options === false || options.length === 0 ||
-          (options.length == 1 && (options[0] === undefined || options[0] === null)) ? false : ಠ_ಠ.Display.choose({
+          (options.length === 1 && (options[0] === undefined || options[0] === null)) ? false : ಠ_ಠ.Display.choose({
             id: `choose_${name}`,
             title: `Please Choose a ${name} to Open ...`,
             action: options && options.length > 0 ? "Open" : false,
@@ -352,9 +352,9 @@ Main = function() {
       }).catch(e => {
 
         /* <!-- Maybe user has revoked scopes, so default back to unauthenticated --> */
-        if (e.status == 401) {
+        if (e.status === 401) {
           google_SignOut();
-        } else if (e.status == 400 || e.status == 403) {
+        } else if (e.status === 400 || e.status === 403) {
           route_LoggedIn(ಠ_ಠ.me = {
             available: false
           });
@@ -551,7 +551,7 @@ Main = function() {
     elevator: SCOPE => fn => {
       var _retry = retry => fn()
         .catch(e => {
-          if (e.status == 403 || e.status == 404) { /* <!-- e.status: 403 or 404 | Seems to return both? --> */
+          if (e.status === 403 || e.status === 404) { /* <!-- e.status: 403 or 404 | Seems to return both? --> */
             ಠ_ಠ.Flags.log("ELEVATE: May need to grant permission");
             return {
               retry: retry

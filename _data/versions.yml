@@ -1,13 +1,14 @@
 site :
   0.0.4e :
-    name : Site v0.0.4e
+    name : Site v0.0.4f
     desc : Initial Version
-    numeric : 0.0.4.5
+    numeric : 0.0.4.6
     type:
       - alpha
     changes :
       - Book Cover Loading
       - Parsable attributes in Custom Columns
+      - Search History State (Back/Forward Buttons)
   0.0.4c :
     name : Site v0.0.4c
     desc : Initial Version

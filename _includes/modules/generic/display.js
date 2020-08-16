@@ -183,7 +183,7 @@ Display = function() {
   var _keys = (options, dialog) => {
     /* <!-- Handle Enter Key (if simple) --> */
     if (options.enter) dialog.keypress(e => {
-      if (e.which == 13) {
+      if (e.which === 13) {
         e.preventDefault();
         dialog.find(".modal-footer button.btn-primary").click();
       }
@@ -788,7 +788,7 @@ Display = function() {
 
         /* <!-- Handle Enter Key (if simple) --> */
         dialog.keypress(e => {
-          if (e.which == 13) {
+          if (e.which === 13) {
             e.preventDefault();
             dialog.find(".modal-footer button.btn-primary").click();
           }
@@ -900,7 +900,7 @@ Display = function() {
 
         /* <!-- Handle Enter Key (if simple) --> */
         if (options.simple || options.password) dialog.keypress(e => {
-          if (e.which == 13) {
+          if (e.which === 13) {
             e.preventDefault();
             dialog.find(".modal-footer button.btn-primary").click();
           }

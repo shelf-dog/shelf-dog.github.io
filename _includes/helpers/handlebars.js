@@ -57,7 +57,7 @@ Handlebars = (options, factory) => {
 
         var _template = $("#__template__" + name);
 
-        if (_template.length == 1) {
+        if (_template.length === 1) {
 
           var _html = _template.html();
 

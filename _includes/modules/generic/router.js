@@ -157,7 +157,7 @@ Router = function() {
           l_options = PREPARE(route.options, l_command),
           l_result = route.fn(_.isArray(l_command) ? 
                               l_command.length === 0 ? 
-                                null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
+                                null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options);
         return l_result && l_result.then ? l_result
           .then(result => {
           

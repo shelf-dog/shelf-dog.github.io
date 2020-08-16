@@ -33,7 +33,7 @@ Dialog = (options, factory) => {
       if (_shortcut) _.each(pairs, pair => {
         if (_shortcut[pair[0]] !== undefined) {
           var _target = dialog.find(pair[1]);
-          if (_target.length == 1 && !_target.hasClass("locked")) {
+          if (_target.length === 1 && !_target.hasClass("locked")) {
             if (_target.data("click")) {
               $(_.find(dialog.find(_target.data("click") + `[data-target='${_target[0].id}']`).toArray(),
                 element => _extractDataValueOrText($(element)) == _shortcut[pair[0]])).click();
@@ -156,7 +156,7 @@ Dialog = (options, factory) => {
       enter: dialog => {
 
         /* <!-- Ctrl-Enter Pressed --> */
-        dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13 && e.shiftKey) ? e.preventDefault() || dialog.find(".modal-footer button.btn-primary").click() : null);
+        dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) === 13 && e.shiftKey) ? e.preventDefault() || dialog.find(".modal-footer button.btn-primary").click() : null);
 
       },
 
@@ -209,7 +209,7 @@ Dialog = (options, factory) => {
 
       /* <!-- Handle Enter on textbox to Add --> */
       dialog.find("input[data-action='add']")
-        .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? 
+        .keypress(e => ((e.keyCode ? e.keyCode : e.which) === 13) ? 
                     e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
       
     }

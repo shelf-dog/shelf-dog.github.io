@@ -238,7 +238,7 @@ self.addEventListener("fetch", function(event) {
         return fetch(event.request).then(function(response) {
           
           /* <!-- console.log("Network Response", response); --> */
-          if (response.status == 404) {
+          if (response.status === 404) {
             return response_NotFound();
           } else {
             return response;  

@@ -80,6 +80,23 @@ App = function() {
                   replace: true
                 })) : book) : book);
   
+  var _search = (terms, element) => {
+    var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,
+        _results_element = element.find("#search-results").removeClass("d-none").find(".results");
+    ಠ_ಠ.Flags.log("RESULTS:", _results);
+    element.find("#library-details")[_results ? "addClass" : "removeClass"]("d-none");
+    _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
+    ಠ_ಠ.Display.template.show(_.extend({
+      template: "results",
+      target: _results_element,
+      clear: true
+    }, _results)) : ಠ_ಠ.Display.template.show({
+      template: "empty",
+      target: _results_element,
+      clear: true
+    });
+  };
+  
   var _library = index => FN.libraries.one(index)
           .then(library => ರ‿ರ.library = library)
           .then(library => FN.libraries.db(library)
@@ -90,36 +107,21 @@ App = function() {
               $("#explore-library .library-name").text(library.name);
             
               var _element = _holder(),
-                  _search = $("header.navbar form[data-role='search']"),
-                  _input = _search.find("input[role='search']").focus();
+                  _form = $("header.navbar form[data-role='search']"),
+                  _input = _form.find("input[role='search']").focus();
             
-              _search.find("button[type='submit']").off("click.search").on("click.search", e => {
+              _form.find("button[type='submit']").off("click.search").on("click.search", e => {
                 e.preventDefault();
                 e.stopPropagation();
-                var _terms = _input.val(),
-                    _results = _terms ? db.search.books(_terms == "*" ? "" : _terms) : null,
-                    _results_element = _element.find("#search-results").removeClass("d-none").find(".results");
-                ಠ_ಠ.Flags.log("RESULTS:", _results);
-                _element.find("#library-details")[_results ? "addClass" : "removeClass"]("d-none");
-                _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
-                ಠ_ಠ.Display.template.show(_.extend({
-                  template: "results",
-                  target: _results_element,
-                  clear: true
-                }, _results)) : ಠ_ಠ.Display.template.show({
-                  template: "empty",
-                  target: _results_element,
-                  clear: true
-                });
+                var _terms = _input.val();
+                _search(_terms, _element);
+                window.history.pushState(null, null, `#search.${ಠ_ಠ.url.encode(encodeURIComponent(_terms))}`);
               });
             
               _overview(_element);
             
             }))
             .then(ಠ_ಠ.Main.busy("Opening Library", true));
-  
-  var _search = terms => $("header.navbar form[data-role='search'] input[role='search']").val(terms)
-    .parents("form").find("button[type='submit']").click();
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */
@@ -218,7 +220,11 @@ App = function() {
             matches : /SEARCH/i,
             state : FN.states.library.loaded,
             length : 1,
-            fn : command => _search(decodeURIComponent(ಱ.url.decode(command))),
+            fn : command => {
+              var _terms = decodeURIComponent(ಱ.url.decode(command));
+              $("header.navbar form[data-role='search'] input[role='search']").val(_terms);
+              _search(_terms, _holder());
+            },
           },
           library : {
             matches : /LIBRARY/i,

@@ -149,7 +149,7 @@ Data = (options, factory) => {
         _inputs = _descendants(_$),
         _multiple = _inputs.length > 1,
         _field = _.reduce(_multiple ? _inputs : [_$.is(":input") ? input :
-            _inputs.length == 1 ? _inputs[0] :
+            _inputs.length === 1 ? _inputs[0] :
             _$.find(options.inputs)[0]
           ],
           (field, input) => {
@@ -238,7 +238,7 @@ Data = (options, factory) => {
             .filter((i, parent) => $(parent).data(HIDDEN) === true).length !== 0;
 
           /* <!-- Set text in all cases but also use click handler if available --> */
-          !_hidden && _option.length == 1 ? _el.text(val) && _option[0].click() : _el.text(val);
+          !_hidden && _option.length === 1 ? _el.text(val) && _option[0].click() : _el.text(val);
 
         } else {
           var _holder = ((_holder = _el.data("holder-field")) ? _holder : false);
