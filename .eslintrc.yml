@@ -106,6 +106,7 @@ globals:
   Google_Sheets_Notation: true
   Google_Sheets_Format: true
   Google_Sheets_Properties: true
+  Google_Sheets_Sorts: true
   Dialog: true
   Example: true
   SaaD: true
@@ -161,3 +162,6 @@ globals:
   Cache: true
   Catalog: true
   Configuration: true
+  Lexer: true
+  Semantics: true
+  Semiotics: true

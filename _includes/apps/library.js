@@ -25,7 +25,8 @@ App = function() {
         var _selector = ಠ_ಠ.Display.template.show({
               template: "selector",
               libraries: libraries,
-              cancel: "/app/library",
+              cancel: "/app",
+              query: window.location.search,
               select_text: "Select",
               select_url: "#google,library",
               target: _holder(),
@@ -102,7 +103,7 @@ App = function() {
           .then(library => FN.libraries.db(library)
             .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
             .then(db => ರ‿ರ.db = db)
-            .then(db => {
+            .then(() => {
               ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
               $("#explore-library .library-name").text(library.name);
             
@@ -158,7 +159,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Cache", "Client", "Demo", "Libraries", "Catalog"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Cache", "Client", "Demo", "Libraries", "Catalog", "Lexer"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;

@@ -80,8 +80,12 @@ modules:
   - shared/cache
   - shared/demo
   - shared/libraries
-  - shared/catalog
+  - library/catalog
+  - library/lexer
+  - library/semiotics
+  - library/semantics
 scripts: 
+  - extends/string
   - extends/regex
   - extends/array
   - extends/math
