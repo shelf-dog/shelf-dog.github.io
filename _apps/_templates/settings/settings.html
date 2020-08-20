@@ -11,15 +11,32 @@
   <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
     
     <!-- CAPABILITIES -->
-    <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark">Capabilities</h5>
+    <h4 class="mt-0 mb-2 pb-1 border-bottom border-dark">Capabilities</h4>
     
-    <!-- LOANS AVAILABLE -->
-    <div class="form-group form-check pl-2" data-output-field="capabilities_loan">
-      <div class="custom-control custom-checkbox mr-sm-2">
-          <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan" data-output-name="Value" data-output-always="true"{{#if capabilities_loan}} checked{{/if}}>
-          <label class="custom-control-label" for="settings_capabilities_loan">Loans?</label>
+    <!-- LOANS -->
+    <div class="border border-dark p-2 pt-3 mb-2">
+      
+      <h5 class="mt-0 mb-2 o-75 text-highlight">Loans</h5>
+      
+      <!-- LOANS AVAILABLE -->
+      <div class="form-group form-check pl-2" data-output-field="capabilities_loan">
+        <div class="custom-control custom-checkbox mr-sm-2">
+            <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan" data-output-name="Value" data-output-always="true"{{#if capabilities_loan}} checked{{/if}}>
+            <label class="custom-control-label" for="settings_capabilities_loan">Are Loans available with this Library?</label>
+        </div>
+        <small id="settings_contents_books_audio_HELP" class="form-text text-muted">Further details.</small>
       </div>
-      <small id="settings_contents_books_audio_HELP" class="form-text text-muted">Further details.</small>
+      
+      <!-- LOAN COPY FIELD IDENTIFIER -->
+      <div class="form-group mb-1" data-output-field="capabilities_loan_field">
+        <label for="settings_capabilities_loan_field">Copies</label>
+        <select class="custom-select" id="settings_capabilities_loan_field" data-output-name="Value" data-output-always="true">
+          <option{{#unless capabilities_loan_field}} selected{{/unless}} value="">None</option>
+          {{#each fields}}<option{{#is ../capabilities_loan_field this}} selected{{/is}} value="{{this}}">{{this}}</option>{{/each}}
+        </select>
+        <small id="settings_capabilities_loan_field_HELP" class="form-text text-muted">Name of the field that represents copies to be loaned out (e.g. Accession or Copy Number). If the library doesn't hold multiple copies for any item, leave this as 'None'.</small>
+      </div>
+      
     </div>
     
   </div>
@@ -27,7 +44,7 @@
   <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
     
     <!-- CONTENTS -->
-    <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark">Contents</h5>
+    <h4 class="mt-0 mb-2 pb-1 border-bottom border-dark">Contents</h4>
     
     <!-- AUDIO BOOKS -->
     <div class="form-group form-check pl-2" data-output-field="contents_books_audio">

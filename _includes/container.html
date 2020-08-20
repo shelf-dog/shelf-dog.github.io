@@ -1,4 +1,4 @@
-<div id="{{ site.app.content }}" class="container{% if include.class%} {{ include.class }}{% endif %}">
+<div id="{{ site.app.content }}" class="{% if include.large %}mx-2 mx-xl-4{% else %}container{% endif %}{% if include.class%} {{ include.class }}{% endif %}">
   <div{% unless include.simple %} class="bg-page rounded-sm p-2"{% endunless %}>
     {{ content }}
   </div>

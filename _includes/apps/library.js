@@ -25,6 +25,7 @@ App = function() {
         var _selector = ಠ_ಠ.Display.template.show({
               template: "selector",
               libraries: libraries,
+              container: true,
               cancel: "/app",
               query: window.location.search,
               select_text: "Select",
@@ -73,13 +74,32 @@ App = function() {
                   data: book,
                   clear: true
                 }))
-          .then(element => book && book.Cover === 1 ? FN.libraries.cover(ರ‿ರ.library, book.Path)
+          .then(element => {
+            /* <!-- Start Cover Download --> */
+            if (book && book.Cover === 1) FN.libraries.cover(ರ‿ರ.library, book.Path)
                 .then(cover => ಠ_ಠ.Display.template.show({
                   template: "cover",
                   target: element.find(".img-placeholder"),
                   image: cover || "",
                   replace: true
-                })) : book) : book);
+                }));
+            /* <!-- Check Availability --> */
+            if (ರ‿ರ.library.meta.capabilities.loan) 
+              FN.libraries.available(ರ‿ರ.library, book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
+                .then(availability => {
+                  ಠ_ಠ.Flags.log("AVAILABILITY:", availability);
+                  if (ರ‿ರ.library.meta.capabilities.loan_field) {
+                    var _row = element.find(`tr[data-field='${ರ‿ರ.library.meta.capabilities.loan_field}']`);
+                    _.each(availability, copy => _row.find($(`td .badge:contains('${copy.copy}')`))
+                           .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, copy), true)));
+                  } else if (availability.length === 1) {
+                    element.find("tr[data-field='ID']")
+                      .find($(`td div:contains('${availability[0].copy}')`))
+                      .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, availability[0]), true));
+                  }
+                });
+            return book;
+          }) : book);
   
   var _search = (terms, element) => {
     var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,

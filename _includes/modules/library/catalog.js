@@ -191,6 +191,7 @@ Catalog = (options, factory) => {
           }, []);
     ರ‿ರ.fields = {
         identifiers: ರ‿ರ.identifiers,
+        custom: _filter(() => true),
         scalar: ["ID", "Title", "Rating"].concat(_filter(_scalar)),
         array: ["Authors", "Series", "Tags", "Publisher", "Formats"].concat(_filter(_array)),
         text: ["Title", "Authors", "Series", "Tags", "Publisher", "Formats"].concat(ರ‿ರ.identifiers).concat(_filter(_text)),
@@ -330,6 +331,8 @@ Catalog = (options, factory) => {
       
     },
     
+    fields : () => ರ‿ರ.fields,
+      
     search : {
       
       books : terms => {

@@ -102,6 +102,8 @@ Libraries = (options, factory) => {
     .then(cover => cover && _.isArray(cover) ? 
           URL.createObjectURL(new Blob([new Uint8Array(cover)], {"type": "image/jpeg"})) : cover);
   
+  FN.available = (value, copies) =>  FN.select(value).then(library => library.api("AVAILABLE", {copies: copies}));
+  
   FN.settings = (value, settings) => FN.select(value).then(library => library.api("SETTINGS", settings));
   /* <!-- Public Functions --> */
   

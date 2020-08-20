@@ -87,7 +87,9 @@ modules:
   - shared/demo
   - shared/libraries
   - shared/schema
+  - library/catalog
 scripts: 
+  - extends/string
   - extends/regex
   - extends/array
   - extends/math

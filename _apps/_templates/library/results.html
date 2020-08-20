@@ -2,12 +2,12 @@
 <table class="table text-light table-responsive">
   <thead>
     <tr>
-      {{#each columns}}<th scope="col">{{this}}</th>{{/each}}
+      {{#each columns}}<th scope="col"{{#is @index 0}} class="bg-dark text-center"{{/is}}>{{this}}</th>{{/each}}
     </tr>
   </thead>
   <tbody>
     {{#each values}}<tr>
-      {{#each this}}{{#is @index 0}}<th scope="row"><a href="#book.{{this}}" class="text-decoration-none text-white">{{this}}</a></th>{{else}}<td>{{> value}}</td>{{/is}}{{/each}}
+      {{#each this}}{{#is @index 0}}<th scope="row" class="align-middle bg-dark text-center"><a href="#book.{{this}}" class="bg-primary px-1 py-2 rounded text-decoration-none text-white">{{this}}</a></th>{{else}}<td class="align-middle">{{> value}}</td>{{/is}}{{/each}}
     </tr>{{/each}}
   </tbody>
 </table>

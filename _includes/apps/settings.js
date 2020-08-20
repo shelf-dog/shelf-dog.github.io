@@ -87,57 +87,63 @@ App = function() {
 
       });
     }).then(ಠ_ಠ.Main.busy("Loading Settings", true));
-  
+ 
   var _library = index => FN.libraries.one(index)
-              .then(library => FN.libraries.settings(library)
-                .then(settings => {
-                
-                  ಠ_ಠ.Flags.log("LIBRARY:", library);
-                  ಠ_ಠ.Flags.log("SETTINGS:", settings);
-                 
-                  ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.library);
-                  $("#settings-for-library .library-name").text(library.name);
-                
-                  /* <!-- Split/Join Managers into Array --> */
-                  if (settings.managers && settings.managers.split) 
-                    settings.managers = settings.managers.split(",").join("\n");
-                
-                  var _form = ಠ_ಠ.Display.template.show(_.extend({
-                        template: "settings",
-                        target: _holder(),
-                        clear: true
-                      }, settings));
-                
-                  /* <!-- Handle Database Link Changes --> */
-                  _link(_form, "input[data-type='file']", id => `https://drive.google.com/file/d/${id}/view`);
-    
-                  /* <!-- Handle Library Folder Changes --> */
-                  _link(_form, "input[data-type='folder']", id => `https://drive.google.com/drive/folders/${id}`);
-                
-                  /* <!-- Handle Settings Save --> */
-                  _form.find("button[type='submit'").on("click.submit", e => {
+              .then(library => Promise.all(
+                [Promise.resolve(library), FN.libraries.settings(library), FN.libraries.db(library).then(result => FN.catalog.load(result.data))]
+              ))
+              .then(results => {
 
-                      e.preventDefault();
-                      e.stopPropagation();
+                var library = results[0], settings = results[1], db = results[2];
 
-                      var _values = ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form);
-                      ಠ_ಠ.Flags.log("Library Settings Form Values", _values);
+                ಠ_ಠ.Flags.log("LIBRARY:", library);
+                ಠ_ಠ.Flags.log("SETTINGS:", settings);
+                ಠ_ಠ.Flags.log("CUSTOM FIELDS:", db.fields().custom);
 
-                      var _settings = _.reduce(_values, (memo, value, key) => {
-                        memo[key] = key == "managers" ? value.Value ? value.Value.split("\n") : [] : value.Value;
-                        return memo;
-                      }, {});
+                ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.library);
+                $("#settings-for-library .library-name").text(library.name);
 
-                      ಠ_ಠ.Flags.log("Library Settings to Save", _settings);
+                /* <!-- Split/Join Managers into Array --> */
+                if (settings.managers && settings.managers.split) 
+                  settings.managers = settings.managers.split(",").join("\n");
 
-                      FN.libraries.settings(library, _settings)
-                        .then(value => value ? FN.libraries.refresh(library) : value)
-                        .then(_result($(e.currentTarget)))
-                        .then(ಠ_ಠ.Main.busy("Saving Settings", true));
+                var _form = ಠ_ಠ.Display.template.show(_.extend({
+                      template: "settings",
+                      target: _holder(),
+                      fields: db.fields().custom,
+                      clear: true
+                    }, settings));
 
-                    });
-               
-                }))
+                /* <!-- Handle Database Link Changes --> */
+                _link(_form, "input[data-type='file']", id => `https://drive.google.com/file/d/${id}/view`);
+
+                /* <!-- Handle Library Folder Changes --> */
+                _link(_form, "input[data-type='folder']", id => `https://drive.google.com/drive/folders/${id}`);
+
+                /* <!-- Handle Settings Save --> */
+                _form.find("button[type='submit'").on("click.submit", e => {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var _values = ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form);
+                    ಠ_ಠ.Flags.log("Library Settings Form Values", _values);
+
+                    var _settings = _.reduce(_values, (memo, value, key) => {
+                      memo[key] = key == "managers" ? value.Value ? value.Value.split("\n") : [] : value.Value;
+                      return memo;
+                    }, {});
+
+                    ಠ_ಠ.Flags.log("Library Settings to Save", _settings);
+
+                    FN.libraries.settings(library, _settings)
+                      .then(value => value ? FN.libraries.refresh(library) : value)
+                      .then(_result($(e.currentTarget)))
+                      .then(ಠ_ಠ.Main.busy("Saving Settings", true));
+
+                  });
+
+              })
               .catch(e => ಠ_ಠ.Flags.error("Loading Settings", e))
               .then(ಠ_ಠ.Main.busy("Loading Settings", true));
   
@@ -257,7 +263,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Cache", "Client", "Configuration", "Libraries"], 
+      _.each(["Cache", "Client", "Configuration", "Libraries", "Catalog"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Create Schema Reference --> */

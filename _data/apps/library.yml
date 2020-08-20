@@ -99,6 +99,7 @@ templates:
   - library/placeholder
   - library/cover
   - library/value
+  - library/availability
 docs:
   - library/PUBLIC
   - library/FEATURES

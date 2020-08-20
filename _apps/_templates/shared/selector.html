@@ -1,4 +1,6 @@
 {% raw %}
+{{~#if container}}<div class="bg-dark p-2 p-xl-3 mb-2 rounded-lg">{{/if~}}
+{{~#if content~}}{{{content}}}{{~/if~}}
 <div class="input-group">
   <select class="custom-select" id="choose_Library" aria-label="Choose Library for Settings">
     <option selected>Choose Library...</option>
@@ -9,4 +11,5 @@
     <a class="btn btn-dark disabled" href="{{select_url}}" data-href="{{select_url}}" role="button" data-role="select">{{select_text}}</a>
   </div>
 </div>
+{{~#if container}}</div>{{/if~}}
 {% endraw %}

@@ -1,8 +1,8 @@
 site :
-  0.0.4g :
-    name : Site v0.0.4g
+  0.0.4h :
+    name : Site v0.0.4h
     desc : Initial Version
-    numeric : 0.0.4.7
+    numeric : 0.0.4.8
     type:
       - alpha
     changes :
@@ -10,6 +10,7 @@ site :
       - Parsable attributes in Custom Columns
       - Search History State (Back/Forward Buttons)
       - Basic Search Lexer (and/or/not, field=value etc.)
+      - Book / Copy Availability for Loan Libraries
   0.0.4c :
     name : Site v0.0.4c
     desc : Initial Version
