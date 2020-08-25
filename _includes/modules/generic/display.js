@@ -1173,7 +1173,9 @@ Display = function() {
           _arrayize(names, _string)
             .forEach(name => all.indexOf(name) >= 0 ? _exit(name) : _enter(name));
           return _in(names);
-        }
+        },
+        
+        set: (names, toggle) => _arrayize(names, _string).forEach(name => toggle ? _enter(name) : _exit(name)),
 
       };
 

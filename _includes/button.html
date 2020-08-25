@@ -1,3 +1,7 @@
-<div class="mx-2 mx-xl-4 mb-1 d-flex justify-content-center">
-  <a href="#{{ include.command }}" class="d-flex flex-column flex-lg-row btn btn-{% if include.colour %}{{ include.colour }}{% else %}primary{% endif %} mr-1 mt-1 pl-2"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="{{ include.desc }}">{{ include.icon }}</span>{{ include.name }}</a>
-</div>
+{%- if include.show -%}<div class="d-none show-{{ include.show }}">{%- endif -%}
+<a class="{% if include.icon %}d-flex flex-column flex-lg-row p{% if include.right %}r{% else %}l{% endif %}-2 {% endif %}btn btn-{% if include.colour %}{{ include.colour }}{% else %}primary{% endif %}{% if include.border %} border border-{{ include.border }}{% endif %} waves-effect{% if include.class %} {{ include.class }}{% endif %}" href="{% if include.url %}{{ include.url }}{% elsif include.path %}{{ include.path }}{% if include.query %}{% raw %}{{query}}{% endraw %}{% endif %}{% if include.command %}#{{ include.command }}{% endif %}{% if include.param %}{% raw %}{{{% endraw %}{{ include.param }}{% raw %}}}{% endraw %}{% endif %}{% elsif include.command %}#{{ include.command }}{% endif %}">
+  {%- if include.right -%}<span>{{ include.text }}</span>{%- endif -%}
+  {%- if include.icon -%}<span class="material-icons m{% if include.right %}l{% else %}r{% endif %}-1"{% if include.desc %} data-toggle="tooltip" data-html="true" title="{{ include.desc }}"{% endif %}>{{ include.icon }}</span>{%- endif -%}
+  {%- unless include.right -%}<span>{{ include.text }}</span>{%- endunless -%}
+</a>
+{%- if include.show -%}</div>{%- endif -%}

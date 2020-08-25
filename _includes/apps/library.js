@@ -19,58 +19,26 @@ App = function() {
 	/* <!-- Internal Functions --> */
   var _holder = () => $(".library");
   
-  var _all = () => FN.libraries.all()
-    .then(libraries => _.filter(libraries, library => library && library.state == "READY"))
-    .then(libraries => {
-        var _selector = ಠ_ಠ.Display.template.show({
-              template: "selector",
-              libraries: libraries,
-              container: true,
-              cancel: "/app",
-              query: window.location.search,
-              select_text: "Select",
-              select_url: "#google,library",
-              target: _holder(),
-              clear: true
-            });
-      
-        ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.all);
-      
-        _selector.find("select").on("change.option", e => {
-              var _selected = $(e.target).find("option:selected"),
-                  _value = _selected.val(),
-                  _valid = _value && _value.startsWith("library"),
-                  _button = _selector.find("a[data-role='select']");
-              _button.toggleClass("disabled", !_valid);
-              if (_valid) {
-                var _href = _button.attr("href").split(",");
-                if (_href.length == 2) {
-                  _href[1] = _value;
-                  _button.attr("href", _href.join(","));
-                }
-              } else {
-                _button.attr("href", _button.data("href"));           
-              }
-            });
-    })
-    .catch(e => ಠ_ಠ.Flags.error("Loading Libraries", e))
-    .then(ಠ_ಠ.Main.busy("Loading Libraries", true));
+  var _reset = header => {
+    var _element = _holder(),
+        _button = _element.find(".forward-button");
+    _button.attr("href", _button.data("href") || _button.attr("href"));
+    if (header) _element.find(".back-button").attr("href", "#overview");
+    $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
+  };
   
-  var _overview = element => ಠ_ಠ.Display.template.show(_.extend({
-                template: "details",
-                target: element || _holder(),
-                clear: true
-              }, {
-                count: ರ‿ರ.db.count.books(),
-                tags: ರ‿ರ.db.count.tags()
-              }));
+  var _display = (element, results) => {
+    var _results_element = element.find("#search-results").removeClass("d-none").find(".results");
+    element.find("#library-details")[results ? "addClass" : "removeClass"]("d-none");
+    return _results_element;
+  };
   
   var _book = id => Promise.resolve(ರ‿ರ.db.find.book(id))
     .then(book => book ? _.tap(_.object(book.columns, book.values[0]), book => ಠ_ಠ.Flags.log("BOOK:", book)) : book)
     .then(book => ($("header.navbar form[data-role='search'] input[role='search']").focus(), book))
     .then(book => book ? Promise.resolve(ಠ_ಠ.Display.template.show({
                   template: "item",
-                  target: _holder().find("#search-results .results"),
+                  target: _display(_holder(), book),
                   data: book,
                   clear: true
                 }))
@@ -98,14 +66,21 @@ App = function() {
                       .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, availability[0]), true));
                   }
                 });
+
+             _reset(true);
+      
+            var _button = _holder().find(".forward-button"),
+                _url = _button.data("href") || _button.attr("href");
+            _button.data("href", _url);
+            _button.attr("href", `${_url}.${book.ID}`);
+      
             return book;
           }) : book);
   
   var _search = (terms, element) => {
     var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,
-        _results_element = element.find("#search-results").removeClass("d-none").find(".results");
+        _results_element = _display(element, _results);
     ಠ_ಠ.Flags.log("RESULTS:", _results);
-    element.find("#library-details")[_results ? "addClass" : "removeClass"]("d-none");
     _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
     ಠ_ಠ.Display.template.show(_.extend({
       template: "results",
@@ -116,9 +91,30 @@ App = function() {
       target: _results_element,
       clear: true
     });
+    _reset(true);
   };
   
-  var _library = index => FN.libraries.one(index)
+  var _searcher = e => {
+                e.preventDefault();
+                e.stopPropagation();
+                var _input = $(e.currentTarget).parents("form[data-role='search']").find("input[role='search']"),
+                    _terms = _input.val();
+                _search(_terms, _holder());
+                window.history.pushState(null, null, `#search.${ಠ_ಠ.url.encode(encodeURIComponent(_terms))}`);
+              };
+  
+  var _overview = (element, index) => Promise.resolve(ಠ_ಠ.Display.template.show({
+                template: "details",
+                target: element,
+                details: ಠ_ಠ.Display.doc.get("LIBRARY"),
+                clear: true,
+                query: window.location.search,
+                index: index,
+                results: _.tap(ರ‿ರ.db.recent.all(5), recent => ಠ_ಠ.Flags.log("RECENT:", recent)),
+              })).then(element => element.find("form[data-role='search'] button[type='submit']")
+                .off("click.search").on("click.search", _searcher));
+  
+  var _library = index => FN.libraries.one(ರ‿ರ.index = index)
           .then(library => ರ‿ರ.library = library)
           .then(library => FN.libraries.db(library)
             .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
@@ -127,20 +123,14 @@ App = function() {
               ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
               $("#explore-library .library-name").text(library.name);
             
-              var _element = _holder(),
-                  _form = $("header.navbar form[data-role='search']"),
-                  _input = _form.find("input[role='search']").focus();
+              _overview(_holder(), index);
             
-              _form.find("button[type='submit']").off("click.search").on("click.search", e => {
-                e.preventDefault();
-                e.stopPropagation();
-                var _terms = _input.val();
-                _search(_terms, _element);
-                window.history.pushState(null, null, `#search.${ಠ_ಠ.url.encode(encodeURIComponent(_terms))}`);
-              });
+              $("header.navbar form[data-role='search'] button[type='submit']")
+                .off("click.search").on("click.search", _searcher);
             
-              _overview(_element);
-            
+              ಠ_ಠ.Display.state().set(FN.states.library.manageable, library.meta.claims && library.meta.claims.manage);
+              $("input[role='search']:visible").focus();
+
             }))
             .then(ಠ_ಠ.Main.busy("Opening Library", true));
 	/* <!-- Internal Functions --> */
@@ -179,7 +169,8 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Cache", "Client", "Demo", "Libraries", "Catalog", "Lexer"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Cache", "Client", "Demo", "Libraries", "Catalog", "Lexer"], 
+             module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -204,6 +195,7 @@ App = function() {
         window.Mousetrap.unbind("esc");
         window.Mousetrap.bind("esc", () => $(".collapse.show").removeClass("show"));
       }
+      
     },
 
   };
@@ -230,6 +222,27 @@ App = function() {
         state : ರ‿ರ,
         states : FN.states.all,
         start : FN.setup.routed,
+        instructions: [{
+          match: [
+            /SEARCH/i,
+            /FREE/i
+          ],
+          show: "SEARCH_FREETEXT_INSTRUCTIONS",
+          title: "Free Text Searching ..."
+        }, {
+          match: [
+            /SEARCH/i,
+            /STRUCTURED/i
+          ],
+          show: "SEARCH_STRUCTURED_INSTRUCTIONS",
+          title: "Structured Searching ..."
+        }, {
+          match: [
+            /SEARCH/i
+          ],
+          show: "SEARCH_INSTRUCTIONS",
+          title: "Searching a Library ..."
+        }],
         routes : {
           book : {
             matches : /BOOK/i,
@@ -252,16 +265,13 @@ App = function() {
             length : 1,
             fn : _library,
           },
-          all : {
-            matches : /ALL/i,
-            length : 0,
-            fn : _all,
-          },
           overview : {
             matches : /OVERVIEW/i,
-            state : FN.states.library.loaded,
             length : 0,
-            fn : _overview,
+            fn : () => {
+              _overview(_holder(), ರ‿ರ.index);
+              _reset();
+            },
           },
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */

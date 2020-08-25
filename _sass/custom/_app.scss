@@ -126,3 +126,7 @@
 .border-highlight {
   border-color: $colour-highlight !important;
 }
+
+.blurred {
+  filter: blur(2px);
+}

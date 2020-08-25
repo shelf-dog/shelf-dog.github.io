@@ -156,6 +156,7 @@ App = function() {
                         template: "selector",
                         libraries: libraries,
                         cancel: "/app/settings",
+                        query: window.location.search,
                         select_text: "Select",
                         select_url: "#google,library",
                         target: _holder(),

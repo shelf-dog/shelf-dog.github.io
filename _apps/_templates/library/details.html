@@ -1,26 +1,25 @@
 {% raw %}
-<div class="bg-dark p-2 p-xl-3 mb-2 rounded-lg">
+<div class="bg-dark main p-2 p-xl-3 mb-2 rounded-lg">
   
   <div id="library-details" class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
+
+    <div class="m-2 pb-1 details">{{{details}}}</div>
+    
+    <div class="mx-2 mb-4">
+      <form class="w-100 d-inline-flex flex-row align-items-center" data-role="search">
+        <div class="input-group">
+          <input type="text" class="form-control" role="search" placeholder="Search Text | Title=Something and Authors=Something" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary border border-primary waves-effect" type="submit">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
     
     <!-- DETAILS -->
-    <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark">Details</h5>
+    <h4 class="mt-0 ml-2 mb-2 pb-1">Recent</h4>
     
-    <ul class="list-group list-group-flush mb-3">
-      
-      <!-- ITEM TOTAL -->
-      {{#if this.count}}<li class="list-group-item d-flex justify-content-between align-items-center bg-transparent font-larger-125">
-        <span>Item Count:</span>
-        <span class="badge badge-primary badge-pill">{{this.count}}</span>
-      </li>{{/if}}
-      
-      <!-- TAGS TOTAL -->
-      {{#if this.tags}}<li class="list-group-item d-flex justify-content-between align-items-center bg-transparent font-larger-125">
-        <span>Tag Count:</span>
-        <span class="badge badge-primary badge-light">{{this.tags}}</span>
-      </li>{{/if}}
-      
-    </ul>
+    <div class="results">{{#if results}}{{> results results}}{{/if}}</div>
     
   </div>
   
@@ -34,15 +33,24 @@
     </div>
   
   </div>
-  
-  <div class="d-flex justify-content-between px-2">
+
+  <div class="d-flex justify-content-between px-2 pt-1 loaded-content">
     
-    <!-- BACK BUTTON -->
-    <a class="btn btn-outline-primary mr-2 waves-effect" href="#overview" role="button">Overview</a>
-  
-    <!-- CLOSE BUTTON -->
-    <a class="btn btn-outline-warning ml-2 waves-effect" href="#all" role="button">Close</a>
+    <!-- LEFT BUTTON -->
+    <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
+       href="/app/libraries">
+      <span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
+      <span>Close</span>
+    </a>
     
+    <!-- RIGHT BUTTON -->
+    <div class="show-library-manageable">
+      <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-primary border border-primary waves-effect forward-button" href="/app/manage/{{query}}#google,library.{{this.index}}">
+        <span>Manage</span>
+        <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Manage Libraries">arrow_forward</span>
+      </a>
+    </div>
+  
   </div>
   
 </div>

@@ -9,9 +9,12 @@ States = () => {
   const STATE_CONFIG = "config",
         STATE_LANDING = "landing",
         STATE_LANDING_LIBRARIES = "landing-libaries",
+        STATE_LIBRARIES = "libraries",
+        STATE_LIBRARIES_LOADED = "libraries-loaded",
+        STATE_LIBRARIES_OVERVIEW = "libraries-overview",
         STATE_LIBRARY = "library",
-        STATE_LIBRARY_ALL = "library-all",
         STATE_LIBRARY_LOADED = "library-loaded",
+        STATE_LIBRARY_MANAGEABLE = "library-manageable",
         STATE_MANAGE = "manage",
         STATE_SETTINGS = "settings",
         STATE_SETTINGS_PERSONAL = "settings-personal",
@@ -19,7 +22,8 @@ States = () => {
         STATE_SETTINGS_LIBRARY = "settings-library",
         STATES = [
           STATE_CONFIG, STATE_LANDING, STATE_LANDING_LIBRARIES, 
-          STATE_LIBRARY, STATE_LIBRARY_ALL, STATE_LIBRARY_LOADED,
+          STATE_LIBRARIES, STATE_LIBRARIES_LOADED, STATE_LIBRARIES_OVERVIEW,
+          STATE_LIBRARY, STATE_LIBRARY_LOADED, STATE_LIBRARY_MANAGEABLE,
           STATE_MANAGE, 
           STATE_SETTINGS, STATE_SETTINGS_PERSONAL, STATE_SETTINGS_ALL, STATE_SETTINGS_LIBRARY
         ];
@@ -51,12 +55,18 @@ States = () => {
       libraries : STATE_LANDING_LIBRARIES,
     },
     
+    libraries : {
+      in : STATE_LIBRARIES,
+      loaded : STATE_LIBRARIES_LOADED,
+      overview : STATE_LIBRARIES_OVERVIEW,
+    },
+    
     library : {
       in : STATE_LIBRARY,
-      all : STATE_LIBRARY_ALL,
       loaded : STATE_LIBRARY_LOADED,
+      manageable : STATE_LIBRARY_MANAGEABLE,
       specific :[
-        STATE_LIBRARY_ALL, STATE_LIBRARY_LOADED
+        STATE_LIBRARY_LOADED
       ],
     },
     

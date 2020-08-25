@@ -1,17 +1,17 @@
-#################################################################################
-#                                                                               #
-#   _//      _//_// _//   _///////          _/       _///////    _//      _//   #
-#   _//      _//_/    _// _//    _//       _/ //     _//    _//   _//    _//    #
-#   _//      _//_/     _//_//    _//      _/  _//    _//    _//    _// _//      #
-#   _//      _//_/// _/   _/ _//         _//   _//   _/ _//          _//        #
-#   _//      _//_/     _//_//  _//      _////// _//  _//  _//        _//        #
-#   _//      _//_/      _/_//    _//   _//       _// _//    _//      _//        #
-#   _////////_//_//// _// _//      _//_//         _//_//      _//    _//        #
-#                                                                               #
-#################################################################################
+################################################################################################################
+#                                                                                                              #
+#   ooooo        ooooo oooooooooo.  ooooooooo.         .o.       ooooooooo.   ooooo oooooooooooo  .oooooo..o   #
+#   `888'        `888' `888'   `Y8b `888   `Y88.      .888.      `888   `Y88. `888' `888'     `8 d8P'    `Y8   #
+#    888          888   888     888  888   .d88'     .8"888.      888   .d88'  888   888         Y88bo.        #
+#    888          888   888oooo888'  888ooo88P'     .8' `888.     888ooo88P'   888   888oooo8     `"Y8888o.    #
+#    888          888   888    `88b  888`88b.      .88ooo8888.    888`88b.     888   888    "         `"Y88b   #
+#    888       o  888   888    .88P  888  `88b.   .8'     `888.   888  `88b.   888   888       o oo     .d8P   #
+#   o888ooooood8 o888o o888bood8P'  o888o  o888o o88o     o8888o o888o  o888o o888o o888ooooood8 8""88888P'    #
+#                                                                                                              #
+################################################################################################################
 
-name: Library
-link: /app/library/
+name: Libraries
+link: /app/libraries/
 css:
   primary:
   secondary:
@@ -93,24 +93,14 @@ scripts:
 templates:
   - loader
   - shared/selector
-  - library/details
-  - library/results
-  - library/empty
-  - library/item
-  - library/placeholder
-  - library/cover
-  - library/value
-  - library/availability
+  - libraries/overview
 docs:
   - shared/PUBLIC
   - shared/FEATURES
   - shared/INSTRUCTIONS
   - shared/TUTORIALS
-  - library/README
-  - library/LIBRARY
-  - library/instructions/SEARCH_INSTRUCTIONS
-  - library/instructions/SEARCH_FREETEXT_INSTRUCTIONS
-  - library/instructions/SEARCH_STRUCTURED_INSTRUCTIONS
+  - libraries/README
+  - libraries/LIBRARIES
 scopes:
   google:
     - scope: email

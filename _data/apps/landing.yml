@@ -80,10 +80,10 @@ templates:
   - landing/libraries
   - landing/library
 docs:
-  - landing/PUBLIC
-  - landing/FEATURES
-  - landing/INSTRUCTIONS
-  - landing/TUTORIALS
+  - shared/PUBLIC
+  - shared/FEATURES
+  - shared/INSTRUCTIONS
+  - shared/TUTORIALS
   - landing/README
 scopes:
   google:

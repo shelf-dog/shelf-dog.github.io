@@ -99,11 +99,12 @@ templates:
   - settings/personal
   - settings/settings
 docs:
-  - settings/PUBLIC
-  - settings/FEATURES
-  - settings/INSTRUCTIONS
-  - settings/TUTORIALS
+  - shared/PUBLIC
+  - shared/FEATURES
+  - shared/INSTRUCTIONS
+  - shared/TUTORIALS
   - settings/README
+  - settings/SETTINGS
 scopes:
   google:
     - scope: email

@@ -252,13 +252,13 @@ Catalog = (options, factory) => {
           "'": "''",
         }),
     
-    select : (identifier_types, custom_names) => ["SELECT id ID, title Title,",
+    select : (identifier_types, custom_names, extras) => ["SELECT id ID, title Title,",
         "(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors,",
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers, identifier_types) : "",
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom, null, true, custom_names) : "",
         "(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags",
-        "FROM books"],
+        `(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags${extras ? "," : ""}`]
+    .concat(extras ? _.isString(extras) ? [extras] : extras : []).concat(["FROM books"]),
   
     condition : (field, comparator, value, type, array) => {
       value = type == "text" ? _search.safe(value) : value;
@@ -310,8 +310,23 @@ Catalog = (options, factory) => {
     },
     
   };
-  /* <!-- Serch Functions --> */
+  /* <!-- Search Functions --> */
       
+  /* <!-- Dated Functions --> */
+  var _dated = {
+    
+    recent : (limit, since, queries, date_column) => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
+          if (value.public && value.multiple) memo.push(_name(key, value));
+          return memo;
+        }, []) : []), [date_column], _data(_run(_.compact(queries.concat([
+          since ? `WHERE "${date_column}" >= ${since.format ? since.format("YYYY-MM-DD HH:mm:ss") : since}` : "",
+          `ORDER BY "${date_column}" DESC`,
+          `LIMIT ${limit || 10}`
+        ])).join("\n")))),
+    
+  };
+  /* <!-- Dated Functions --> */
+  
   /* <!-- Query Functions --> */
   var _queries = {
     
@@ -364,6 +379,20 @@ Catalog = (options, factory) => {
         `FROM books WHERE ID = ${id}`
       ]).join("\n")))),
       
+    },
+    
+    recent : {
+      
+      added : (limit, since) => _dated.recent(limit, since, _search.select(), "timestamp"),
+      
+      modified : (limit, since) => _dated.recent(limit, since, _search.select(), "last_modified"),
+      
+      all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT * FROM ("]
+        .concat(_search.select(null, null, "last_modified AS 'Added / Updated'"))
+        .concat(["UNION ALL"])
+        .concat(_search.select(null, null, "timestamp AS 'Added / Updated'"))
+        .concat([")"]), "Added / Updated"),
+
     },
     
   };

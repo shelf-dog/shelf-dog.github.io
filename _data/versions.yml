@@ -1,4 +1,12 @@
 site :
+  0.0.4i :
+    name : Site v0.0.4i
+    desc : Initial Version
+    numeric : 0.0.4.9
+    type:
+      - alpha
+    changes :
+      - Updated Library Opening Flow
   0.0.4h :
     name : Site v0.0.4h
     desc : Initial Version

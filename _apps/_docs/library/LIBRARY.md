@@ -1,5 +1,1 @@
-You can choose to explore any __libraries__ to which you have access!
-
-* * *
-
-[Libraries](#all){:.btn .btn-outline-light .ml-2 .waves-effect}
+You can see the most __recent additions__ to the library below. You can also search the library using the search boxes above and below. You can use [free text](#instructions.search.free) or [structured](#instructions.search.structured) queries. 

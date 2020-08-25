@@ -1,0 +1,34 @@
+<div class="d-flex justify-content-between px-2{% if include.class %} {{ include.class }}{% endif %}">
+    
+  <!-- LEFT BUTTON -->
+  {%- if include.left_text -%}{% include button.html 
+      class=include.left_class
+      colour=include.left_colour
+      border=include.left_border
+      icon=include.left_icon
+      text=include.left_text
+      command=include.left_command
+      url=include.left_url
+      path=include.left_path
+      query=include.left_query
+      param=include.left_param
+      desc=include.left_desc
+      show=include.left_show %}{%- endif -%}
+  
+  <!-- RIGHT BUTTON -->
+  {%- if include.right_text -%}{% include button.html 
+      class=include.right_class
+      colour=include.right_colour
+      border=include.right_border
+      icon=include.right_icon
+      text=include.right_text
+      command=include.right_command
+      url=include.right_url
+      path=include.right_path
+      query=include.right_query
+      param=include.right_param
+      desc=include.right_desc
+      show=include.right_show
+      right=true %}{%- endif -%}
+    
+</div>

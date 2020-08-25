@@ -110,3 +110,11 @@ $opacities: ("10": 0.1, "25": 0.25, "40": 0.40, "50": 0.5, "60": 0.6, "70": 0.7,
   border-left-style: solid;
 }
 // -- Titles and Content -- //
+
+// -- Main -- //
+.main {
+  border-top-color: $colour-highlight;
+  border-top-width: 4px;
+  border-top-style: solid;
+}
+// -- Main -- //

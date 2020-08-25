@@ -1,5 +1,5 @@
-<div id="{{ site.app.content }}" class="{% if include.large %}mx-2 mx-xl-4{% else %}container{% endif %}{% if include.class%} {{ include.class }}{% endif %}">
-  <div{% unless include.simple %} class="bg-page rounded-sm p-2"{% endunless %}>
-    {{ content }}
+<div id="{% if include.id %}{{ include.id }}{% else %}{{ site.app.content }}{% endif %}" class="{% if include.large %}mx-2 mx-xl-4{% else %}container{% endif %}{% if include.class%} {{ include.class }}{% endif %}"{% if include.style %} style="{{ include.style }}"{% endif %}>
+  <div{% unless include.simple %} class="bg-page rounded-sm main p-2 h-100"{% endunless %}>
+    <div class="h-100 d-flex flex-column justify-content-between{% if include.loaded %} loaded-content{% endif %}">{{ content }}</div>
   </div>
 </div>
