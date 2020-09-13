@@ -224,7 +224,7 @@ Handlebars = (options, factory) => {
           variable !== null &&
           !(variable.constructor === Object && Object.keys(variable).length === 0) &&
           !(variable.constructor === Array && variable.length === 0) && 
-          !((typeof variable === "string" || variable instanceof String) && variable == "")) {
+          !((typeof variable === "string" || variable instanceof String) && variable === "")) {
           return options.fn ? options.fn(this) : true;
         } else {
           return options.inverse ? options.inverse(this) : false;

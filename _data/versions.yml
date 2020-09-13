@@ -1,12 +1,14 @@
 site :
-  0.0.4i :
-    name : Site v0.0.4i
+  0.0.4j :
+    name : Site v0.0.4j
     desc : Initial Version
-    numeric : 0.0.4.9
+    numeric : 0.0.4.10
     type:
       - alpha
     changes :
       - Updated Library Opening Flow
+      - Updated WASM File Handling
+      - Updated Item selection from search list
   0.0.4h :
     name : Site v0.0.4h
     desc : Initial Version

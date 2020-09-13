@@ -77,16 +77,28 @@ App = function() {
             return book;
           }) : book);
   
+  var _hookup = element => {
+    var _query = "[data-action='click'][data-href]:visible";
+    element.find(_query).off("dblclick.action").on("dblclick.action", e => {
+      var _target = $(e.currentTarget);
+      if (!_target.is("span")) {
+        _target = _target.is(_query) ? _target : _target.parents(_query);
+        window.location.hash = _target.data("href"); 
+      }
+    });
+    return element;
+  };
+  
   var _search = (terms, element) => {
     var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,
         _results_element = _display(element, _results);
     ಠ_ಠ.Flags.log("RESULTS:", _results);
     _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
-    ಠ_ಠ.Display.template.show(_.extend({
+    _hookup(ಠ_ಠ.Display.template.show(_.extend({
       template: "results",
       target: _results_element,
       clear: true
-    }, _results)) : ಠ_ಠ.Display.template.show({
+    }, _results))) : ಠ_ಠ.Display.template.show({
       template: "empty",
       target: _results_element,
       clear: true
@@ -95,10 +107,18 @@ App = function() {
   };
   
   var _searcher = e => {
+                /* <!-- Stop any default form actions (e.g. Post) --> */
                 e.preventDefault();
                 e.stopPropagation();
+    
+                /* <!-- Get the search terms from the triggering element (search up the tree) --> */
                 var _input = $(e.currentTarget).parents("form[data-role='search']").find("input[role='search']"),
                     _terms = _input.val();
+    
+                /* <!-- Not routed, so manually tidy up! --> */
+                ಠ_ಠ.Display.tidy();
+    
+                /* <!-- Perform the search and push into the history state (to allow for blended back/forward navigation) --> */
                 _search(_terms, _holder());
                 window.history.pushState(null, null, `#search.${ಠ_ಠ.url.encode(encodeURIComponent(_terms))}`);
               };
@@ -111,7 +131,7 @@ App = function() {
                 query: window.location.search,
                 index: index,
                 results: _.tap(ರ‿ರ.db.recent.all(5), recent => ಠ_ಠ.Flags.log("RECENT:", recent)),
-              })).then(element => element.find("form[data-role='search'] button[type='submit']")
+              })).then(element => _hookup(element).find("form[data-role='search'] button[type='submit']")
                 .off("click.search").on("click.search", _searcher));
   
   var _library = index => FN.libraries.one(ರ‿ರ.index = index)
@@ -248,12 +268,14 @@ App = function() {
             matches : /BOOK/i,
             state : FN.states.library.loaded,
             length : 1,
+            tidy : true,
             fn : _book,
           },
           search : {
             matches : /SEARCH/i,
             state : FN.states.library.loaded,
             length : 1,
+            tidy : true,
             fn : command => {
               var _terms = decodeURIComponent(ಱ.url.decode(command));
               $("header.navbar form[data-role='search'] input[role='search']").val(_terms);
@@ -263,11 +285,13 @@ App = function() {
           library : {
             matches : /LIBRARY/i,
             length : 1,
+            tidy : true,
             fn : _library,
           },
           overview : {
             matches : /OVERVIEW/i,
             length : 0,
+            tidy : true,
             fn : () => {
               _overview(_holder(), ರ‿ರ.index);
               _reset();

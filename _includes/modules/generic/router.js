@@ -153,6 +153,9 @@ Router = function() {
         /* <!-- Clean up the state (before command has run) if required! --> */
         if (route.reset) _clean(false);
         
+        /* <!-- Tidy up visuals if required! --> */
+        if (route.tidy) ಠ_ಠ.Display.tidy();
+        
         var l_command = STRIP(command, route.__length),
           l_options = PREPARE(route.options, l_command),
           l_result = route.fn(_.isArray(l_command) ? 

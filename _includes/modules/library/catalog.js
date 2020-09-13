@@ -7,12 +7,10 @@ Catalog = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-    sql_config: {
-      locateFile: filename => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.3.0/dist/${filename}`
-    }
+    sql_config: {}
   }, FN = {};
   /* <!-- Internal Constants --> */
-
+  
   /* <!-- Internal Options --> */
   options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Options --> */
@@ -399,14 +397,20 @@ Catalog = (options, factory) => {
   /* <!-- Query Functions --> */
   
   /* <!-- Initial Functions --> */
-  var _load = data => initSqlJs(options.sql_config)
-    .then(sql => ರ‿ರ.db = new sql.Database(data))
-    .then(_interrogate)
-    .then(() => _queries);
+  var _files = () => {
+    var files = Array.from(document.querySelectorAll("[data-filename]")),
+        names = files.map(element => `${element.dataset.filename}`),
+        contents = files.map(file => file.textContent);
+    options.sql_config.locateFile = file => contents[names.indexOf(file)];
+  };
+  _files();
   /* <!-- Initial Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.load = _load;
+  FN.load = data => initSqlJs(options.sql_config)
+    .then(sql => ರ‿ರ.db = new sql.Database(data))
+    .then(_interrogate)
+    .then(() => _queries);
   /* <!-- Public Functions --> */
   
   return FN;

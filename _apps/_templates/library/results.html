@@ -1,13 +1,13 @@
 {% raw %}
-<table class="table text-light table-responsive">
+<table class="table text-light table-responsive table-hover">
   <thead>
     <tr>
       {{#each columns}}<th scope="col"{{#is @index 0}} class="bg-dark text-center"{{/is}}>{{this}}</th>{{/each}}
     </tr>
   </thead>
   <tbody>
-    {{#each values}}<tr>
-      {{#each this}}{{#is @index 0}}<th scope="row" class="align-middle bg-dark text-center"><a href="#book.{{this}}" class="bg-primary px-1 py-2 rounded text-decoration-none text-white">{{this}}</a></th>{{else}}<td class="align-middle">{{> value}}</td>{{/is}}{{/each}}
+    {{#each values}}<tr data-id="{{this.[0]}}" data-href="#book.{{this.[0]}}" data-action="click">
+      {{#each this}}{{#is @index 0}}<th scope="row" class="align-middle bg-dark text-center"><a href="#book.{{this}}" class="bg-primary px-1 py-2 rounded text-decoration-none text-white d-flex justify-content-center"><span style="min-width: 2em;">{{this}}</span></a></th>{{else}}<td class="align-middle">{{> value}}</td>{{/is}}{{/each}}
     </tr>{{/each}}
   </tbody>
 </table>
