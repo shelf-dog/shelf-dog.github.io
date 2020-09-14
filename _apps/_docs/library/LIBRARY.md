@@ -1,1 +1,1 @@
-You can see the most __recent additions__ to the library below. You can also search the library using the search boxes above and below. You can use [free text](#instructions.search.free) or [structured](#instructions.search.structured) queries. 
+The most __recent additions__ to the library are shown below. You can also __search__ the library using the search boxes above and below. [Free text](#instructions.search.free){:.help-link} or [structured](#instructions.search.structured){:.help-link} queries are both supported, helping you find exactly what you need!

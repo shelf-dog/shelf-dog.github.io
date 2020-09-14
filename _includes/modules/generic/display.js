@@ -328,7 +328,8 @@ Display = function() {
           .replace(/\{\{+\s*content\s*}}/gi, content)
           .replace(/\{\{+\s*doc\s*}}/gi, options && options.name ? options.name : "name")
           .replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
-          .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close");
+          .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close")
+          .replace(/\{\{+\s*class\s*}}/gi, options && options.class ? ` ${options.class}` : "");
       },
 
       /* <!--

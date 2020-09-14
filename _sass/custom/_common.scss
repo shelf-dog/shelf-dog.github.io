@@ -38,21 +38,17 @@ a {text-decoration: none; color: inherit;}
 // -- Highlight Elements -- //
 
 // -- Scrollbars -- //
-::-webkit-scrollbar {
-    width: 0.5em;
-}
-
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.8);
+    background: rgba(100, 100, 100, 0.9);
 }
 
 ::-webkit-scrollbar-corner,
 ::-webkit-scrollbar-thumb:window-inactive {
-    background: rgba(100, 100, 100, 0.4);
+    background: rgba(100, 100, 100, 0.8);
 }
 // -- Scrollbars -- //
 
@@ -117,4 +113,8 @@ $opacities: ("10": 0.1, "25": 0.25, "40": 0.40, "50": 0.5, "60": 0.6, "70": 0.7,
   border-top-width: 4px;
   border-top-style: solid;
 }
-// -- Main -- //
+// -- Main -- //#
+
+a.help-link:hover {
+  color: $colour-highlight;
+}

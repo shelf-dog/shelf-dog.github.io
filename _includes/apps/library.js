@@ -7,7 +7,8 @@ App = function() {
 	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
 	/* <!-- Internal Constants --> */
-  const FN = {};
+  const FN = {},
+        DEFAULT_ROUTE = "library.0";
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -28,8 +29,13 @@ App = function() {
   };
   
   var _display = (element, results) => {
-    var _results_element = element.find("#search-results").removeClass("d-none").find(".results");
+    var _results_element = element.find("#search-results").removeClass("d-none"),
+        _header_element = _results_element.find(".header");
+    _results_element = _results_element.find(".results");
     element.find("#library-details")[results ? "addClass" : "removeClass"]("d-none");
+    if (results) _.isArray(results.values) && results.values.length > 0 ?
+        _header_element.removeClass("d-none").text(`${results.values.length} Result${results.values.length > 1 ? "s" : ""}`) :
+        _header_element.addClass("d-none").text("Results");
     return _results_element;
   };
   
@@ -130,7 +136,9 @@ App = function() {
                 clear: true,
                 query: window.location.search,
                 index: index,
-                results: _.tap(ರ‿ರ.db.recent.all(5), recent => ಠ_ಠ.Flags.log("RECENT:", recent)),
+                results: _.tap(ರ‿ರ.db.recent.all(!ರ‿ರ.library.meta || ರ‿ರ.library.meta.recent === undefined ? 
+                                                 5 : ರ‿ರ.library.meta.recent),
+                                recent => ಠ_ಠ.Flags.log("RECENT:", recent)),
               })).then(element => _hookup(element).find("form[data-role='search'] button[type='submit']")
                 .off("click.search").on("click.search", _searcher));
   
@@ -216,6 +224,9 @@ App = function() {
         window.Mousetrap.bind("esc", () => $(".collapse.show").removeClass("show"));
       }
       
+      /* <!-- Default Route used in case we arrived here directly (instead of from another page) --> */
+      if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Display.state().in(FN.states.library.working)) window.location.hash = `#${DEFAULT_ROUTE}`;
+      
     },
 
   };
@@ -242,6 +253,7 @@ App = function() {
         state : ರ‿ರ,
         states : FN.states.all,
         start : FN.setup.routed,
+        center : true,
         instructions: [{
           match: [
             /SEARCH/i,
@@ -267,6 +279,7 @@ App = function() {
           book : {
             matches : /BOOK/i,
             state : FN.states.library.loaded,
+            trigger : FN.states.library.working,
             length : 1,
             tidy : true,
             fn : _book,
@@ -274,6 +287,7 @@ App = function() {
           search : {
             matches : /SEARCH/i,
             state : FN.states.library.loaded,
+            trigger : FN.states.library.working,
             length : 1,
             tidy : true,
             fn : command => {
@@ -284,12 +298,14 @@ App = function() {
           },
           library : {
             matches : /LIBRARY/i,
+            trigger : FN.states.library.working,
             length : 1,
             tidy : true,
             fn : _library,
           },
           overview : {
             matches : /OVERVIEW/i,
+            trigger : FN.states.library.working,
             length : 0,
             tidy : true,
             fn : () => {

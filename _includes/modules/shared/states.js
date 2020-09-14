@@ -13,6 +13,7 @@ States = () => {
         STATE_LIBRARIES_LOADED = "libraries-loaded",
         STATE_LIBRARIES_OVERVIEW = "libraries-overview",
         STATE_LIBRARY = "library",
+        STATE_LIBRARY_WORKING = "library-working",
         STATE_LIBRARY_LOADED = "library-loaded",
         STATE_LIBRARY_MANAGEABLE = "library-manageable",
         STATE_MANAGE = "manage",
@@ -23,7 +24,7 @@ States = () => {
         STATES = [
           STATE_CONFIG, STATE_LANDING, STATE_LANDING_LIBRARIES, 
           STATE_LIBRARIES, STATE_LIBRARIES_LOADED, STATE_LIBRARIES_OVERVIEW,
-          STATE_LIBRARY, STATE_LIBRARY_LOADED, STATE_LIBRARY_MANAGEABLE,
+          STATE_LIBRARY, STATE_LIBRARY_WORKING, STATE_LIBRARY_LOADED, STATE_LIBRARY_MANAGEABLE,
           STATE_MANAGE, 
           STATE_SETTINGS, STATE_SETTINGS_PERSONAL, STATE_SETTINGS_ALL, STATE_SETTINGS_LIBRARY
         ];
@@ -63,6 +64,7 @@ States = () => {
     
     library : {
       in : STATE_LIBRARY,
+      working : STATE_LIBRARY_WORKING,
       loaded : STATE_LIBRARY_LOADED,
       manageable : STATE_LIBRARY_MANAGEABLE,
       specific :[

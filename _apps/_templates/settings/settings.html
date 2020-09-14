@@ -75,6 +75,13 @@
   
   </div>
   
+  <!-- RECENT ITEMS -->
+  <div class="form-group" data-output-field="recent_items">
+    <label for="settings_recent_items">Recent Items</label>
+    <input type="number" class="form-control" id="settings_recent_items" aria-describedby="settings_recent_items_HELP" data-output-name="Value" data-output-always="true"{{#exists recent_items}} value="{{ recent_items }}"{{/exists}}>
+    <small id="settings_recent_items_HELP" class="form-text text-muted">Number of recently added / updated items to display for the library.</small>
+  </div>
+  
   <!-- LIBRARY DATABASE FILE -->
   <div class="form-group" data-output-field="database">
     <label for="settings_database">Database</label>

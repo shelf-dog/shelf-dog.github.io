@@ -7,7 +7,8 @@ Catalog = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-    sql_config: {}
+    sql_config: {},
+    updated: "Updated"
   }, FN = {};
   /* <!-- Internal Constants --> */
   
@@ -386,10 +387,10 @@ Catalog = (options, factory) => {
       modified : (limit, since) => _dated.recent(limit, since, _search.select(), "last_modified"),
       
       all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT * FROM ("]
-        .concat(_search.select(null, null, "last_modified AS 'Added / Updated'"))
+        .concat(_search.select(null, null, `last_modified AS '${options.updated}'`))
         .concat(["UNION ALL"])
-        .concat(_search.select(null, null, "timestamp AS 'Added / Updated'"))
-        .concat([")"]), "Added / Updated"),
+        .concat(_search.select(null, null, `timestamp AS '${options.updated}'`))
+        .concat([")"]), options.updated),
 
     },
     

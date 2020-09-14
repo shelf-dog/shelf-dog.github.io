@@ -1,4 +1,12 @@
 site :
+  0.0.4k :
+    name : Site v0.0.4k
+    desc : Initial Version
+    numeric : 0.0.4.11
+    type:
+      - alpha
+    changes :
+      - Visual Tweaks and 'Recent Items' settings addition
   0.0.4j :
     name : Site v0.0.4j
     desc : Initial Version
