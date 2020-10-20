@@ -78,6 +78,7 @@ modules:
   - generic/router
   - shared/states
   - shared/events
+  - shared/common
   - shared/client
   - shared/cache
   - shared/demo
@@ -94,6 +95,9 @@ scripts:
 templates:
   - loader
   - shared/selector
+  - generic/confirm
+  - generic/choose
+  - generic/text
   - library/details
   - library/results
   - library/empty
@@ -112,6 +116,14 @@ docs:
   - library/instructions/SEARCH_INSTRUCTIONS
   - library/instructions/SEARCH_FREETEXT_INSTRUCTIONS
   - library/instructions/SEARCH_STRUCTURED_INSTRUCTIONS
+  - dialogs/CONFIRM_RETURN
+  - dialogs/CHOOSE_RETURN
+  - dialogs/CHOOSE_LOAN
+  - dialogs/CONFIRM_LOAN
+  - titles/TITLE_CONFIRM_RETURN
+  - titles/TITLE_CHOOSE_RETURN
+  - titles/TITLE_CONFIRM_LOAN
+  - titles/TITLE_CHOOSE_LOAN
 scopes:
   google:
     - scope: email

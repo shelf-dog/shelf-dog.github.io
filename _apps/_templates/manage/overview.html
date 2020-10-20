@@ -1,0 +1,23 @@
+{% raw %}
+
+<!-- DETAILS -->
+{{#present details}}{{> details}}{{/present}}
+
+<div id="library-details" class="bg-dark main p-2 p-xl-3 mb-2 rounded-lg">
+  
+  <!-- MANAGEMENT DESCRIPTION -->
+  {{#if description}}{{{description}}}{{/if}}
+
+  <div class="d-flex justify-content-between px-2 pt-1 pt-xl-2 loaded-content">
+    
+    <!-- LEFT BUTTON -->
+    <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
+       href="/app/library/{{query}}{{#present index}}#library.{{index}}{{/present}}">
+      <span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
+      <span>Close</span>
+    </a>
+    
+  </div>
+  
+</div>
+{% endraw %}

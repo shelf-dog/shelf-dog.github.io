@@ -200,6 +200,8 @@ Catalog = (options, factory) => {
     factory.Flags.log("FIELDS:", ರ‿ರ.fields);
     
   };
+  
+  var _custom = name => _.find(ರ‿ರ.custom, (custom, key) => name && (name.equals(key, true) || name.equals(custom.name, true)));
   /* <!-- Internal Functions --> */
   
   /* <!-- Builder Functions --> */
@@ -213,7 +215,7 @@ Catalog = (options, factory) => {
             memo.push(`(SELECT ${value.multiple ? `GROUP_CONCAT(value, '${separator || "\n"}')` : "value"} FROM ${value.table} WHERE ${value.table}.id IN (SELECT value from ${value.link_table} WHERE book = books.id)) "${_name(key, value)}",`);
           } else if (value.table) {
             memo.push(`(SELECT value FROM ${value.table} WHERE book = books.id) "${_name(key, value)}",`);
-          }  
+          }
         }
         return memo;
       }, []).join("\n"),
@@ -239,10 +241,29 @@ Catalog = (options, factory) => {
         return memo;
       }, []).join(""),
       
-    },
+    }
     
   };
   /* <!-- Builder Functions --> */
+  
+  /* <!-- Find Functions --> */
+  var _find = where => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
+        if (value.multiple) memo.push(_name(key, value));
+        return memo;
+      }, []) : []), ["Published", "Modified"], _data(_run(_.compact([
+        "SELECT id ID, title Title, pubdate Published, path Path, has_Cover Cover, last_modified Modified,",
+        "(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors,",
+        "(SELECT GROUP_CONCAT(name, '\n') FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher,",
+        ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers) : "",
+        "(SELECT rating FROM ratings WHERE ratings.id IN (SELECT rating from books_ratings_link WHERE book = books.id)) Rating,",
+        "(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
+        "(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags,",
+        ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom) : "",
+        "(SELECT GROUP_CONCAT(format, '\n') FROM data WHERE data.book = books.id) Formats",
+        "FROM books",
+        where
+      ]).join("\n"))));
+  /* <!-- Find Functions --> */
   
   /* <!-- Search Functions --> */
   var _search = {
@@ -337,11 +358,17 @@ Catalog = (options, factory) => {
       
       comments : () => _scalar(_run("SELECT count(*) FROM comments;")),
       
+      formats : () => _scalar(_run("SELECT count(distinct(format)) from data;")),
+      
       publishers : () => _scalar(_run("SELECT count(*) FROM publishers;")),
+      
+      ratings : () => _scalar(_run("SELECT count(*) FROM books_ratings_link;")),
       
       series : () => _scalar(_run("SELECT count(*) FROM series;")),
       
       tags : () => _scalar(_run("SELECT count(*) FROM tags;")),
+      
+      custom : name => _scalar(_run(`SELECT count(distinct(value)) FROM ${_custom(name).table};`)),
       
     },
     
@@ -362,21 +389,9 @@ Catalog = (options, factory) => {
     
     find : {
       
-      book : id => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
-        if (value.multiple) memo.push(_name(key, value));
-        return memo;
-      }, []) : []), ["Published", "Modified"], _data(_run(_.compact([
-        "SELECT id ID, title Title, pubdate Published, path Path, has_Cover Cover, last_modified Modified,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher,",
-        ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers) : "",
-        "(SELECT rating FROM ratings WHERE ratings.id IN (SELECT rating from books_ratings_link WHERE book = books.id)) Rating,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags,",
-        ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom) : "",
-        "(SELECT GROUP_CONCAT(format, '\n') FROM data WHERE data.book = books.id) Formats",
-        `FROM books WHERE ID = ${id}`
-      ]).join("\n")))),
+      book : id => _find(`WHERE ID = ${id}`),
+      
+      copy : (id, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} WHERE value = '${id}')`),
       
     },
     

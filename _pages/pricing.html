@@ -1,0 +1,88 @@
+---
+layout: page
+permalink: /pricing
+title: Pricing
+modules:
+  - generic/controller
+  - generic/service
+  - generic/flags
+  - generic/display
+  - page
+  - pricing
+  - shared/subscribe
+helpers:
+  - strings
+  - handlebars
+  - backgrounds
+scripts: 
+  - extends/math
+imports:
+  - name: underscore
+    load: first
+  - name: jquery_slim
+    load: first
+  - name: popper
+    load: first
+  - name: bootstrap-js
+    load: last
+  - name: urlparser
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: handlebars
+    load: last
+  - name: uuid_new
+    load: last
+  - name: fetchjsonp
+    load: last
+  - name: stripe
+    load: last
+templates:
+  - loader
+  - pricing/subscribe
+docs:
+  - pricing/SUBSCRIBE_GENERAL
+  - pricing/SUBSCRIBE_PERSONAL
+  - pricing/SUBSCRIBE_ORGANISATION
+extra-css:
+  primary:
+    - custom/mixins/gradients
+    - custom/mixins/transitions
+    - custom/mixins/transforms
+    - custom/mixins/animations
+    - custom/pricing
+    - custom/ribbons
+    - custom/icons
+  secondary:
+    - bootstrap/list-group
+    - bootstrap/input-group
+    - bootstrap/forms
+    - custom/loader
+nav: true
+---
+<div class="container-fluid my-3">
+  <div class="row">
+    <div class="col-12">
+      {% include section.html content="_content/SUBSCRIPTION" %}
+    </div>
+  </div>
+  <div class="row no-gutters my-2">
+    <div class="col-12">
+      <div class="card-deck tiers">
+        {%- for value in site.data.tiers -%}
+          {%- assign id = value[0] -%}
+          {%- assign tier = value[1] -%}
+          {%- include tier.html id=id tier=tier class="border border-light mb-3 mb-lg-0" -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      {% include section.html content="_content/CANCELLATION" title="Subscription Cancellations" %}
+      {% include section.html content="_content/HARDSHIP" title="Hardship" %}
+    </div>
+  </div>
+</div>

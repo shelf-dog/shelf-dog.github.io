@@ -1,0 +1,119 @@
+################################################################################################################
+#                                                                                                              #
+#         ,gg,                                                                                                 #
+#        i8""8i               ,dPYb,                                         ,dPYb,                      8I    #
+#        `8,,8'               IP'`Yb                                         IP'`Yb                      8I    #
+#         `88'                I8  8I                                    gg   I8  8I                      8I    #
+#         dP"8,               I8  8'                                    ""   I8  8'                      8I    #
+#        dP' `8a  gg      gg  I8 dP       ,g,       ,gggg,   ,gggggg,   gg   I8 dP       ,ggg,     ,gggg,8I    #
+#       dP'   `Yb I8      8I  I8dP   88gg,8'8,     dP"  "Yb  dP""""8I   88   I8dP   88ggi8" "8i   dP"  "Y8I    #
+#   _ ,dP'     I8 I8,    ,8I  I8P    8I ,8'  Yb   i8'       ,8'    8I   88   I8P    8I  I8, ,8I  i8'    ,8I    #
+#   a8P"Y88888P" 8P'"Y88P"`Y88P'"Y88P"'P' "YY8P8PP""Y8888PP8P      `Y88P""Y88P'"Y88P"' 888P"Y888P"Y8888P"`Y8   #
+#   "888,,____,dP,d8b,  ,d8b,,d8b,  ,8I,8'_   8) ,d8,_    _,dP     Y8,_,88,_,d8b,  ,8I  `YbadP' ,d8,   ,d8b,   #
+#                                                                                                              #
+################################################################################################################
+link: /subscribed/
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: day
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: mousetrap
+    load: last
+  - name: fetchjsonp
+    load: last
+helpers:
+  - network
+  - strings
+  - google/sheets/notation
+  - google/sheets/grid
+  - google/sheets/format
+  - google/sheets/properties
+  - google/sheets/metadata
+  - google/sheets/sorts
+  - google
+  - colours
+  - css
+  - handlebars
+  - backgrounds
+modules:
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
+  - shared/client
+  - shared/subscribe
+  - shared/states
+  - subscribed/create
+scripts: 
+  - extends/regex
+  - extends/array
+  - extends/math
+  - extends/promises
+css:
+  primary:
+    - custom/home
+templates:
+  - generic/text
+  - loader
+  - subscribed/subscribed
+  - subscribed/subscriptions
+  - subscribed/subscription
+  - subscribed/link
+  - subscribed/upgrade
+docs:
+  - subscribed/PUBLIC
+  - subscribed/README
+  - subscribed/INSTRUCTIONS
+  - subscribed/MANAGE
+  - subscribed/titles/UPGRADE_CLIENT
+  - subscribed/titles/VERSION_CLIENT
+  - subscribed/titles/HELP_CLIENT
+  - subscribed/titles/CANCEL_CLIENT
+  - subscribed/titles/CREATE_CLIENT
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: To create the Loan Spreadsheet in your Google Drive
+      request: lazy
+    - scope: https://www.googleapis.com/auth/script.projects
+      name: Create and update Google Apps Script projects
+      reason: In order to create an end point for your service.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/script.deployments
+      name: Create and update Google Apps Script deployments
+      reason: In order to configure an end point for your service.
+      request: lazy
+keys:
+  google:
+      oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com

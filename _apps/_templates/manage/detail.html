@@ -1,0 +1,37 @@
+{% raw %}
+<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library mb-2 mb-xl-3">
+  {{~#if loading~}}
+  
+  <div class="card-header d-flex align-items-center">
+    <span>{{either name 'Loading …'}}</span>
+    <div class="spinner-border ml-auto text-highlight o-25" role="status" aria-hidden="true"><span class="sr-only">Loading …</span></div>
+  </div>
+  
+  {{~else~}}
+  
+  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-body"><span class="font-weight-bold"{{#if admin}} data-toggle="tooltip" data-html="true" title="You are an <strong>admin</strong> for this library"{{/if}}>{{either title "Details"}}</span><span class="material-icons">{{either icon 'check_circle'}}</span></div>
+
+  <div class="card-body">
+    {{#if name}}<h2 class="card-title mt-0">{{name}}</h2>{{/if}}
+    {{#if description}}<p class="card-text mx-0">{{description}}</p>{{/if}}
+    {{#if (any name description)}}<hr class="border-secondary my-2">{{/if}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap">  
+      {{#present values}}<ul class="list-group list-group-flush w-100 o-75">
+        {{#each values}}<li class="list-group-item list-group-item-dark d-flex justify-content-between align-items-center">
+          {{#if route}}<a class="text-reset" data-route="{{route}}" href="#">{{name}}</a>{{else}}<span>{{name}}</span>{{/if}}
+          <{{either size 'h5'}} class="m-0">
+            <span class="badge badge-{{either background 'dark'}} badge-pill font-weight-light">{{localeString count}}</span>
+          </{{either size 'h5'}}>
+        </li>{{/each}}
+      </ul>{{/present}}
+    </div>
+  </div>
+  
+  {{~#present commands~}}<div class="card-footer text-muted d-flex justify-content-between">
+    {{#each commands}}<a href="#{{command}}" class="btn btn-action mr-1 mt-1{{#is @index 'gt' 0}} pl-2{{/is}}">{{#if icon}}<span class="material-icons mr-1"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{desc}}"{{/if}}>{{icon}}</span>{{/if}}{{name}}</a>{{/each}}
+  </div>{{~/present~}}
+  {{~/if~}}
+  
+  {{~#if admin~}}<div class="corner-ribbon top-right bg-light text-body shadow-deep d-flex align-items-center justify-content-center"><span class="material-icons md-18 mr-1">security</span>Admin</div>{{~/if~}}
+</div>
+{% endraw %}

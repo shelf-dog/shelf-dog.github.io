@@ -23,6 +23,7 @@ Libraries = (options, factory) => {
   
   /* <!-- Internal Functions --> */
   var _endpoint = endpoint => ({
+    code: endpoint.code,
     name: endpoint.name,
     admin: endpoint.admin,
     cache: endpoint.id ? key => `endpoint_${endpoint.id}${key ? `_${key.toLowerCase()}` : ""}` : false,
@@ -76,8 +77,11 @@ Libraries = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.all = force => !force && ರ‿ರ.all ? Promise.resolve(ರ‿ರ.all) : _all(force);
   
-  FN.one = index => FN.all().then(libraries => libraries[_.isNumber(index) ? index : parseInt(index)]),
+  FN.one = index => FN.all().then(libraries => _.isNumber(index) ? libraries[index] : /\d+/.test(index) ? 
+                                    libraries[parseInt(index)] : _.find(libraries, library => String.equal(library.code, index, true))),
   
+  FN.first = fn => FN.all().then(libraries => fn ? _.find(libraries, fn) : libraries && libraries.length > 0 ? libraries[0] : null),
+    
   FN.select = value => _.isObject(value) ? Promise.resolve(value) : FN.one(value);
   
   FN.refresh = value => FN.select(value).then(library => _meta(library, true)),
@@ -105,6 +109,25 @@ Libraries = (options, factory) => {
   FN.available = (value, copies) =>  FN.select(value).then(library => library.api("AVAILABLE", {copies: copies}));
   
   FN.settings = (value, settings) => FN.select(value).then(library => library.api("SETTINGS", settings));
+  
+  FN.loans = value => FN.select(value).then(library => library.api("LOANS"));
+  
+  FN.statistics = value => FN.select(value).then(library => library.api("STATISTICS"));
+  
+  FN.log = {
+    
+    loan : (value, user, id, isbn, copy) => FN.select(value).then(library => library.api("LOG_LOANED", {
+      user : user,
+      id : id,
+      isbn : isbn || "",
+      copy : copy
+    })),
+    
+    returned : (value, copy) => FN.select(value).then(library => library.api("LOG_RETURNED", {
+      copy : copy
+    })),
+      
+  };
   /* <!-- Public Functions --> */
   
   return FN;

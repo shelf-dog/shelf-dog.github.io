@@ -1,0 +1,25 @@
+<div class="card bg-dark border border-background overflow-hidden library d-flex flex-column justify-content-between align-items-center text-center{% if include.class %} {{ include.class }}{% endif %}">
+  <div class="card-header p-0 m-0">
+    <h5 class="display-2 mt-2">{% if include.tier.cost &gt; 0%}<span class="currency text-muted">£</span><span class="price text-white">{{include.tier.cost}}</span><span class="period text-light"> / {% if include.tier.unit %}{{include.tier.unit}}{% else %}month{% endif %}</span>{% endif %}</h5>
+  </div>
+  <div class="card-block">
+    <h5 class="card-title align-middle"><span class="bg-{% if include.tier.colour %}{{ include.tier.colour }}{% else %}dark{% endif %} text-dark rounded-lg py-1 px-2">{{include.tier.name | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</span></h5>
+    {%- if include.tier.condition -%}<h6 class="text-success">{{ include.tier.condition | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</h6>{%- endif -%}
+    <ul class="list-group mx-4 pt-2 pb-4">
+      {% for desc in include.tier.desc %}<li class="list-group-item">{{desc | markdownify}}</li>{% endfor %}
+    </ul>
+  </div>
+  {%- if include.tier.product -%}
+  <div class="card-footer w-100">
+    <a href="#" class="btn btn-gradient mt-2"
+       data-tier="{{include.tier.name | replace: '_', '' | replace: '*', '' | strip }}"
+       data-tier-client="{% if jekyll.environment == site.debug %}{{ site.app.stripe.testing }}{% else %}{{ site.app.stripe.live }}{% endif %}"
+       data-tier-product="{% if jekyll.environment == site.debug %}{{include.tier.product.testing}}{% else %}{{include.tier.product.live}}{% endif %}"
+       data-tier-cost="{{include.tier.cost}}"
+       data-tier-unit="{{include.tier.unit}}"
+       data-tier-data="{{include.tier.data}}"
+       data-tier-type="{{include.tier.type}}"
+       data-tier-details="{{include.tier.details}}">Subscribe</a></div>
+  {%- endif -%}
+  {%- if include.tier.type -%}<div class="corner-ribbon bottom-right bg-{% if include.tier.type == 'Organisation' %}primary{% else %}success{% endif %} text-body shadow-deep d-flex align-items-center justify-content-center{% if include.tier.type == 'Organisation' %} small{%- endif -%}">{% if include.tier.type == 'Personal' %}<span class="material-icons md-1 mr-1">person</span>{% elsif include.tier.type == 'Organisation' %}<span class="material-icons md-1 mr-1">domain</span>{%- endif -%}{{include.tier.type}}</div>{%- endif -%}
+</div>

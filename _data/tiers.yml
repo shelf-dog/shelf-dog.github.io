@@ -1,0 +1,49 @@
+personal:
+  name: __Single User__ Plan
+  type: Personal
+  condition: Equivalent of £1/month
+  desc:
+    - __Individual__ User Access
+    - __Unlimited__ Technical Support
+  cost: 12
+  unit: year
+  colour: warning
+  data: 
+  details: 
+  product:
+    live: price_1HTOH4LM8piW21zClos0556P
+    testing: price_1HTOJ4LM8piW21zCmuMBHADe
+    
+monthly:
+  name: Monthly __Domain__ Plan
+  type: Organisation
+  condition:
+  desc:
+    - __All__ users in your domain
+    - __Unlimited__ Technical Support
+  cost: 10
+  unit: month
+  colour: info
+  data: Organisation Domain
+  details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
+  product:
+    live: price_1HTOGRLM8piW21zCDzhmwfht
+    testing: price_1HTOIbLM8piW21zC664IcbAi
+
+yearly:
+  name: Yearly __Domain__ Plan
+  type: Organisation
+  condition: Equivalent of £8/month
+  desc:
+    - __All__ users in your domain
+    - __Extra__ users as required
+    - __Unlimited__ Technical Support
+    - __Priority__ Feature Requests
+  cost: 96
+  unit: year
+  colour: warning
+  data: Organisation Domain
+  details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
+  product:
+    live: price_1HTOGSLM8piW21zCaN2MM0Cv
+    testing: price_1HTOIbLM8piW21zCVH65LEoW

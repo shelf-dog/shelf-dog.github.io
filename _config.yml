@@ -72,3 +72,6 @@ app:
   content:            content
   namespace:          shelf_dog
   tests:              _tests
+  stripe:
+    live:             pk_live_51HTNxjLM8piW21zC3g9dIqv8PiZ3joimbNx83XRkMQ8nx6JFKfEHYRWgbO1DYyHwL0mfCJbeOL5ZtZvWQyUH750M00LIMgyNuL
+    testing:          pk_test_51HTNxjLM8piW21zC8cAAzOsUMpkuMuc2UoybVhsj2C7ObwCIvg8u89NgteIAXpKsWDgqf7h9ZSSpiOB89LXk44AG00Esxs4XB9

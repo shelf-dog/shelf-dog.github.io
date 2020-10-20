@@ -22,6 +22,7 @@ css:
     - custom/variables
     - custom/fonts
     - custom/tables
+    - custom/ribbons
 imports:
   - name: underscore
     load: first
@@ -71,6 +72,7 @@ helpers:
   - handlebars
   - backgrounds
   - network
+  - url
 modules:
   - generic/dates
   - generic/flags
@@ -81,22 +83,37 @@ modules:
   - generic/router
   - shared/states
   - shared/events
+  - shared/common
   - shared/client
   - shared/cache
-  - shared/demo
   - shared/libraries
+  - library/catalog
 scripts: 
+  - extends/string
   - extends/regex
   - extends/array
   - extends/math
+  - extends/promises
 templates:
   - loader
+  - generic/confirm
+  - manage/overview
+  - manage/details
+  - manage/detail
+  - manage/loans
+  - manage/statistics
+  - manage/return
+  - manage/returned
 docs:
   - shared/PUBLIC
   - shared/FEATURES
   - shared/INSTRUCTIONS
   - shared/TUTORIALS
   - manage/README
+  - manage/DETAILS
+  - manage/instructions/MANAGE_SEARCH_INSTRUCTIONS
+  - dialogs/CONFIRM_RETURN
+  - titles/TITLE_CONFIRM_RETURN
 scopes:
   google:
     - scope: email

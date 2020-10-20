@@ -84,7 +84,9 @@ Dialog = (options, factory) => {
       target.find("i.material-icons").text(_el.hasClass("locked") ? "lock" : "lock_open");
     },
 
-    clear: (target, dialog) => dialog.find(_makeIds(target.data("clear"))).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),
+    clear: (target, dialog) => dialog.find(
+      _makeIds(target.data("clear"))).val("").trigger("change").trigger("input").filter("textarea.resizable")
+        .map((i, el) => autosize.update(el)),
 
     options: (target, dialog) => {
       var value = _extractDataValueOrText(target),
@@ -128,6 +130,17 @@ Dialog = (options, factory) => {
       
     },
 
+    filter: (target, dialog) => {
+
+      var _select = dialog.find(`#${target.data("filter")}`),
+          _text = target.val(),
+          _search = _text ? new RegExp(RegExp.escape(_text), "gi") : false;
+      
+      _select.find("option").each((i, el) => !_search || el.text.match(_search) ?
+          $(el).show() : $(el).hide());
+  
+    },
+    
     extract: regexes => (target, dialog) => {
 
       var _value = target.val();

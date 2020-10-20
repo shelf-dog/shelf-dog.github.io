@@ -1,4 +1,13 @@
 site :
+  0.0.5 :
+    name : Site v0.0.5
+    desc : Initial Version
+    numeric : 0.0.5
+    type:
+      - alpha
+    changes :
+      - Library Management
+      - Loans and Returns
   0.0.4k :
     name : Site v0.0.4k
     desc : Initial Version

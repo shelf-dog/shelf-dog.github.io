@@ -11,6 +11,7 @@ $fonts-general:               $font-general, -apple-system, BlinkMacSystemFont, 
 
 $font-source:                 "Roboto Mono", "Anonymous Pro", "Space Mono", "Fira Mono", Inconsolata, monospace;
 $font-weight-heading:					400;
+$font-weight-bold:					  700;
 $font-weight:									400;
 $font-spacing-heading:				0.1rem;
 
@@ -19,6 +20,7 @@ $colour-background: 					#000000;
 $colour-navigator:            rgba(#871f52, 0.1); //lighten($colour-background, 10%);
 $colour-navigator-input:      rgba(#871f52, 0.2);
 $colour-emphasis: 						#cccccc;
+$colour-deemphasise:          #f3f3f3;
 $colour-foreground: 					darken($colour-emphasis, 10%);
 $colour-header:               transparentize($colour-background, 0.4);
 $colour-page:                 transparentize($colour-background, 0.25);
@@ -33,6 +35,9 @@ $colour-save-fill:            #ffaa00;
 $colour-delete-fill:          #e60000;
 $colour-commit-fill:          #5c5cd6;
 $colour-background-menu:      #fafafa;
+$colour-section:              #101010;
+$colour-support:              #ccc504;
+$colour-general:              #000000;
 
 /* == Sizes == */
 $navigator-line:              1.1rem;

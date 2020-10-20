@@ -1,0 +1,40 @@
+{% raw %}
+<div data-index="{{id}}" class="card bg-dark border border-background overflow-hidden library mb-2 mb-xl-3 pb-2" style="max-height: 500px;">
+  
+  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-body mb-2"><span class="font-weight-bold"{{#if admin}} data-toggle="tooltip" data-html="true" title="You are an <strong>admin</strong> for this library"{{/if}}>{{either title "Details"}}</span><span class="material-icons">{{either icon 'check_circle'}}</span></div>
+
+  <div class="card-body py-0 px-1 px-xl-2 overflow-auto">
+    {{#if name}}<h2 class="card-title mt-0">{{name}}</h2>{{/if}}
+    {{#if description}}<p class="card-text mx-0">{{description}}</p>{{/if}}
+    {{#if (any name description)}}<hr class="border-secondary my-2">{{/if}}
+    
+    {{#present loans}}<table class="table table-dark table-hover">
+      <thead class="bg-dark">
+        <tr>
+          <th scope="col" class="border-0">Item</th>
+          <th scope="col" class="border-0">Who</th>
+          <th scope="col" class="border-0">When</th>
+          <th scope="col" class="border-0"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each loans}}<tr>
+          <th scope="row"><a href="{{command}}" class="text-decoration-none link-action"{{#if description}} data-toggle="tooltip" data-html="true" title="{{{description}}}"{{/if}}>{{item}}</a></th>
+          <td>{{who}}</td>
+          <td data-toggle="tooltip" data-html="true" title="<strong>Loaned</strong><br />{{localeDate when}}">{{fromNow when}}</td>
+          <td class="d-flex align-items-center" data-item="{{item}}">
+            {{> return}}
+          </td>
+        </tr>{{/each}}
+      </tbody>
+    </table>{{/present}}
+    </div>
+    
+  </div>
+  
+  {{~#present commands~}}<div class="card-footer text-muted d-flex justify-content-between">
+    {{#each commands}}<a href="#{{command}}" class="btn btn-action mr-1 mt-1{{#is @index 'gt' 0}} pl-2{{/is}}">{{#if icon}}<span class="material-icons mr-1"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{desc}}"{{/if}}>{{icon}}</span>{{/if}}{{name}}</a>{{/each}}
+  </div>{{~/present~}}
+  
+</div>
+{% endraw %}

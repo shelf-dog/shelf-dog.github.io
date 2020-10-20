@@ -57,6 +57,8 @@ globals:
   jsQR: false
   initSqlJs: false
   SparkMD5: false
+  uuidv4: false
+  Stripe: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -165,3 +167,5 @@ globals:
   Lexer: true
   Semantics: true
   Semiotics: true
+  Common: true
+  Subscribe: true

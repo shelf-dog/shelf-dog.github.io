@@ -22,7 +22,7 @@ App = function() {
         _placeholder = number => (ಠ_ಠ.Display.template.show({
           template: "libraries",
           libraries: _.times(number, () => ({
-            name: "Loading Library ...",
+            name: "Loading Library …",
             loading: true
           })),
           target: _libraries,

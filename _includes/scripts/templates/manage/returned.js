@@ -1,0 +1,1 @@
+!function(){var e=Handlebars.template;(Handlebars.templates=Handlebars.templates||{}).returned=e({compiler:[8,">= 4.3.0"],main:function(e,a,t,n,s){return'<span data-toggle="tooltip" title="Book has been Returned" class="material-icons md-1 o-50 text-success">check_circle</span>\n'},useData:!0})}();

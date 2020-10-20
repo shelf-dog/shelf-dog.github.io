@@ -1,0 +1,4 @@
+Now that you have subscribed, you can create a new __Google Sheet__ loan.sheet. This will be where the data for your organisation is stored, and also where the code that the library talks to is run from. In order for this sheet to be created, you will need to grant a [few permissions](/privacy){:target="_blank" rel="noopener"}. You will be prompted to authorise these permissions when you click the __Create Loan Sheet__{:.badge .badge-dark} button below.
+
+__IMPORTANT__: Once the loan sheet has been created, click on the __Open Sheet__{:.badge .badge-primary} button. This will open the sheet (that has been created in your Google Drive). When this has loaded, please run the __Authorise__ command from the __Tasks__ menu inside the sheet.
+{:.alert .alert-dark}

@@ -1,0 +1,32 @@
+{% raw %}
+<tr data-code="{{code}}">
+  <th scope="row" class="align-middle">{{code}}</th>
+  <td class="align-middle">{{name}}</td>
+  <td class="align-middle">{{domain}}</td>
+  <td class="align-middle">{{tier}}</td>
+  <td class="align-middle">{{localeDate expires true}}</td>
+  <td class="align-middle">
+    <div class="d-flex flex-row justify-content-between">
+      {{~#exists file~}}
+      {{>link file details=version_details}}
+      {{~#if upgradable}}{{>upgrade command=upgradable desc=details}}{{~/if~}}
+      {{~/exists~}}
+      {{~#unless endpoint~}}
+      <a href="#create.{{code}}"{{#if create_details}} data-toggle="tooltip" data-html="true" title="{{create_details}}"{{/if}} data-action="create" class="badge badge-dark d-flex align-items-center">
+        <span class="md-24 md-light material-icons">memory</span>
+        <span class="mx-1">Create Loan Sheet</span>
+      </a>
+      {{~else~}}{{~#unless file~}}
+      <a href="mailto:help@shelf.dog?subject=Subscription%20Help%20({{code}})" target="_blank" rel="noopener"{{#if help_details}} data-toggle="tooltip" data-html="true" title="{{help_details}}"{{/if}} data-action="help" class="badge badge-warning d-flex align-items-center">
+        <span class="md-24 material-icons">emoji_people</span>
+        <span class="mx-1">Get Help</span>
+      </a>
+      {{~/unless~}}{{~/unless~}}
+      <a href="mailto:help@shelf.dog?subject=Cancel%20Subscription%20({{code}})" target="_blank" rel="noopener"{{#if cancel_details}} data-toggle="tooltip" data-html="true" title="{{cancel_details}}"{{/if}} data-action="cancel" class="badge badge-danger d-flex align-items-center">
+        <span class="md-24 md-light material-icons">cancel_schedule_send</span>
+        <span class="mx-1">Cancel Subscription</span>
+      </a>
+    </div>
+  </td>
+</tr>
+{% endraw %}

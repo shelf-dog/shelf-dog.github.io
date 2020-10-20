@@ -160,6 +160,11 @@ Handlebars = (options, factory) => {
             variable.toDate() : variable instanceof Date ? variable : false))) return;
         return variable.toLocaleTimeString();
       });
+      
+      Handlebars.registerHelper("localeString", variable => {
+        if (variable === null || variable === undefined) return;
+        return isNaN(variable) || !variable.toLocaleString ? variable : variable.toLocaleString();
+      });
 
       Handlebars.registerHelper("fromNow", (variable, short) => {
         if (!variable || !(variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)))) return;
@@ -311,6 +316,11 @@ Handlebars = (options, factory) => {
       Handlebars.registerHelper("falsy", value => !value);
       
       Handlebars.registerHelper("truthy", value => !!value);
+      
+      Handlebars.registerHelper("resolve", function() {
+        return _.reduce(Array.prototype.slice.call(arguments, 1, arguments.length - 1), 
+          (memo, property) => memo ? memo[property] : null, Array.prototype.slice.call(arguments, 0, 1)[0]);
+      });
       
       /* <!-- Map all templates as Partials too --> */
       if (Handlebars.templates) Handlebars.partials = Handlebars.templates;

@@ -71,7 +71,8 @@ modules:
   - shared/cache
   - shared/demo
   - shared/libraries
-scripts: 
+scripts:
+  - extends/string
   - extends/regex
   - extends/array
   - extends/math

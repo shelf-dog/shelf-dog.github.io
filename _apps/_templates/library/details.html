@@ -43,12 +43,40 @@
       <span>Close</span>
     </a>
     
-    <!-- RIGHT BUTTON -->
-    <div class="show-library-manageable">
-      <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-primary border border-primary waves-effect forward-button" href="/app/manage/{{query}}#google,library.{{this.index}}">
-        <span>Manage</span>
-        <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Manage Libraries">arrow_forward</span>
-      </a>
+    <!-- RIGHT BUTTONS -->
+    <div class="d-none show-library-manageable">
+      
+      <div class="d-flex flex-row">
+        
+        <div class="d-none show-library-returnable">
+          
+          <a class="d-flex flex-column flex-lg-row pr-2 mr-2 btn btn-outline-light border border-light waves-effect" href="#item.return">
+            <span>Return</span>
+            <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book as Returned">local_library</span>
+          </a>
+          
+        </div>
+        
+        <div class="d-none show-library-available">
+          
+          <a class="d-flex flex-column flex-lg-row pr-2 mr-2 btn btn-outline-success border border-success waves-effect" href="#item.loan">
+            <span>Loan</span>
+            <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book as Loaned">local_library</span>
+          </a>
+          
+        </div>
+
+        <div class="hide-library-item_">
+          
+          <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-primary border border-primary waves-effect forward-button" href="/app/manage/{{query}}#google,library.{{this.index}}">
+            <span>Manage</span>
+            <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Manage Libraries">arrow_forward</span>
+          </a>
+        
+        </div>
+        
+      </div>
+      
     </div>
   
   </div>

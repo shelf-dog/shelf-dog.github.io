@@ -1,0 +1,17 @@
+{% raw %}
+<table class="table table-borderless m-2">
+  <thead>
+    <tr class="border-bottom">
+      <th scope="col">Code</th>
+      <th scope="col">Organisation</th>
+      <th scope="col">Domain</th>
+      <th scope="col">Tier</th>
+      <th scope="col">Subscribed Until</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each subscriptions}}{{> subscription}}{{/each}}
+  </tbody>
+</table>
+{% endraw %}

@@ -1,0 +1,1 @@
+This will create a __Google Sheet__, where information about book loans will be stored.

@@ -34,6 +34,13 @@ Client = (options, factory) => {
                     factory.Flags.error("Directory Error", value = value.error) :
           value.response && value.response.result ? 
                     factory.Flags.log("API Response", value = value.response.result) : null : null, value));
+  
+  FN.user = () => factory.Google.scripts.execute(options.directory, "list", "user")
+    .then(value => (value && value.done ? 
+          value.error ? 
+                    factory.Flags.error("Directory Error", value = value.error) :
+          value.response && value.response.result ? 
+                    factory.Flags.log("API Response", value = value.response.result) : null : null, value));
   /* <!-- Public Functions --> */
   
   return FN;

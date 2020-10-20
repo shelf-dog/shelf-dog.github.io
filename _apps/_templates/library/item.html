@@ -8,7 +8,7 @@
         <td class="text-right border-dark border-right pr-2 pr-lg-3 pr-xl-4">
           <span class="font-weight-bold text-secondary">{{@key}}</span>
         </td>
-        <td class="pl-2 pl-lg-3 pl-xl-4">{{#is @index 0}}<div class="d-flex flex-row flex-wrap align-items-center"><span class="font-weight-bold text-white bg-dark rounded py-1 px-2">{{this}}</span></div>{{else}}{{> value}}{{/is}}</td>
+        <td class="pl-2 pl-lg-3 pl-xl-4{{#is @key 'Title'}} font-weight-bold{{/is}}">{{#is @index 0}}<div class="d-flex flex-row flex-wrap align-items-center"><span class="font-weight-bold text-white bg-dark rounded py-1 px-2">{{this}}</span></div>{{else}}{{> value}}{{/is}}</td>
       </tr>
       {{/each}}
     </table>

@@ -51,9 +51,9 @@ Controller = function() {
     }
     
     if (g.overrides)
-      for (var j = 0; j < g.overrides.length; j++) t = t.replace(g.overrides[j].replace, g.overrides[j].with);
+      for (var j = 0; j < g.overrides.length; j++) t = t.replace(g.overrides[j].replace, g.overrides[j].with || "");
     
-    a.appendChild(s.createTextNode(t));
+    a.appendChild(s.createTextNode(t.trim()));
     a.onload = r(g);
     if (m) {
       m.parentNode.insertBefore(a, m);

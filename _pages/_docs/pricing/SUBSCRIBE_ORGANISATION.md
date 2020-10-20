@@ -1,0 +1,3 @@
+We also need the details of your __domain__{:.text-white} (typically the part after the @ symbol in your email address) and the name of your organisation's library. This information allows us to ensure your library is available for all your users, and also to __display the name of your organisation__{:.text-white} to your users (in case they have multiple libraries to choose from).
+
+If you wish to only allow a subset of your domain users to access your library, please let us know once you have subscribed and we will help you get that sorted!

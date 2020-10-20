@@ -8,7 +8,7 @@ App = function() {
 
 	/* <!-- Internal Constants --> */
   const FN = {},
-        DEFAULT_ROUTE = "library.0";
+        DEFAULT_ROUTE = "library";
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -20,9 +20,16 @@ App = function() {
 	/* <!-- Internal Functions --> */
   var _holder = () => $(".library");
   
+  var _clear = () => {
+    delete ರ‿ರ.book;
+    delete ರ‿ರ.availability;
+    delete ರ‿ರ.available;
+    ಠ_ಠ.Display.state().exit(FN.states.library.items);
+  };
+  
   var _reset = header => {
     var _element = _holder(),
-        _button = _element.find(".forward-button");
+        _button = _element.find(".forward-button:visible");
     _button.attr("href", _button.data("href") || _button.attr("href"));
     if (header) _element.find(".back-button").attr("href", "#overview");
     $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
@@ -49,6 +56,10 @@ App = function() {
                   clear: true
                 }))
           .then(element => {
+            
+            /* <!-- Set Item Selected State --> */
+            ಠ_ಠ.Display.state().enter(FN.states.library.item);
+      
             /* <!-- Start Cover Download --> */
             if (book && book.Cover === 1) FN.libraries.cover(ರ‿ರ.library, book.Path)
                 .then(cover => ಠ_ಠ.Display.template.show({
@@ -57,31 +68,47 @@ App = function() {
                   image: cover || "",
                   replace: true
                 }));
-            /* <!-- Check Availability --> */
-            if (ರ‿ರ.library.meta.capabilities.loan) 
-              FN.libraries.available(ರ‿ರ.library, book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
-                .then(availability => {
-                  ಠ_ಠ.Flags.log("AVAILABILITY:", availability);
-                  if (ರ‿ರ.library.meta.capabilities.loan_field) {
-                    var _row = element.find(`tr[data-field='${ರ‿ರ.library.meta.capabilities.loan_field}']`);
-                    _.each(availability, copy => _row.find($(`td .badge:contains('${copy.copy}')`))
-                           .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, copy), true)));
-                  } else if (availability.length === 1) {
-                    element.find("tr[data-field='ID']")
-                      .find($(`td div:contains('${availability[0].copy}')`))
-                      .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, availability[0]), true));
-                  }
-                });
+      
+            /* <!-- Available Tagging --> */
+            ರ‿ರ.available = availability => {
+                
+              ರ‿ರ.availability = availability;
+              ಠ_ಠ.Flags.log("AVAILABILITY:", availability);
 
-             _reset(true);
+              /* <!-- Set Appropriate States --> */
+              ಠ_ಠ.Display.state().set(FN.states.library.available, 
+                                      availability && _.find(availability, value => value.available === true));
+              ಠ_ಠ.Display.state().set(FN.states.library.returnable, 
+                                      availability && _.find(availability, value => value.available === false));
+
+              /* <!-- Remove existing tags --> */
+              element.find("i[data-available]").remove();
+
+              if (ರ‿ರ.library.meta.capabilities.loan_field) {
+                var _row = element.find(`tr[data-field='${ರ‿ರ.library.meta.capabilities.loan_field}']`);
+                _.each(availability, copy => _row.find($(`td .badge:contains('${copy.copy}')`))
+                       .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, copy), true)));
+              } else if (availability.length === 1) {
+                element.find("tr[data-field='ID']")
+                  .find($(`td div:contains('${availability[0].copy}')`))
+                  .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, availability[0]), true));
+              }
+            };
+      
+            /* <!-- Check Availability --> */
+            if (ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan) 
+              FN.libraries.available(ರ‿ರ.library, book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
+                .then(ರ‿ರ.available);
+
+            _reset(true);
       
             var _button = _holder().find(".forward-button"),
                 _url = _button.data("href") || _button.attr("href");
             _button.data("href", _url);
             _button.attr("href", `${_url}.${book.ID}`);
       
-            return book;
-          }) : book);
+            return (ರ‿ರ.book = book);
+          }) : (delete ರ‿ರ.book, delete ರ‿ರ.availability, delete ರ‿ರ.available, book));
   
   var _hookup = element => {
     var _query = "[data-action='click'][data-href]:visible";
@@ -99,6 +126,10 @@ App = function() {
     var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,
         _results_element = _display(element, _results);
     ಠ_ಠ.Flags.log("RESULTS:", _results);
+    
+    /* <!-- Clear any selected Book states --> */
+    _clear();
+    
     _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
     _hookup(ಠ_ಠ.Display.template.show(_.extend({
       template: "results",
@@ -139,10 +170,19 @@ App = function() {
                 results: _.tap(ರ‿ರ.db.recent.all(!ರ‿ರ.library.meta || ರ‿ರ.library.meta.recent === undefined ? 
                                                  5 : ರ‿ರ.library.meta.recent),
                                 recent => ಠ_ಠ.Flags.log("RECENT:", recent)),
-              })).then(element => _hookup(element).find("form[data-role='search'] button[type='submit']")
-                .off("click.search").on("click.search", _searcher));
+              }))
+    .then(element => _hookup(element).find("form[data-role='search'] button[type='submit']")
+                .off("click.search").on("click.search", _searcher))
+    .then(() => {
+      /* <!-- Set Manageable and Loanable States --> */
+      ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable]);
+      ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
+      ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
+    })
+    .then(_clear);
   
-  var _library = index => FN.libraries.one(ರ‿ರ.index = index)
+  var _library = (index, book) => (index === null || index === undefined ? 
+      FN.libraries.first().then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : FN.libraries.one(ರ‿ರ.index = index))
           .then(library => ರ‿ರ.library = library)
           .then(library => FN.libraries.db(library)
             .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
@@ -151,14 +191,13 @@ App = function() {
               ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
               $("#explore-library .library-name").text(library.name);
             
-              _overview(_holder(), index);
+              _overview(_holder(), ರ‿ರ.index).then(() => book !== undefined && book !== null ? _book(book) : null);
             
               $("header.navbar form[data-role='search'] button[type='submit']")
                 .off("click.search").on("click.search", _searcher);
             
-              ಠ_ಠ.Display.state().set(FN.states.library.manageable, library.meta.claims && library.meta.claims.manage);
               $("input[role='search']:visible").focus();
-
+ 
             }))
             .then(ಠ_ಠ.Main.busy("Opening Library", true));
 	/* <!-- Internal Functions --> */
@@ -197,7 +236,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Cache", "Client", "Demo", "Libraries", "Catalog", "Lexer"], 
+      _.each(["Common", "Cache", "Client", "Demo", "Libraries", "Catalog", "Lexer"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
@@ -275,7 +314,9 @@ App = function() {
           show: "SEARCH_INSTRUCTIONS",
           title: "Searching a Library ..."
         }],
+        
         routes : {
+          
           book : {
             matches : /BOOK/i,
             state : FN.states.library.loaded,
@@ -284,6 +325,7 @@ App = function() {
             tidy : true,
             fn : _book,
           },
+          
           search : {
             matches : /SEARCH/i,
             state : FN.states.library.loaded,
@@ -296,13 +338,120 @@ App = function() {
               _search(_terms, _holder());
             },
           },
+          
           library : {
             matches : /LIBRARY/i,
             trigger : FN.states.library.working,
-            length : 1,
+            length : {
+              min: 0,
+              max: 2
+            },
             tidy : true,
-            fn : _library,
+            fn : command => command && _.isArray(command) && command.length == 2 ? _library(command[0], command[1]) : _library(command),
           },
+          
+          item : {
+            matches : /ITEM/i,
+            state : FN.states.library.item,
+            tidy: true,
+            routes : {
+              
+              loan : {
+                matches : /LOAN/i,
+                fn: () => {
+                  
+                  /* <!-- Get Available Copies --> */
+                  var _available = _.filter(ರ‿ರ.availability, available => available.available === true),
+                      _process = availability => availability ? ರ‿ರ.available(availability) : false,
+                      _error = e => e ? ಠ_ಠ.Flags.error("Loan Book Error", e) : ಠ_ಠ.Flags.log("Loan Book Cancelled"),
+                      _loan = copy => ಠ_ಠ.Display.text({
+                        id: "loan_confirm",
+                        title: ಠ_ಠ.Display.doc.get({
+                          name: "TITLE_CONFIRM_LOAN",
+                          trim: true
+                        }),
+                        message: ಠ_ಠ.Display.doc.get("CONFIRM_LOAN", FN.common.format.book(ರ‿ರ.book, copy)),
+                        action: "Loan",
+                        simple: true
+                      })
+                      .then(user => FN.libraries.log.loan(ರ‿ರ.library, user, ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, copy)
+                            .then(ಠ_ಠ.Main.busy("Loaning Book", true))
+                            .then(_process))
+                      .catch(_error);
+                      
+                    _available.length === 1 ? _loan(_available[0].copy) : ಠ_ಠ.Display.choose({
+                      id: "return_choose",
+                      title: ಠ_ಠ.Display.doc.get({
+                        name: "TITLE_CHOOSE_LOAN",
+                        trim: true
+                      }),
+                      message: ಠ_ಠ.Display.doc.get("CHOOSE_LOAN"),
+                      action: "Loan",
+                      choices: _.map(_available, loan => ({
+                        desc: ರ‿ರ.book.Title,
+                        name: loan.copy
+                      }))
+                    })
+                    .then(loan => loan ? _loan(loan.name) : false)
+                    .catch(_error);
+                  
+                } 
+              },
+              
+              return : {
+                matches : /RETURN/i,
+                fn: () => {
+                  if (!ರ‿ರ.availability || !ರ‿ರ.book) return;
+                  var _loaned = _.filter(ರ‿ರ.availability, available => available.available === false),
+                      _process = availability => availability ? ರ‿ರ.available(availability) : false,
+                      _return = copy => FN.libraries.log.returned(ರ‿ರ.library, copy)
+                              .then(ಠ_ಠ.Main.busy("Returning Book", true))
+                              .then(_process),
+                      _error = e => e ? ಠ_ಠ.Flags.error("Return Book Error", e) : ಠ_ಠ.Flags.log("Return Book Cancelled");
+                  
+                  if (_loaned.length === 1) {
+                    
+                    /* <!-- Only one available item / copy --> */
+                    ಠ_ಠ.Display.confirm({
+                      id: "return_confirm",
+                      title: ಠ_ಠ.Display.doc.get({
+                        name: "TITLE_CONFIRM_RETURN",
+                        trim: true
+                      }),
+                      message: ಠ_ಠ.Display.doc.get("CONFIRM_RETURN", FN.common.format.book(ರ‿ರ.book)),
+                      action: "Return"
+                    })
+                      .then(confirmation => confirmation === true ? _return(_loaned[0].copy) : false)
+                      .then(_process)
+                      .catch(_error);
+                    
+                  } else if (_loaned.length > 1) {
+                    
+                    /* <!-- More than one outstanding loan --> */
+                    ಠ_ಠ.Display.choose({
+                      id: "return_choose",
+                      title: ಠ_ಠ.Display.doc.get({
+                        name: "TITLE_CHOOSE_RETURN",
+                        trim: true
+                      }),
+                      message: ಠ_ಠ.Display.doc.get("CHOOSE_RETURN"),
+                      action: "Return",
+                      choices: _.map(_loaned, loan => ({
+                        desc: ರ‿ರ.book.Title,
+                        name: loan.copy
+                      }))
+                    })
+                    .then(loan => loan ? _return(loan.name) : false)
+                    .catch(_error);
+                    
+                  }
+                  
+                }
+              }
+              
+            }
+          },
+          
           overview : {
             matches : /OVERVIEW/i,
             trigger : FN.states.library.working,
@@ -313,6 +462,7 @@ App = function() {
               _reset();
             },
           },
+          
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });

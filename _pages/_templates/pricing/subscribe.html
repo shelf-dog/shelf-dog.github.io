@@ -1,32 +1,51 @@
 {% raw %}
 <div {{#if id}}id="{{id}}" {{/if}}class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_text_title">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
+    <div class="modal-content text-body">
       <div class="modal-header">
-        <h5 class="modal-title" id="modal_text_title">{{title}}</h5>
+        <h3 class="modal-title m-0" id="modal_text_title">{{title}}{{#if cost}}<span class="text-muted"> (£{{cost}}{{#if unit}} / {{unit}}{{/if}})</span>{{/if}}</h3>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         {{#if message}}{{{message}}}{{/if}}
-        <form action="https://www.paypal.com/cgi-bin/webscr" class="subscribe" method="post" target="_top">
-          <input type="hidden" name="cmd" value="_s-xclick">
-          <input type="hidden" name="hosted_button_id" value="{{button}}">
-          <input id="on0" type="hidden" name="on0" value="{{data}}">
+        <form class="subscribe mt-3">
+          <input type="hidden" name="type" value="{{type}}">
+          <input type="hidden" name="tier" value="{{tier}}">
+          <input type="hidden" name="client" value="{{client}}">
+          <input type="hidden" name="product" value="{{product}}">
+          <input type="hidden" name="cost" value="{{cost}}">
+          <input type="hidden" name="unit" value="{{unit}}">
+          {{#if email}}<div class="form-group">
+            <label class="font-weight-bold d-flex align-items-center" for="email">
+              <span>Your Email Address</span>
+              <span class="badge badge-danger ml-2">REQUIRED</span>
+            </label>
+            <input id="email_input" type="email" name="email" class="form-control form-control-lg" maxlength="200" aria-describedby="email_help" placeholder="e.g. me@example.com" required>
+          <small id="email_help" class="form-text text-muted">Your email address will be used to set the initial manager of your account (you can add further management users later). This should match your G-Suite / Google Login.</small>
+          </div>{{/if}}
           <div class="form-group">
-            <label class="font-weight-bold" for="os0">{{data}}</label>
-            <input id="os0" type="text" name="os0" class="form-control form-control-lg" maxlength="200" aria-describedby="os0_help" placeholder="Type here ...">
-            {{#if details}}<small id="os0_help" class="form-text text-muted">{{details}}</small>{{/if}}
+            <label class="font-weight-bold d-flex align-items-center" for="name">
+              <span>Library Name</span>
+              <span class="badge badge-danger ml-2">REQUIRED</span>
+            </label>
+            <input id="name_input" type="text" name="name" class="form-control form-control-lg" maxlength="200" aria-describedby="name_help" placeholder="e.g. My Library, Example School Library" required>
+          <small id="name_help" class="form-text text-muted">This is the name of your library, and will be displayed in the app (to you and/or your users), so should be something descriptive!</small>
           </div>
-          <p class="text-center">
-            <input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!">  
-          </p>
-          <img border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1" alt="">
+          {{~#if organisation~}}<div class="form-group">
+            <label class="font-weight-bold d-flex align-items-center" for="domain">
+              <span>{{data}}</span>
+              <span class="badge badge-danger ml-2">REQUIRED</span>
+            </label>
+            <input id="domain_input" type="text" name="domain" class="form-control form-control-lg" maxlength="200" aria-describedby="domain_help" placeholder="e.g. example.com" required>
+            {{#if details}}<small id="domain_help" class="form-text text-muted">{{details}}</small>{{/if}}
+          </div>{{~/if~}}
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-outline-secondary btn-flat" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Subscribe</button>
       </div>
     </div>
   </div>
