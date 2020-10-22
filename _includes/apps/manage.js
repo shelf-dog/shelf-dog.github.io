@@ -75,9 +75,41 @@ App = function() {
     return element;
   };
   
-  var _search = (terms, element) => {
+  var _loan = loan => {
+    var book = _book(loan.copy || loan.id),
+        loaned = loan.date ? ಠ_ಠ.Dates.parse(loan.date) : "",
+        returned = loan.returned && _.isString(loan.returned) ? ಠ_ಠ.Dates.parse(loan.returned) : loan.returned,
+        duration = loaned && _.isObject(loaned) && returned && _.isObject(returned) ? ಠ_ಠ.Dates.duration(returned - loaned) : null;
+    return {
+      command: loan.copy || loan.id ? `/app/library/${window.location.search}#library.${ಱ.index}.${loan.id ? loan.id : `search.${loan.copy}`}` : "",
+      item: loan.copy || loan.id,
+      description: book ? `<strong>${book.Title}</strong>${book.Authors && book.Authors.length ? `<br/>${_.isString(book.Authors) ? book.Authors : book.Authors.join(" | ")}` : ""}` : "",
+      who: loan.user,
+      when: loaned,
+      returned : returned,
+      last : loan.last,
+      duration : duration,
+    };
+  };
+  
+  var _search = terms => {
     ಠ_ಠ.Flags.log("SEARCHING:", terms);
-    ಠ_ಠ.Flags.log("FROM:", element);
+    if (terms) FN.libraries.loans[/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi.test(terms) ? "user" : "copy"](ರ‿ರ.library, terms)
+      .then(loans => {
+        if (!loans || loans.length === 0) return;
+        ಠ_ಠ.Flags.log(`LOANS for [${terms}]:`, loans);
+        ಠ_ಠ.Display.template.show({
+          template: "log",
+          target: _holder(),
+          clear: true,
+          loans: _.map(loans, _loan),
+          query: window.location.search,
+          index: ಱ.index,
+        });
+        ಠ_ಠ.Display.state().enter(FN.states.manage.log);
+      })
+      .catch(e => ಠ_ಠ.Flags.error("Fetching Loans Error", e))
+      .then(ಠ_ಠ.Main.busy("Fetching Loans", true));
   };
   
   var _redirect = index => window.location.href = ಠ_ಠ.Flags.full(`/app/library/${window.location.search}#library.${index}`);
@@ -124,23 +156,14 @@ App = function() {
     $("input[role='search']:visible").focus();
     
     /* <!-- Load and Display Current Loans --> */
-    FN.libraries.loans(ರ‿ರ.library)
-      .then(loans => (ಠ_ಠ.Flags.log("LOANS:", loans), ಠ_ಠ.Display.template.show({
+    FN.libraries.loans.outstanding(ರ‿ರ.library)
+      .then(loans => (ಠ_ಠ.Flags.log("OUTSTANDING LOANS:", loans), ಠ_ಠ.Display.template.show({
         id: 1,
-        template: "loans",
+        template: "outstanding",
         title: "Loans",
         background: "success",
         icon: "local_library",
-        loans: loans && loans.length ? _.map(loans, loan => {
-          var book = _book(loan.id);
-          return {
-            command: `/app/library/${window.location.search}#library.${ರ‿ರ.index}.${loan.id}`,
-            item: loan.id,
-            description: book ? `<strong>${book.Title}</strong>${book.Authors && book.Authors.length ? `<br/>${_.isString(book.Authors) ? book.Authors : book.Authors.join(" | ")}` : ""}` : "",
-            who: loan.user,
-            when: loan.date ? ಠ_ಠ.Dates.parse(loan.date) : ""
-          };
-        }) : null,
+        loans: loans && loans.length ? _.map(loans, _loan) : null,
         target: $(".details .detail[data-index=1]"),
         replace: true
       })));
@@ -183,13 +206,13 @@ App = function() {
   
   var _library = index => (index === null || index === undefined ? 
       FN.libraries.first(library => library && library.meta && library.meta.claims && library.meta.claims.manage)
-        .then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : 
-      FN.libraries.one(ರ‿ರ.index = index))
+        .then(library => _.tap(library, library => ಱ.index = library.code)) : 
+      FN.libraries.one(ಱ.index = index))
         .then(library => ರ‿ರ.library = library)
         .then(library => FN.libraries.db(library)
           .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
           .then(db => ರ‿ರ.db = db)
-          .then(() => library.meta.claims && library.meta.claims.manage ? _show(ರ‿ರ.index, library) : _redirect(index)))
+          .then(() => library.meta.claims && library.meta.claims.manage ? _show(ಱ.index, library) : _redirect(index)))
           .then(ಠ_ಠ.Main.busy("Opening Library", true));
 	/* <!-- Internal Functions --> */
   
@@ -215,6 +238,8 @@ App = function() {
       /* <!-- Setup Helpers --> */
       _.each([{
         name: "Strings"
+      }, {
+        name: "Url"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
       /* <!-- Setup Function Modules --> */
@@ -294,7 +319,9 @@ App = function() {
               max: 2
             },
             tidy : true,
-            fn : command => command && _.isArray(command) && command.length == 2 ? _library(command[0], command[1]) : _library(command),
+            fn : command => (command && _.isArray(command) && command.length == 2 ? 
+              _library(command[0], command[1]) : _library(command || ಱ.index))
+                .then(() => $("header.navbar form[data-role='search'] input[role='search']").val("")),
           },
           
           list : {
@@ -351,13 +378,13 @@ App = function() {
                 length : 1,
                 fn : id => {
                   var book = _book(id);
-                  if (book) ಠ_ಠ.Display.confirm({
+                  ಠ_ಠ.Display.confirm({
                       id: "return_confirm",
                       title: ಠ_ಠ.Display.doc.get({
                         name: "TITLE_CONFIRM_RETURN",
                         trim: true
                       }),
-                      message: ಠ_ಠ.Display.doc.get("CONFIRM_RETURN", FN.common.format.book(book)),
+                      message: ಠ_ಠ.Display.doc.get("CONFIRM_RETURN", book ? FN.common.format.book(book) : "UNKNOWN BOOK"),
                       action: "Return"
                     })
                     .then(confirmation => {

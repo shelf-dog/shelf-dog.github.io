@@ -157,7 +157,7 @@ App = function() {
     
                 /* <!-- Perform the search and push into the history state (to allow for blended back/forward navigation) --> */
                 _search(_terms, _holder());
-                window.history.pushState(null, null, `#search.${ಠ_ಠ.url.encode(encodeURIComponent(_terms))}`);
+                window.history.pushState(null, null, `#search.${ಱ.url.encode(encodeURIComponent(_terms))}`);
               };
   
   var _overview = (element, index) => Promise.resolve(ಠ_ಠ.Display.template.show({
@@ -344,10 +344,14 @@ App = function() {
             trigger : FN.states.library.working,
             length : {
               min: 0,
-              max: 2
+              max: 3
             },
             tidy : true,
-            fn : command => command && _.isArray(command) && command.length == 2 ? _library(command[0], command[1]) : _library(command),
+            fn : command => command && _.isArray(command) ? 
+                command.length == 2 ? _library(command[0], command[1]) : 
+                command.length == 3 ? _library(command[0]).then(() => command[1] && command[1].toLowerCase() == "search" ?
+                                                                  _search(command[2], _holder()) : null) : 
+              _library(command) : _library(command),
           },
           
           item : {

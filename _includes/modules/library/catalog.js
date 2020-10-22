@@ -391,7 +391,7 @@ Catalog = (options, factory) => {
       
       book : id => _find(`WHERE ID = ${id}`),
       
-      copy : (id, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} WHERE value = '${id}')`),
+      copy : (id, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.id = custom_column_1.id WHERE ${_custom(field).table}.value = '${id}')`),
       
     },
     

@@ -80,7 +80,8 @@ Libraries = (options, factory) => {
   FN.one = index => FN.all().then(libraries => _.isNumber(index) ? libraries[index] : /\d+/.test(index) ? 
                                     libraries[parseInt(index)] : _.find(libraries, library => String.equal(library.code, index, true))),
   
-  FN.first = fn => FN.all().then(libraries => fn ? _.find(libraries, fn) : libraries && libraries.length > 0 ? libraries[0] : null),
+  FN.first = fn => FN.all().then(libraries => libraries ? fn ? _.find(libraries, fn) :  libraries.length > 0 ? 
+                                 _.find(libraries, library => library.state == "READY") : null : null),
     
   FN.select = value => _.isObject(value) ? Promise.resolve(value) : FN.one(value);
   
@@ -110,7 +111,19 @@ Libraries = (options, factory) => {
   
   FN.settings = (value, settings) => FN.select(value).then(library => library.api("SETTINGS", settings));
   
-  FN.loans = value => FN.select(value).then(library => library.api("LOANS"));
+  FN.loans = {
+  
+    outstanding: value => FN.select(value).then(library => library.api("LOANS")),
+    
+    copy: (value, copy) => FN.select(value).then(library => library.api("LOANS", {
+      copy: copy
+    })),
+    
+    user: (value, user) => FN.select(value).then(library => library.api("LOANS", {
+      user: user
+    })),
+    
+  };
   
   FN.statistics = value => FN.select(value).then(library => library.api("STATISTICS"));
   

@@ -1,7 +1,9 @@
 .library {
   border-width: 2px !important;
-  min-width: 12rem;
-  max-width: 24rem;
+  min-width: 16rem;
+  @include media-breakpoint-up(sm) {
+    max-width: 24rem;
+  }
   &.hide {
     @include animation(fadeOutGracefully 0.6s ease-in-out);
     visibility: hidden;

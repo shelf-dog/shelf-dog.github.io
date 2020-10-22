@@ -100,10 +100,12 @@ templates:
   - manage/overview
   - manage/details
   - manage/detail
-  - manage/loans
+  - manage/outstanding
   - manage/statistics
   - manage/return
   - manage/returned
+  - manage/loans
+  - manage/log
 docs:
   - shared/PUBLIC
   - shared/FEATURES
