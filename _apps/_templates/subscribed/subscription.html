@@ -1,11 +1,11 @@
 {% raw %}
 <tr data-code="{{code}}">
-  <th scope="row" class="align-middle">{{code}}</th>
-  <td class="align-middle">{{name}}</td>
-  <td class="align-middle">{{domain}}</td>
-  <td class="align-middle">{{tier}}</td>
-  <td class="align-middle">{{localeDate expires true}}</td>
-  <td class="align-middle">
+  <th scope="row" class="align-middle text-white">{{code}}</th>
+  <td class="align-middle text-white">{{name}}</td>
+  <td class="align-middle text-white">{{domain}}</td>
+  <td class="align-middle text-white">{{tier}}</td>
+  <td class="align-middle text-white">{{localeDate expires true}}</td>
+  <td class="align-middle text-white">
     <div class="d-flex flex-row justify-content-between">
       {{~#exists file~}}
       {{>link file details=version_details}}

@@ -1,12 +1,13 @@
 site :
-  0.0.5a :
-    name : Site v0.0.5a
+  0.0.5b :
+    name : Site v0.0.5b
     desc : Initial Version
-    numeric : 0.0.5.1
+    numeric : 0.0.5.2
     type:
       - alpha
     changes :
       - Library Management Improvements
+      - Subscription Management
   0.0.5 :
     name : Site v0.0.5
     desc : Initial Version

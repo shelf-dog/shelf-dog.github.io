@@ -1,7 +1,9 @@
 {% raw %}
-<div {{#if id}}id="{{id}}"{{/if}} class="container bg-light py-2">
-  {{{ instructions }}}
-  <hr />
-  {{{ table }}}
+<div {{#if id}}id="{{id}}" {{/if}}class="mx-2 mx-xl-4 library">
+  <div class="bg-dark main p-2 p-xl-3 mb-2 rounded-lg">
+    {{{ instructions }}}
+    <hr />
+    {{{ table }}}
+  </div>
 </div>
 {% endraw %}

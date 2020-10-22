@@ -12,7 +12,18 @@
 #   "888,,____,dP,d8b,  ,d8b,,d8b,  ,8I,8'_   8) ,d8,_    _,dP     Y8,_,88,_,d8b,  ,8I  `YbadP' ,d8,   ,d8b,   #
 #                                                                                                              #
 ################################################################################################################
+name: Subscribed
 link: /subscribed/
+css:
+  primary:
+  secondary:
+    - material/menu
+    - material/general
+    - custom/mixins/transitions
+    - custom/mixins/gradients
+    - custom/variables
+    - custom/fonts
+    - custom/tables
 imports:
   - name: underscore
     load: first
@@ -71,9 +82,6 @@ scripts:
   - extends/array
   - extends/math
   - extends/promises
-css:
-  primary:
-    - custom/home
 templates:
   - generic/text
   - loader
