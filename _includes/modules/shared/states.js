@@ -35,6 +35,7 @@ States = () => {
         STATE_SETTINGS_LIBRARY = "settings-library",
         
         STATE_SUBSCRIBED = "subscribed",
+        STATE_SUBSCRIBED_WORKING = "subscribed-working",
         
         STATES = [
           STATE_CONFIG, STATE_LANDING, STATE_LANDING_LIBRARIES, 
@@ -116,6 +117,7 @@ States = () => {
     
     subscribed: {
       in : STATE_SUBSCRIBED,
+      working : STATE_SUBSCRIBED_WORKING,
     },
     
     views : [

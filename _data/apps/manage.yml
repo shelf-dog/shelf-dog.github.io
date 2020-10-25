@@ -96,6 +96,7 @@ scripts:
   - extends/promises
 templates:
   - loader
+  - generic/alert
   - generic/confirm
   - manage/overview
   - manage/details

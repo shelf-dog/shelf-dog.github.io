@@ -78,6 +78,7 @@ scripts:
   - extends/math
 templates:
   - loader
+  - generic/alert
   - landing/libraries
   - landing/library
 docs:

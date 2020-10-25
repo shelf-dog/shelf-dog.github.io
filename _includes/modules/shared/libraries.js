@@ -94,6 +94,7 @@ Libraries = (options, factory) => {
       age: options.db_cache,
       fn: (stored, data) => library.api("HASH").then(hash => hash == data.hash),
     }, () => _fetch(library, "DB", 60000).then(result => {
+      if (!result) return false;
       result.data = new Uint8Array(result.data);
       var spark_md5 = new SparkMD5.ArrayBuffer();
       spark_md5.append(result.data);

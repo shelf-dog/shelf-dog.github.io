@@ -83,8 +83,9 @@ scripts:
   - extends/math
   - extends/promises
 templates:
-  - generic/text
   - loader
+  - generic/alert
+  - generic/text
   - subscribed/subscribed
   - subscribed/subscriptions
   - subscribed/subscription

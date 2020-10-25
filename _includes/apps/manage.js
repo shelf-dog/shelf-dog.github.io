@@ -316,12 +316,13 @@ App = function() {
             trigger : FN.states.manage.working,
             length : {
               min: 0,
-              max: 2
+              max: 4
             },
             tidy : true,
-            fn : command => (command && _.isArray(command) && command.length == 2 ? 
-              _library(command[0], command[1]) : _library(command || ಱ.index))
-                .then(() => $("header.navbar form[data-role='search'] input[role='search']").val("")),
+            fn : command => (command && _.isArray(command) && command.length >= 1 ? 
+              _library(command[0]) : _library(command || ಱ.index))
+                .then(() => command.length >= 2 ? this.route(command.slice(command.length - 2)) : 
+                      $("header.navbar form[data-role='search'] input[role='search']").val("")),
           },
           
           list : {

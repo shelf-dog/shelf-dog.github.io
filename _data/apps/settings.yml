@@ -95,6 +95,7 @@ scripts:
   - extends/math
 templates:
   - loader
+  - generic/alert
   - shared/selector
   - settings/personal
   - settings/settings

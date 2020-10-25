@@ -8,7 +8,7 @@ Create = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
     property : {
-      name: "SCANTLY",
+      name: "SHELF-DOG",
       value: "ENDPOINT"
     },
     subscription : {
@@ -33,6 +33,12 @@ Create = (options, factory) => {
   const SCHEMAS = [{
     key: "ENDPOINT_SCHEMA_VERSION",
     value: 1,
+    keys: {
+      type : "TYPE",
+    },
+    values: {
+      current_loans : "CURRENT_LOANS"
+    }
   }];
 
   /* <!-- Internal Options --> */
@@ -40,7 +46,9 @@ Create = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Variables --> */
-  var ರ‿ರ = {}; /* <!-- Session State --> */
+  var ರ‿ರ = {}, /* <!-- Session State --> */
+      _colours = factory.Google_Sheets_Format({}, factory),
+      _format = factory.Google_Sheets_Format({}, factory);
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
@@ -52,24 +60,50 @@ Create = (options, factory) => {
       sheet: sheetId,
       visibility: "PROJECT"
     }, factory),
-    format: factory.Google_Sheets_Format({
-      sheet: sheetId
-    }, factory),
+    format: _format,
     properties: factory.Google_Sheets_Properties({
       sheet: sheetId
     }),
     notation: factory.Google_Sheets_Notation(),
     sorts: factory.Google_Sheets_Sorts()
   });
+  /* <!-- Internal Functions --> */
+  
+  /* <!-- Metadata Functions --> */
+  FN.metadata = {
 
+    value: (key, value) => ({
+      key: key,
+      value: value,
+    }),
+
+    columns: (helpers, column, key, value) => ({
+      "createDeveloperMetadata": helpers.meta.columns(column, column + 1).tag(FN.metadata.value(key, value))
+    }),
+
+    rows: (helpers, row, key, value) => ({
+      "createDeveloperMetadata": helpers.meta.rows(row, row + 1).tag(FN.metadata.value(key, value))
+    }),
+
+    sheet: (helpers, key, value) => ({
+      "createDeveloperMetadata": helpers.meta.sheet().tag(FN.metadata.value(key, value))
+    }),
+    
+  };
+  /* <!-- Metadata Functions --> */
+  
   /* <!-- Sheet Functions --> */
   FN.sheet = {
 
-    create: (name, tab, colour) => factory.Google.sheets.create(name, tab, colour, [_.pick(_.last(SCHEMAS), "key", "value")])
-      .then(sheet => ({
-        sheet: sheet,
-        helpers: FN.helpers(sheet.sheets[0].properties.sheetId),
-      })),
+    create: (name, tab, colour) => {
+      var _schema = _.last(SCHEMAS);
+      return factory.Google.sheets.create(name, tab, colour, [_.pick(_schema, "key", "value")], "Poppins")
+          .then(sheet => ({
+            schema: _schema,
+            sheet: sheet,
+            helpers: FN.helpers(sheet.sheets[0].properties.sheetId),
+          }));
+    },
 
     add: (id, tab, sheet, colour) => factory.Google.sheets.tab(id, sheet, tab, colour).then(sheet => ({
       sheet: sheet,
@@ -150,9 +184,8 @@ Create = (options, factory) => {
           factory.Google.scripts.deployments(script).create(version || 1))
     .then(script => script.entryPoints[0].webApp.url);
 
-  FN.log = (name, subscription) => {
-    var _colours = factory.Google_Sheets_Format({}, factory);
-    return FN.sheet.create(name, "USERS", _colours.colour("MAGENTA"))
+  FN.log = (name, subscription, code) => {
+    return FN.sheet.create(name, "CURRENT LOANS", _colours.colour("MAGENTA"))
       .then(value => _.tap(value, value => factory.Google.files.update(
           value.sheet.spreadsheetId, _.extend(
             factory.Google.files.tag(options.property.name, options.property.value),
@@ -161,140 +194,193 @@ Create = (options, factory) => {
               [options.version.name, ರ‿ರ.latest.version],
             ], true)
           ))))
+    
+      /* <!-- Add Sheet Metadata --> */
+      .then(value => FN.sheet.batch(value, [FN.metadata.sheet(value.helpers, value.schema.keys.type, value.schema.values.current_loans)])
+            
+      /* <!-- Add Statistics Sheet --> */
       .then(value => Promise.each([
         Promise.resolve(value),
-        FN.sheet.add(value.sheet.spreadsheetId, "NAMES", null, _colours.colour("LIME")),
-        FN.sheet.add(value.sheet.spreadsheetId, "LOG", null, _colours.colour("BLACK")),
+        FN.sheet.add(value.sheet.spreadsheetId, "STATISTICS", null, _colours.colour("LIME")),
       ]))
+            
+      /* <!-- Populate and Format Sheets --> */
       .then(values => Promise.all([
 
         Promise.resolve(values[0].sheet.spreadsheetId),
       
-        /* <!-- Format First Tab (USERS) --> */
-        FN.sheet.update(values[0], values[0].helpers.notation.grid(0, 3, 0, 10, true, "USERS"), [
-          ["=\"ONSITE ⬇ \"&COUNTIF(A3:A, \"<>\")", null, null, null, null, null, null, "ACTIONS ➡", null, null],
-          ["SIGN-IN", null, "USER", "NAME", "CURRENTLY", "LAST LOCATION", null, "SCAN", "SIGN-IN", "SIGN-OUT"],
-          [
-            "=IFNA(QUERY(UNIQUE(D3:E), \"select Col1 where Col1 is not null and Col2='\"&A2&\"'\",0),)", null,
-            "=IFNA(QUERY(UNIQUE(LOG!D2:D), \"select Col1 where Col1 is not null order by Col1\", 0),)",
-            "=IF(LEN(C3)>0,IFNA(VLOOKUP(C3,NAMES!A:B,2,FALSE),C3),)",
-            "=IF(LEN($C3)>0,IFNA(QUERY({TRANSPOSE(H$2:$2),TRANSPOSE(H3:3)}, \"select Col1 order by Col2 desc limit 1\", 0),),)",
-            "=IF(LEN($C3)>0,IFNA(QUERY(LOG!$A:$D, \"select B where D='\"&$C3&\"' order by A desc limit 1\", 0),),)", null,
-            "=IF(AND(LEN($C3)>0,LEN(H$2)>0),IFNA(TEXT(QUERY(LOG!$A:$D, \"select A where D='\"&$C3&\"' and C='\"&H$2&\"' order by A desc limit 1\", 0), \"yy-MM-dd HH:mm:ss\"),),)",
-            "=IF(AND(LEN($C3)>0,LEN(I$2)>0),IFNA(TEXT(QUERY(LOG!$A:$D, \"select A where D='\"&$C3&\"' and C='\"&I$2&\"' order by A desc limit 1\", 0), \"yy-MM-dd HH:mm:ss\"),),)",
-            "=IF(AND(LEN($C3)>0,LEN(J$2)>0),IFNA(TEXT(QUERY(LOG!$A:$D, \"select A where D='\"&$C3&\"' and C='\"&J$2&\"' order by A desc limit 1\", 0), \"yy-MM-dd HH:mm:ss\"),),)"
-          ]
+        /* <!-- Format First Tab (CURRENT LOANS) --> */
+        FN.sheet.update(values[0], values[0].helpers.notation.grid(0, 1, 0, 8, true, "CURRENT LOANS"), [
+          ["DATE", "ID", "ISBN","COPY", "USER", "RETURNED", "AUTH_USER", "LOAN"]
         ], "USER_ENTERED")
         .then(() => FN.sheet.batch(values[0], [
 
-          /* <!-- Set Second Column to Black --> */
-          values[0].helpers.format.cells(values[0].helpers.grid.columns(1, 2).range(), [
+          /* <!-- Set Default Format --> */
+           values[0].helpers.format.cells(values[0].helpers.grid.rows(0, 26).range(), [
+            values[0].helpers.format.align.vertical("MIDDLE"),
+          ]),
+                                   
+          /* <!-- Set Top 2 Rows as a Header --> */
+          values[0].helpers.format.cells(values[0].helpers.grid.rows(0, 1).range(), [
             values[0].helpers.format.background("black"),
+            values[0].helpers.format.align.horizontal("CENTER"),
+            values[0].helpers.format.text("white", 12, true)
           ]),
 
-          /* <!-- Set Seventh Column to Black --> */
-          values[0].helpers.format.cells(values[0].helpers.grid.columns(6, 7).range(), [
-            values[0].helpers.format.background("black"),
-          ]),
-
-          /* <!-- Freeze Heading Rows --> */
+          /* <!-- Freeze Heading Rows (1) --> */
           values[0].helpers.properties.update([
-            values[0].helpers.properties.grid.frozen.rows(2),
+            values[0].helpers.properties.grid.frozen.rows(1),
           ]),
 
           /* <!-- Resize the Columns --> */
           values[0].helpers.format.dimension(values[0].helpers.grid.columns(0, 1).dimension(200)),
-          values[0].helpers.format.dimension(values[0].helpers.grid.columns(1, 2).dimension(10)),
-          values[0].helpers.format.dimension(values[0].helpers.grid.columns(6, 7).dimension(10)),
-          values[0].helpers.format.dimension(values[0].helpers.grid.columns(2, 6).dimension(190)),
-          values[0].helpers.format.dimension(values[0].helpers.grid.columns(7, 10).dimension(120)),
-
-          /* <!-- Set Top 2 Rows as Headers --> */
-          values[0].helpers.format.cells(values[0].helpers.grid.rows(0, 1).range(), [
-            values[0].helpers.format.background("black"),
-            values[0].helpers.format.align.horizontal("CENTER"),
-            values[0].helpers.format.align.vertical("MIDDLE"),
-            values[0].helpers.format.text("white", 12, true)
-          ]),
-
-          /* <!-- Set Top 2 Rows as Headers --> */
-          values[0].helpers.format.cells(values[0].helpers.grid.rows(1, 2).range(), [
-            values[0].helpers.format.background("black"),
-            values[0].helpers.format.align.horizontal("CENTER"),
-            values[0].helpers.format.align.vertical("MIDDLE"),
-            values[0].helpers.format.text("white", 11, true)
-          ]),
-          
-          /* <!-- AutoFill Formulas --> */
-          values[0].helpers.format.autofill(values[0].helpers.grid.range(2, 1000, 3, 6)),
-          values[0].helpers.format.autofill(values[0].helpers.grid.range(2, 1000, 7, 10)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(1, 2).dimension(80)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(2, 3).dimension(120)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(3, 4).dimension(80)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(4, 5).dimension(240)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(5, 6).dimension(200)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(6, 7).dimension(240)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(7, 9).dimension(80)),
 
           /* <!-- Conditional Formats --> */
-          values[0].helpers.format.conditional(values[0].helpers.grid.range(2, 1000, 0, 1))
-            .boolean("NOT_BLANK", null, values[0].helpers.format.background("yellow")),
-          values[0].helpers.format.conditional(values[0].helpers.grid.range(2, 1000, 4, 5))
-            .boolean("TEXT_EQ", values[0].helpers.format.value("SIGN-IN"), values[0].helpers.format.background("yellow"))
+          
+          /* <!-- Returned Loans - whole row lighter font colour --> */
+          values[0].helpers.format.conditional(values[0].helpers.grid.range(2, 1000, 0, 8))
+            .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=LEN($F2)>0"), values[0].helpers.format.text("mediumdarkgrey")),
+          
+           /* <!-- Outstanding Loans - user name in bold --> */
+          values[0].helpers.format.conditional(values[0].helpers.grid.range(2, 1000, 3, 4))
+            .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=LEN($F2)=0"), values[0].helpers.format.text(null, null, true))
           
         ]))
-        .then(() => factory.Flags.log("SHEET 1 | USERS:", values[0])),
+        .then(() => factory.Flags.log("SHEET 1 | CURRENT LOANS:", values[0])),
 
-        /* <!-- Create & Format Second Tab (NAMES) --> */
-        FN.sheet.update(values[1], values[1].helpers.notation.grid(0, 1, 0, 2, true, "NAMES"), [
-            ["USER ⬇", "NAME ⬇"]
+        /* <!-- Create & Format Second Tab (STATISTICS) --> */
+        FN.sheet.update(values[1], values[1].helpers.notation.grid(0, 8, 0, 10, true, "STATISTICS"), [
+            ["Statistics", code, null, null, null, null, null, null, null],
+            ["Outstanding Loans:", "=IFERROR(QUERY('CURRENT LOANS'!A2:F, \"select count(A) where D is not null and F is null label count(A) ''\",0),)", null, null, null, null, null, null, null],
+            ["Longest Outstanding Loan:", "=IFERROR(DATEDIF(INDEX(SPLIT(QUERY('CURRENT LOANS'!A2:F, \"select A where D is not null and F is null order by A limit 1\",0),\"T\"),1,1),NOW(),\"D\"),)", "=IF(LEN(B3)>0, IF(B3>1,\"day/s\",\"day\"),)", null, null, null, null, null, null],
+            ["Most Popular Item:", "=IFERROR(TRANSPOSE(QUERY('CURRENT LOANS'!A2:F, \"select B, count(A) where D is not null group by B order by count(A) desc limit 1 label count(A) ''\",0)),)", null, null, null, null, null, null, null],
+            ["Loan Count:", null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null, null],
+            ["Outstanding Loans", null, null, null, "Completed Loans", null, null, null, "Completed Loans"],
+            ["=QUERY('CURRENT LOANS'!A2:F, \"select E, count(A) where D is not null and F is not null group by E order by count(A) desc label E 'Users', count(A) 'Loans'\",0)", null, null, null, "=QUERY('CURRENT LOANS'!A2:F, \"select E, count(A) where D is not null and F is null group by E order by count(A) desc label E 'Users', count(A) 'Loans'\",0)", null, null, null, "=QUERY('CURRENT LOANS'!A2:F, \"select D, count(A) where E is not null and F is null group by D order by count(A) desc label D 'Items', count(A) 'Loans'\",0)"],
           ], "USER_ENTERED")
           .then(() => FN.sheet.batch(values[1], [
 
-            /* <!-- Set Top Row as Headers --> */
+            /* <!-- Set Default Format --> */
+            values[1].helpers.format.cells(values[1].helpers.grid.rows(0, 26).range(), [
+              values[1].helpers.format.align.vertical("MIDDLE"),
+            ]),
+            
+            /* <!-- Set Header Row Backgrounds and Formats --> */
             values[1].helpers.format.cells(values[1].helpers.grid.rows(0, 1).range(), [
               values[1].helpers.format.background("black"),
+            ]),
+            values[1].helpers.format.cells(values[1].helpers.grid.range(0, 1, 0, 1), [
+              values[0].helpers.format.text("yellow", 18, true)
+            ]),
+            values[1].helpers.format.cells(values[1].helpers.grid.range(0, 1, 1, 2), [
+              values[0].helpers.format.text("verydarkgrey", 10, true)
+            ]),
+            values[1].helpers.format.cells(values[1].helpers.grid.range(0, 1, 2, 3), [
+              values[1].helpers.format.text("white", 8)
+            ]),
+            
+            values[1].helpers.format.cells(values[1].helpers.grid.rows(5, 7).range(), [
+              values[1].helpers.format.background("black"),
               values[1].helpers.format.align.horizontal("CENTER"),
-              values[1].helpers.format.align.vertical("MIDDLE"),
-              values[1].helpers.format.text("white", 11, true)
+              values[1].helpers.format.text("white", 12, true)
+            ]),
+            
+            values[1].helpers.format.cells(values[1].helpers.grid.rows(7, 8).range(), [
+              values[1].helpers.format.background("verylightgrey"),
+              values[1].helpers.format.text(null, 12, true)
+            ]),
+            
+            values[1].helpers.format.cells(values[1].helpers.grid.range(1, 5, 0, 1), [
+              values[1].helpers.format.background("verylightgrey"),
+              values[1].helpers.format.text(null, 12, true)
             ]),
 
-            /* <!-- Freeze Heading Rows --> */
+            values[1].helpers.format.cells(values[1].helpers.grid.range(2, 6, 1, 2), [
+              values[1].helpers.format.text(null, 12)
+            ]),
+            
+            values[1].helpers.format.cells(values[1].helpers.grid.range(2, 6, 3, 4), [
+              values[1].helpers.format.text(null, 8)
+            ]),
+            
+             values[1].helpers.format.cells(values[1].helpers.grid.range(3, 4, 1, 2), [
+              values[1].helpers.format.text("midgrey")
+            ]),
+            
+            values[1].helpers.format.cells(values[1].helpers.grid.range(7, 8, 1, 2), [
+              values[1].helpers.format.align.horizontal("RIGHT"),
+            ]),
+            
+            values[1].helpers.format.cells(values[1].helpers.grid.range(7, 8, 5, 6), [
+              values[1].helpers.format.align.horizontal("RIGHT"),
+            ]),
+            
+            values[1].helpers.format.cells(values[1].helpers.grid.range(7, 8, 9, 10), [
+              values[1].helpers.format.align.horizontal("RIGHT"),
+            ]),
+            
+            /* <!-- Freeze Top Rows --> */
             values[1].helpers.properties.update([
-              values[1].helpers.properties.grid.frozen.rows(1),
+              values[1].helpers.properties.grid.frozen.rows(7),
             ]),
             
             /* <!-- Resize the Columns --> */
-            values[1].helpers.format.dimension(values[1].helpers.grid.columns(0, 2).dimension(200)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(0, 1).dimension(240)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(1, 2).dimension(80)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(2, 4).dimension(40)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(4, 5).dimension(240)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(5, 6).dimension(80)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(6, 8).dimension(40)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(8, 10).dimension(80)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(10, 11).dimension(40)),
             
-            /* <!-- Delete Extra Columns --> */
-            values[1].helpers.format.delete(values[1].helpers.grid.columns(2, 26).dimension()),
-
+            /* <!-- Merge Tabular Headers --> */
+            value.helpers.format.merge(values[1].helpers.grid.range(6, 7, 0, 2)),
+            value.helpers.format.merge(values[1].helpers.grid.range(6, 7, 4, 6)),
+            value.helpers.format.merge(values[1].helpers.grid.range(6, 7, 8, 10)),
+            
+            /* <!-- Set Tabular Borders --> */
+            value.helpers.format.update(values[1].helpers.grid.columns(3, 4).range())
+                .borders(null, null, values[1].helpers.format.border("DASHED", "black")),
+            value.helpers.format.update(values[1].helpers.grid.columns(7, 8).range())
+                .borders(null, null, values[1].helpers.format.border("DASHED", "black")),
+            value.helpers.format.update(values[1].helpers.grid.columns(11, 12).range())
+                .borders(null, null, values[1].helpers.format.border("DASHED", "black")),
+            
+            /* <!-- Set Named Range --> */
+            {
+              "addNamedRange": {
+                "namedRange": {
+                  "name": "CODE",
+                  "range": values[1].helpers.grid.range(0, 1, 1, 2)
+                }
+              }
+            },
+            
+            /* <!-- Protected Cell --> */
+            {
+              "addProtectedRange": {
+                "protectedRange": {
+                  "range": values[1].helpers.grid.range(0, 1, 1, 2),
+                  "warningOnly": true,
+                } 
+              }
+            }
+            
           ])
-          .then(() => factory.Flags.log("SHEET 2 | NAMES:", values[1]))),
+          .then(() => factory.Flags.log("SHEET 2 | STATISTICS:", values[1]))),
 
-        /* <!-- Create & Format Third Tab (LOG) --> */
-        FN.sheet.update(values[2], values[2].helpers.notation.grid(0, 1, 0, 4, true, "LOG"), [
-            ["TIME ⬇", "LOCATION ⬇", "ACTION ⬇", "USER ⬇"]
-          ], "USER_ENTERED")
-          .then(() => FN.sheet.batch(values[2], [
-
-            /* <!-- Set Top Row as Headers --> */
-            values[2].helpers.format.cells(values[2].helpers.grid.rows(0, 1).range(), [
-              values[2].helpers.format.background("black"),
-              values[2].helpers.format.align.horizontal("CENTER"),
-              values[2].helpers.format.align.vertical("MIDDLE"),
-              values[2].helpers.format.text("white", 11, true)
-            ]),
-
-            /* <!-- Freeze Heading Rows --> */
-            values[2].helpers.properties.update([
-              values[2].helpers.properties.grid.frozen.rows(1),
-            ]),
-
-            /* <!-- Resize the Columns --> */
-            values[2].helpers.format.dimension(values[2].helpers.grid.columns(0, 4).dimension(200)),
+      ]))
             
-            /* <!-- Delete Extra Columns --> */
-            values[2].helpers.format.delete(values[2].helpers.grid.columns(4, 26).dimension()),
-            
-          ])
-          .then(() => factory.Flags.log("SHEET 3 | LOG:", values[2]))),
-
-      ]).then(values => values[0]));
+      .then(values => values[0]));
   };
 
   FN.script = (script, key) => FN.main.prepare(key).then(code => factory.Google.scripts.content(script).update(code));

@@ -56,7 +56,8 @@ App = function() {
                   ಠ_ಠ.Display.doc.get({
                     name: "UPGRADE_CLIENT",
                     data: {
-                      name: subscription.file.name,
+                      name: subscription.file.name.indexOf("SHELF-DOG") === 0 && subscription.file.name.indexOf(" | ") > 0 ?
+                        subscription.file.name.split(" | ")[1].trim() : subscription.file.name,
                       version: subscription.version,
                       latest: subscription.latest
                     }
@@ -76,7 +77,7 @@ App = function() {
       })
       .then(() => ಠ_ಠ.Display.state().enter(FN.states.subscribed.in))
       .catch(e => ಠ_ಠ.Flags.error("Subscriptions Service Error:", e))
-      .then(ಠ_ಠ.Main.busy("Fetching Details"));                
+      .then(ಠ_ಠ.Main.busy("Fetching Subscription Details"));                
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */
@@ -144,7 +145,7 @@ App = function() {
       } else if (!ಠ_ಠ.Flags.initial()) {
         
         /* <!-- Default Route used in case we arrived here directly (instead of from another page) --> */
-        if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Display.state().in(FN.states.working)) window.location.hash = `#${DEFAULT_ROUTE}`;
+        if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Display.state().in(FN.states.subscribed.working)) window.location.hash = `#${DEFAULT_ROUTE}`;
         
       }
       
@@ -183,7 +184,7 @@ App = function() {
             scopes: [
               "https://www.googleapis.com/auth/drive.file"
             ],
-            trigger : FN.states.working,
+            trigger : FN.states.subscribed.working,
             fn: id => ಠ_ಠ.me ? FN.subscriptions(id) : ಱ.id = id,
           },
           
@@ -193,7 +194,7 @@ App = function() {
             scopes: [
               "https://www.googleapis.com/auth/drive.file"
             ],
-            trigger : FN.states.working,
+            trigger : FN.states.subscribed.working,
             fn: () => FN.subscriptions(),
           },
          
@@ -205,9 +206,10 @@ App = function() {
               "https://www.googleapis.com/auth/script.deployments",
             ],
             length: 1,
-            fn: code => ಱ.subscription && code == ಱ.subscription.code ?
-                          FN.create.log(`${ಱ.subscription.organisation} | Log`, ಱ.subscription.id)
-                            .then(id => ಠ_ಠ.Google.scripts.create(`${ಱ.subscription.organisation} | Log | Script`, ಱ.spreadsheet = id))
+            tidy: true,
+            fn: code => ಱ.subscription && code == ಱ.subscription.code ? //SHELF-DOG | Digital-Books Library | JD
+                          FN.create.log(`SHELF-DOG | ${ಱ.subscription.name}`, ಱ.subscription.id, ಱ.subscription.code)
+                            .then(id => ಠ_ಠ.Google.scripts.create(`SHELF-DOG | ${ಱ.subscription.name} | API`, ಱ.spreadsheet = id))
                             .then(script => {
                               ಠ_ಠ.Google.files.update(ಱ.spreadsheet, FN.create.script_id.set(script.scriptId || script));
                               return script;
@@ -251,9 +253,11 @@ App = function() {
               "https://www.googleapis.com/auth/script.deployments",
             ],
             length: 1,
+            tidy: true,
             fn: id => {
               var _subscription = ಱ.subscriptions ?
-                  _.find(ಱ.subscriptions, subscription => subscription.id == id) : ಱ.subscription;
+                  _.find(ಱ.subscriptions, 
+                          subscription => subscription.id == id || (subscription.file && subscription.file.id == id)) : ಱ.subscription;
               return _subscription ? FN.create.script(FN.create.script_id.get(_subscription.file), _subscription.public)
                 .then(script => Promise.all([ಠ_ಠ.Google.scripts.versions(script).list(), script]))
                 .then(results => {

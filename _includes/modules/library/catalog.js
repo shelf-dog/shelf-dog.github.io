@@ -118,14 +118,15 @@ Catalog = (options, factory) => {
   var _interrogate = db => {
     
     var _tables = _data(_run("SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;", db));
-    ರ‿ರ.tables = _.map(_tables.values, value => value[0]);
+    
+    ರ‿ರ.tables = _tables ? _.map(_tables.values, value => value[0]) : null;
     factory.Flags.log("META [Tables]:", ರ‿ರ.tables);
     
-    var _identifiers = _data(_run("SELECT DISTINCT type FROM identifiers ORDER BY type;", db));
-    ರ‿ರ.identifiers = _.map(_identifiers.values, value => value[0]);
+    var _identifiers = ರ‿ರ.tables ? _data(_run("SELECT DISTINCT type FROM identifiers ORDER BY type;", db)) : null;
+    ರ‿ರ.identifiers = _identifiers ? _.map(_identifiers.values, value => value[0]) : null;
     factory.Flags.log("META [Identifiers]:", ರ‿ರ.identifiers);
     
-    if (ರ‿ರ.tables.indexOf("_lc_genre_mapping") >= 0) {
+    if (ರ‿ರ.tables && ರ‿ರ.tables.indexOf("_lc_genre_mapping") >= 0) {
       var _classifications = _data(_run("SELECT * FROM _lc_genre_mapping;")),
           _classification_cols = _columns(["library_code", "genre"], _classifications);
       if (_classification_cols) ರ‿ರ.classifications = _.reduce(_classifications.values, (memo, value) => {
@@ -134,7 +135,7 @@ Catalog = (options, factory) => {
       }, {});
       factory.Flags.log("META [Classifications]:", ರ‿ರ.classifications);
     }
-    if (ರ‿ರ.tables.indexOf("custom_columns") >= 0) {
+    if (ರ‿ರ.tables && ರ‿ರ.tables.indexOf("custom_columns") >= 0) {
       var _custom = _data(_run("SELECT * FROM custom_columns WHERE mark_for_delete = 0;")),
           _custom_cols = _columns(["id", "label", "name", "datatype", "is_multiple", "normalized", "display"], _custom);
       if (_custom_cols) {

@@ -94,10 +94,11 @@ scripts:
   - extends/math
 templates:
   - loader
-  - shared/selector
+  - generic/alert
   - generic/confirm
   - generic/choose
   - generic/text
+  - shared/selector
   - library/details
   - library/results
   - library/empty
