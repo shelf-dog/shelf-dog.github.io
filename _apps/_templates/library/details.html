@@ -3,9 +3,9 @@
   
   <div id="library-details" class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
 
-    <div class="m-2 pb-1 details">{{{details}}}</div>
+    <div class="m-2 pb-1 details d-none d-md-block">{{{details}}}</div>
     
-    <div class="mx-2 mb-4">
+    <div class="mx-2 mb-3 d-none d-md-block">
       <form class="w-100 d-inline-flex flex-row align-items-center" data-role="search">
         <div class="input-group">
           <input type="text" class="form-control" role="search" placeholder="What would you like to find?" aria-label="Search">
@@ -17,9 +17,9 @@
     </div>
     
     <!-- DETAILS -->
-    <h4 class="mt-0 ml-2 mb-2 pb-1">Recent</h4>
+    <h4 class="mt-1 ml-2 mb-2 pb-1">Recent</h4>
     
-    <div class="results">{{#if results}}{{> results results}}{{/if}}</div>
+    <div class="results table-responsive">{{#if results}}{{> results results}}{{/if}}</div>
     
   </div>
   
@@ -28,7 +28,7 @@
     <!-- DETAILS -->
     <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark header">Results</h5>
     
-    <div class="results">
+    <div class="results table-responsive">
       
     </div>
   

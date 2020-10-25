@@ -1,1 +1,5 @@
-The most __recent additions__ to the library are shown below. You can also __search__ the library using the search boxes above and below. [Free text](#instructions.search.free){:.help-link} or [structured](#instructions.search.structured){:.help-link} queries are both supported, helping you find exactly what you need!
+__Recent__ library additions are below. Please also use the __search__ boxes to find anything you want.
+{:.d-block .d-xl-none}
+
+The most __recent additions__ to the library are shown below. You can also __search__ the library using the search boxes above and below.[Free text](#instructions.search.free){:.help-link} or [structured](#instructions.search.structured){:.help-link} queries are both supported, helping you find exactly what you need!
+{:.d-none .d-xl-block}

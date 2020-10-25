@@ -245,11 +245,11 @@ Create = (options, factory) => {
           /* <!-- Conditional Formats --> */
           
           /* <!-- Returned Loans - whole row lighter font colour --> */
-          values[0].helpers.format.conditional(values[0].helpers.grid.range(2, 1000, 0, 8))
+          values[0].helpers.format.conditional(values[0].helpers.grid.range(1, 1000, 0, 8))
             .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=LEN($F2)>0"), values[0].helpers.format.text("mediumdarkgrey")),
           
            /* <!-- Outstanding Loans - user name in bold --> */
-          values[0].helpers.format.conditional(values[0].helpers.grid.range(2, 1000, 3, 4))
+          values[0].helpers.format.conditional(values[0].helpers.grid.range(1, 1000, 4, 5))
             .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=LEN($F2)=0"), values[0].helpers.format.text(null, null, true))
           
         ]))
