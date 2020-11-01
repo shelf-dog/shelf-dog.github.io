@@ -1,0 +1,112 @@
+{% raw %}
+{{#> dialog class="modal-xl" }}
+<form class="needs-validation mt-3" novalidate>
+          
+  <div class="row">
+
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}title" class="col-sm-2 col-form-label col-form-label-lg text-white">Title</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}title" data-output-field="Title" type="text" class="form-control form-control-lg"
+                 tabindex="1" {{#if state}}{{#exists state.title}} value="{{state.title}}"{{/exists}}{{/if}}/>
+        </div>
+      </div>
+    </div>
+
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}author" class="col-sm-2 col-form-label col-form-label-lg text-white">Author</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}author" name="Author" type="text" class="form-control form-control-lg"
+                 tabindex="2" {{#if state}}{{#exists state.author}} value="{{state.author}}"{{/exists}}{{/if}}/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}identifier" class="col-sm-2 col-form-label text-white">Identifier</label>
+        <div class="col-sm-10">
+          {{#present identifiers}}<div class="input-group">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" data-output-field="Identifier_Type"
+                      data-qualifier="identifier" aria-haspopup="true" aria-expanded="false">Type</button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#" data-identifier="*">Any</a>
+                <div role="separator" class="dropdown-divider"></div>
+                {{#each identifiers}}<a class="dropdown-item" href="#" data-identifier="{{@key}}">{{uppercase this}}</a>{{/each}}
+              </div>
+            </div>{{/present}}
+            <input id="{{#if id}}{{id}}_{{/if}}identifier" data-output-field="Identifier" type="text" class="form-control" tabindex="3"
+                           {{#if state}}{{#exists state.identifier}} value="{{state.identifier}}"{{/exists}}{{/if}}/>
+          {{#present identifiers}}</div>{{/present}}
+        </div>
+      </div>
+    </div>
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}tag" class="col-sm-2 col-form-label text-white">Tag</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}tag" name="Tag" type="text" class="form-control" tabindex="4"
+                 {{#if state}}{{#exists state.tag}} value="{{state.tag}}"{{/exists}}{{/if}}/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}series" class="col-sm-2 col-form-label text-white">Series</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}series" data-output-field="Series" type="text" class="form-control" tabindex="5"
+                 {{#if state}}{{#exists state.identifier}} value="{{state.identifier}}"{{/exists}}{{/if}}/>
+        </div>
+      </div>
+    </div>
+
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}publisher" class="col-sm-2 col-form-label text-white">Publisher</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}publisher" name="Publisher" type="text" class="form-control" tabindex="6"
+                 {{#if state}}{{#exists state.publisher}} value="{{state.publisher}}"{{/exists}}{{/if}}/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  {{#present custom}}<div class="row"> 
+  
+   {{#each custom}}<div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row d-flex align-items-center">
+        <label for="{{#if ../id}}{{../id}}_{{/if}}custom_{{key}}" class="col-sm-5 col-form-label col-form-label-sm text-white">{{name}}</label>
+        <div class="col-sm-7 pl-2">
+          {{~#present values~}}
+          <select id="{{#if ../id}}{{../id}}_{{/if}}custom_{{key}}" class="custom-select" name="{{key}}"
+                  tabindex="{{inc @index inc=7}}" multiple>
+            {{#each values}}<option value="{{@key}}">{{this}}</option>{{/each}}
+          </select>
+          {{~else~}}
+          <input id="{{#if ../id}}{{../id}}_{{/if}}custom_{{key}}" name="{{key}}" type="{{#is type 'text'}}text{{else}}number{{/is}}"
+                 class="form-control form-control-sm" tabindex="{{inc @index inc=7}}"
+                 {{#if ../state}}{{#exists (resolve ../state key)}} value="{{resolve ../state key}}"{{/exists}}{{/if}}/>
+          {{~/present~}}
+        </div>
+      </div>
+    </div>{{/each}}
+  
+  </div>{{/present}}
+  
+</form>
+{{/dialog}}
+{% endraw %}

@@ -422,10 +422,12 @@ Google_API = (options, factory) => {
     };
 
     if (team) {
-      _data.teamDriveId = team;
+      if (team !== true) {
+        _data.teamDriveId = team;
+        _data.corpora = "teamDrive";
+      }
       _data.includeTeamDriveItems = true;
       _data.supportsTeamDrives = true;
-      _data.corpora = "teamDrive";
     } else if (spaces) {
       _data.spaces = spaces;
     } else {
@@ -912,10 +914,10 @@ Google_API = (options, factory) => {
         return fn;
       },
 
-      search: (mimeTypes, properties, mine, dates, full) => _contents(null, null,
+      search: (mimeTypes, properties, mine, dates, full, team) => _contents(null, null,
         _arrayize(mimeTypes, _.isString), null, _arrayize(properties, _.isString),
-        null, null, false, false, null, null, null, full ? FULL : null, mine, dates),
-
+        null, null, false, team || false, null, null, null, full ? FULL : null, mine, dates),
+      
     },
 
     calendar: {

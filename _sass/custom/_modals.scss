@@ -1,0 +1,30 @@
+.modal-content {
+  & > * {color: $colour-foreground;}
+  background-color: $colour-highlight-dark;
+  border: 1px solid $colour-highlight-dark;
+  .modal-title {
+    color: $colour-highlight;
+  }
+  .modal-header {
+    border-bottom: 1px solid $colour-highlight-darkest;
+  }
+  .modal-footer {
+    border-top: 1px solid $colour-highlight-darkest;
+    button, a[role='button'] {
+      color: $colour-bright;
+    }
+  }
+  .modal-header, .modal-footer {
+    background-color: $colour-background-dark;
+  }
+  .modal-body {
+    background-color: $colour-background-light;
+  }
+  .close {
+    color: $colour-emphasis;
+  }
+}
+
+.modal-backdrop {
+  background-color: $colour-background-lightest;
+}

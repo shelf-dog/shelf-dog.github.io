@@ -79,7 +79,10 @@ App = function() {
     var book = _book(loan.copy || loan.id),
         loaned = loan.date ? ಠ_ಠ.Dates.parse(loan.date) : "",
         returned = loan.returned && _.isString(loan.returned) ? ಠ_ಠ.Dates.parse(loan.returned) : loan.returned,
-        duration = loaned && _.isObject(loaned) && returned && _.isObject(returned) ? ಠ_ಠ.Dates.duration(returned - loaned) : null;
+        duration = loaned && _.isObject(loaned) ?
+                    returned && _.isObject(returned) ? 
+                      ಠ_ಠ.Dates.duration(returned - loaned) : 
+                      ಠ_ಠ.Dates.duration(ಠ_ಠ.Dates.now() - loaned) : null;
     return {
       command: loan.copy || loan.id ? `/app/library/${window.location.search}#library.${ಱ.index}.${loan.id ? loan.id : `search.${loan.copy}`}` : "",
       item: loan.copy || loan.id,
@@ -88,30 +91,40 @@ App = function() {
       when: loaned,
       returned : returned,
       last : loan.last,
-      duration : duration,
+      duration : returned ? duration : null,
+      overdue : duration && !returned && ರ‿ರ.library.meta.capabilities.loan_length && 
+        duration.as("days") > ರ‿ರ.library.meta.capabilities.loan_length ? 
+          `<strong class='text-warning'>Overdue by:</strong> ${duration.subtract({days: ರ‿ರ.library.meta.capabilities.loan_length}).humanize()}` : null
     };
+  };
+  
+  var _log = details => loans => {
+    if (!loans || loans.length === 0) return;
+    ಠ_ಠ.Flags.log(`LOANS for [${details}]:`, loans);
+    ಠ_ಠ.Display.template.show({
+      template: "log",
+      target: _holder(),
+      clear: true,
+      loans: _.map(loans, _loan),
+      query: window.location.search,
+      index: ಱ.index,
+    });
+    ಠ_ಠ.Display.state().enter(FN.states.manage.log);
   };
   
   var _search = terms => {
     ಠ_ಠ.Flags.log("SEARCHING:", terms);
     if (terms) FN.libraries.loans[/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi.test(terms) ? "user" : "copy"](ರ‿ರ.library, terms)
-      .then(loans => {
-        if (!loans || loans.length === 0) return;
-        ಠ_ಠ.Flags.log(`LOANS for [${terms}]:`, loans);
-        ಠ_ಠ.Display.template.show({
-          template: "log",
-          target: _holder(),
-          clear: true,
-          loans: _.map(loans, _loan),
-          query: window.location.search,
-          index: ಱ.index,
-        });
-        ಠ_ಠ.Display.state().enter(FN.states.manage.log);
-      })
+      .then(_log(terms))
       .catch(e => ಠ_ಠ.Flags.error("Fetching Loans Error", e))
       .then(ಠ_ಠ.Main.busy("Fetching Loans", true));
   };
   
+  var _overdue = () => FN.libraries.loans.overdue(ರ‿ರ.library)
+        .then(_log("Overdue"))
+        .catch(e => ಠ_ಠ.Flags.error("Fetching Overdue Loans Error", e))
+        .then(ಠ_ಠ.Main.busy("Fetching Overdue Loans", true));
+
   var _redirect = index => window.location.href = ಠ_ಠ.Flags.full(`/app/library/${window.location.search}#library.${index}`);
   
   var _searcher = e => {
@@ -176,28 +189,43 @@ App = function() {
         title: "Statistics",
         background: "light",
         icon: "insights",
-        values : [
-          {
-            name: "Outstanding",
-            count: statistics.outstanding,
+        values : (statistics.overdue ? [{
+            name: "Overdue",
+            count: statistics.overdue,
+            route: "overdue",
             size: "h4",
             background: "danger"
-          },{
-            name: "Returned",
-            count: statistics.returned,
-            background: "success"
-          },{
-            name: "Loaned",
-            count: statistics.loaned,
-            background: "light"
-          },{
-            name: "Avg. Loan Length",
-            count: statistics.durations,
-          },
-        ].concat(_.map(statistics.weeks, (count, week) => ({
-          name: `Week: ${week}`,
-          count: count
-        }))),
+          }] : []).concat([
+            {
+              name: "Outstanding",
+              count: statistics.outstanding,
+              size: "h4",
+              background: "warning"
+            }, {
+              name: "Returned",
+              count: statistics.returned,
+              route: "items.loan",
+              background: "success"
+            }, {
+              name: "Loaned",
+              count: statistics.loaned,
+              route: "items.return",
+              background: "light"
+            }, {
+              name: "Avg. Loan Length",
+              count: statistics.durations ? ಠ_ಠ.Dates.duration(statistics.durations * 60 * 60 * 1000).humanize() : statistics.durations,
+            },
+          ])
+          .concat(_.chain(statistics.weeks).map((count, week) => ({
+            prefix: "Loans",
+            name: `Week: ${week}`,
+            week: week,
+            class: "small py-1",
+            size: "h6",
+            colour: "info",
+            background: "info",
+            count: count
+          })).sortBy("week").reverse().value()),
         target: $(".details .detail[data-index=2]"),
         replace: true
       })));
@@ -321,7 +349,7 @@ App = function() {
             tidy : true,
             fn : command => (command && _.isArray(command) && command.length >= 1 ? 
               _library(command[0]) : _library(command || ಱ.index))
-                .then(() => command.length >= 2 ? this.route(command.slice(command.length - 2)) : 
+                .then(() => command && command.length >= 2 ? this.route(command.slice(command.length - 2)) : 
                       $("header.navbar form[data-role='search'] input[role='search']").val("")),
           },
           
@@ -366,6 +394,30 @@ App = function() {
             }
           },
           
+          items : {
+            
+            matches : /ITEMS/i, 
+            state : FN.states.manage.loaded,
+            tidy: true,
+            
+            routes : {
+              
+              return : {
+                matches : /RETURN/i,
+                length : 0,
+                fn : () => ಠ_ಠ.Flags.log("RETURN ITEMS")
+              },
+              
+              loan : {
+                matches : /LOAN/i,
+                length : 0,
+                fn : () => ಠ_ಠ.Flags.log("LOAN ITEMS")
+              }
+              
+            }
+            
+          },
+          
           item : {
             
             matches : /ITEM/i, 
@@ -381,6 +433,7 @@ App = function() {
                   var book = _book(id);
                   ಠ_ಠ.Display.confirm({
                       id: "return_confirm",
+                      target: $("body"),
                       title: ಠ_ಠ.Display.doc.get({
                         name: "TITLE_CONFIRM_RETURN",
                         trim: true
@@ -423,6 +476,15 @@ App = function() {
               _search(_terms, _holder());
             },
           },
+                    
+          overdue : {
+            
+            matches : /OVERDUE/i, 
+            state : FN.states.manage.loaded,
+            tidy : true,
+            fn : _overdue
+            
+          }
           
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */

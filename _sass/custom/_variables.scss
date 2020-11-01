@@ -17,8 +17,12 @@ $font-spacing-heading:				0.1rem;
 
 /* == Colours == */
 $colour-background: 					#000000;
-$colour-navigator:            rgba(#871f52, 0.1); //lighten($colour-background, 10%);
+$colour-background-dark:      lighten($colour-background, 5%);
+$colour-background-light:     lighten($colour-background, 10%);
+$colour-background-lightest:  lighten($colour-background, 50%);
+$colour-navigator:            rgba(#871f52, 0.1);
 $colour-navigator-input:      rgba(#871f52, 0.2);
+$colour-bright: 	  					#ffffff;
 $colour-emphasis: 						#cccccc;
 $colour-deemphasise:          #f3f3f3;
 $colour-foreground: 					darken($colour-emphasis, 10%);
@@ -27,6 +31,8 @@ $colour-page:                 transparentize($colour-background, 0.25);
 $colour-dark:                 transparentize($colour-background, 0.2);
 $colour-shadow:               transparentize($colour-background, 0.6);
 $colour-highlight: 						#fef513;
+$colour-highlight-dark:       darken($colour-highlight, 20%);
+$colour-highlight-darkest:    darken($colour-highlight, 40%);
 $colour-debug: 								#888888;
 $colour-busy-line:            #646464;
 $colour-create-fill:          #cc0099;

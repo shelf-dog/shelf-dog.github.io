@@ -95,7 +95,7 @@ Catalog = (options, factory) => {
         return value => _enums[value] ? {
           value: value,
           text: _enums[value],
-        } : value;
+        } : value === undefined ? _enums : value;
       }  
     },
     
@@ -373,7 +373,11 @@ Catalog = (options, factory) => {
       
     },
     
+    custom : () => ರ‿ರ.custom,
+    
     fields : () => ರ‿ರ.fields,
+    
+    identifiers : () => ರ‿ರ.identifiers,
       
     search : {
       

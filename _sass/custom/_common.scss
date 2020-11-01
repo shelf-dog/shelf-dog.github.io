@@ -56,7 +56,13 @@ a {text-decoration: none; color: inherit;}
 .content {
 	width: 100%;
 }
-
+.modal-open {
+  @include transition(background-color 1s ease-in-out);
+  > .content {
+    @include transition(filter 1s linear);
+    @include filter(blur, 4px);
+  }  
+}
 .bg-page {
   background-color: $colour-page !important; 
 }

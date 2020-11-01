@@ -37,6 +37,13 @@
         <small id="settings_capabilities_loan_field_HELP" class="form-text text-muted">Name of the field that represents copies to be loaned out (e.g. Accession or Copy Number). If the library doesn't hold multiple copies for any item, leave this as 'None'.</small>
       </div>
       
+      <!-- LOANS LENGTH (DAYS) -->
+      <div class="form-group" data-output-field="capabilities_loan_length">
+        <label for="settings_capabilities_loan_length">Loan Length</label>
+        <input type="number" class="form-control" id="settings_capabilities_loan_length" min="0" aria-describedby="settings_capabilities_loan_length_HELP" data-output-name="Value" data-output-always="true"{{#exists capabilities_loan_length}} value="{{ capabilities_loan_length }}"{{/exists}}>
+        <small id="settings_capabilities_loan_length_HELP" class="form-text text-muted">Length of loans in days (0 = unlimited loan length).</small>
+      </div>
+      
     </div>
     
   </div>
@@ -78,7 +85,7 @@
   <!-- RECENT ITEMS -->
   <div class="form-group" data-output-field="recent_items">
     <label for="settings_recent_items">Recent Items</label>
-    <input type="number" class="form-control" id="settings_recent_items" aria-describedby="settings_recent_items_HELP" data-output-name="Value" data-output-always="true"{{#exists recent_items}} value="{{ recent_items }}"{{/exists}}>
+    <input type="number" class="form-control" id="settings_recent_items" min="0" aria-describedby="settings_recent_items_HELP" data-output-name="Value" data-output-always="true"{{#exists recent_items}} value="{{ recent_items }}"{{/exists}}>
     <small id="settings_recent_items_HELP" class="form-text text-muted">Number of recently added / updated items to display for the library.</small>
   </div>
   

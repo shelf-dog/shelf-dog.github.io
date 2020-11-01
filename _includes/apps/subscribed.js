@@ -18,9 +18,39 @@ App = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
+  FN.subscription = (subscription, file, latest) => {
+    
+    subscription.expires = subscription.expires ? new Date(subscription.expires) : "";
+    subscription.file = file;
+
+    subscription.version = subscription.file ? FN.create.version.get(subscription.file) : null;
+    if (subscription.version) subscription.version_details = ಠ_ಠ.Display.doc.get("VERSION_CLIENT", subscription.version);
+    subscription.latest = latest.version;
+
+    subscription.upgradable = subscription.file && subscription.version != subscription.latest ?
+      `upgrade.${subscription.file.id}` : null;
+    subscription.details = subscription.upgradable ? 
+      ಠ_ಠ.Display.doc.get({
+        name: "UPGRADE_CLIENT",
+        data: {
+          name: subscription.file.name.indexOf("SHELF-DOG") === 0 && subscription.file.name.indexOf(" | ") > 0 ?
+            subscription.file.name.split(" | ")[1].trim() : subscription.file.name,
+          version: subscription.version,
+          latest: subscription.latest
+        }
+      }) : null;
+
+    subscription.create_details = ಠ_ಠ.Display.doc.get("CREATE_CLIENT");
+    subscription.help_details = ಠ_ಠ.Display.doc.get("HELP_CLIENT");
+    subscription.cancel_details = ಠ_ಠ.Display.doc.get("CANCEL_CLIENT");
+
+    return subscription;
+    
+  };
+  
   FN.subscriptions = id => Promise.all([
       FN.client.user().then(user => FN.subscribe.subscriptions(user, id)),
-      ಠ_ಠ.Google.files.search(ಠ_ಠ.Google.files.natives()[1], FN.create.query(), true),
+      ಠ_ಠ.Google.files.search(ಠ_ಠ.Google.files.natives()[1], FN.create.query(), null, null, null, true),
       FN.create.latest()
     ])
       .then(results => {
@@ -31,7 +61,7 @@ App = function() {
     
         ಠ_ಠ.Flags.log("Subscriptions:", subscriptions);
         ಠ_ಠ.Flags.log("Files:", files);
-        ಠ_ಠ.Flags.log("Version:", version);
+        ಠ_ಠ.Flags.log("Version:", ರ‿ರ.version = version);
     
         if (subscriptions && _.isArray(subscriptions)) {
           subscriptions.length === 1 ? ಱ.subscription = subscriptions[0] : ಱ.subscriptions = subscriptions;
@@ -41,34 +71,8 @@ App = function() {
             instructions: ಠ_ಠ.Display.doc.get(id && ಱ.subscription && !ಱ.subscription.file ? "INSTRUCTIONS" : "MANAGE"),
             table: ಠ_ಠ.Display.template.get({
               template: "subscriptions",
-              subscriptions: _.map(subscriptions, subscription => {
-                
-                subscription.expires = subscription.expires ? new Date(subscription.expires) : "";
-                subscription.file = _.find(files, FN.create.filter(subscription.id));
-                
-                subscription.version = subscription.file ? FN.create.version.get(subscription.file) : null;
-                if (subscription.version) subscription.version_details = ಠ_ಠ.Display.doc.get("VERSION_CLIENT", subscription.version);
-                subscription.latest = version.version;
-                
-                subscription.upgradable = subscription.file && subscription.version != subscription.latest ?
-                  `upgrade.${subscription.file.id}` : null;
-                subscription.details = subscription.upgradable ? 
-                  ಠ_ಠ.Display.doc.get({
-                    name: "UPGRADE_CLIENT",
-                    data: {
-                      name: subscription.file.name.indexOf("SHELF-DOG") === 0 && subscription.file.name.indexOf(" | ") > 0 ?
-                        subscription.file.name.split(" | ")[1].trim() : subscription.file.name,
-                      version: subscription.version,
-                      latest: subscription.latest
-                    }
-                  }) : null;
-                
-                subscription.create_details = ಠ_ಠ.Display.doc.get("CREATE_CLIENT");
-                subscription.help_details = ಠ_ಠ.Display.doc.get("HELP_CLIENT");
-                subscription.cancel_details = ಠ_ಠ.Display.doc.get("CANCEL_CLIENT");
-                
-                return subscription;
-              }),
+              subscriptions: _.map(subscriptions, subscription => FN.subscription(subscription,
+                                                                    _.find(files, FN.create.filter(subscription.id)), version)),
             }),
             target: ಠ_ಠ.container,
           });
@@ -207,7 +211,7 @@ App = function() {
             ],
             length: 1,
             tidy: true,
-            fn: code => ಱ.subscription && code == ಱ.subscription.code ? //SHELF-DOG | Digital-Books Library | JD
+            fn: code => ಱ.subscription && code == ಱ.subscription.code ?
                           FN.create.log(`SHELF-DOG | ${ಱ.subscription.name}`, ಱ.subscription.id, ಱ.subscription.code)
                             .then(id => ಠ_ಠ.Google.scripts.create(`SHELF-DOG | ${ಱ.subscription.name} | API`, ಱ.spreadsheet = id))
                             .then(script => {
@@ -265,8 +269,21 @@ App = function() {
                   return [results[1], _version ? _version.versionNumber + 1 : 1];
                 })
                 .then(results => FN.create.app(results[0], results[1], _subscription.endpoint))
-                .then(result => result ? ಠ_ಠ.Google.files.update(_subscription.file.id, FN.create.version.set()) : result)
-                .then(result => result ? $(`[data-action='upgrade'][data-id='${_subscription.file.id}']`).remove() : result)
+                .then(result => result ? ಠ_ಠ.Google.files.update(_subscription.file.id, FN.create.version.set(),
+                                                                    _subscription.file.teamDriveId || null) : result)
+                .then(result => {
+                  if (result) {
+                    _subscription.file.appProperties.VERSION = ರ‿ರ.version.version;
+                    _subscription = FN.subscription(_subscription, _subscription.file, ರ‿ರ.version);
+                    ಠ_ಠ.Flags.log("Updated Subscription:", _subscription);
+                    ಠ_ಠ.Display.template.show(_.extend({
+                      target: $(`tr[data-code='${_subscription.code}']`),
+                      template: "subscription",
+                      replace: true,
+                    }, _subscription));
+                  }
+                  return result;
+                })
                 .catch(e => ಠ_ಠ.Flags.error("Logging Sheet Update Error:", e))
                 .then(ಠ_ಠ.Main.busy("Updating Script")) : false;
             }

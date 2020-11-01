@@ -116,6 +116,10 @@ Libraries = (options, factory) => {
   
     outstanding: value => FN.select(value).then(library => library.api("LOANS")),
     
+    overdue: value => FN.select(value).then(library => library.api("LOANS", {
+      overdue: true
+    })),
+    
     copy: (value, copy) => FN.select(value).then(library => library.api("LOANS", {
       copy: copy
     })),

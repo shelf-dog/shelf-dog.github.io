@@ -17,11 +17,13 @@ css:
   secondary:
     - material/menu
     - material/general
+    - material/dialogs
     - custom/mixins/transitions
     - custom/mixins/gradients
     - custom/variables
     - custom/fonts
     - custom/tables
+    - custom/modals
 imports:
   - name: underscore
     load: first
@@ -98,7 +100,9 @@ templates:
   - generic/confirm
   - generic/choose
   - generic/text
+  - shared/dialog
   - shared/selector
+  - dialogs/search
   - library/details
   - library/results
   - library/empty
@@ -114,6 +118,7 @@ docs:
   - shared/TUTORIALS
   - library/README
   - library/LIBRARY
+  - library/ADVANCED_SEARCH
   - library/instructions/SEARCH_INSTRUCTIONS
   - library/instructions/SEARCH_FREETEXT_INSTRUCTIONS
   - library/instructions/SEARCH_STRUCTURED_INSTRUCTIONS

@@ -122,43 +122,91 @@ App = function() {
     return element;
   };
   
-  var _search = (terms, element) => {
-    var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,
-        _results_element = _display(element, _results);
-    ಠ_ಠ.Flags.log("RESULTS:", _results);
+  var _search = {
     
-    /* <!-- Clear any selected Book states --> */
-    _clear();
+    action: (terms, element) => {
+      var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,
+          _results_element = _display(element, _results);
+      ಠ_ಠ.Flags.log("RESULTS:", _results);
+
+      /* <!-- Clear any selected Book states --> */
+      _clear();
+
+      _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
+      _hookup(ಠ_ಠ.Display.template.show(_.extend({
+        template: "results",
+        target: _results_element,
+        clear: true
+      }, _results))) : ಠ_ಠ.Display.template.show({
+        template: "empty",
+        target: _results_element,
+        clear: true
+      });
+      _reset(true);
+    },
+        
+    advanced: () => ಠ_ಠ.Display.modal("search", {
+        id: "advanced_search",
+        target: $("body"),
+        title: "Advanced Search",
+        instructions: ಠ_ಠ.Display.doc.get("ADVANCED_SEARCH", null, true),
+        identifiers: ರ‿ರ.db.identifiers(),
+        custom: _.chain(ರ‿ರ.db.custom() || []).map((field, key) => {
+            var _field = {
+              key: key,
+            };
+            if (field.enums) _field.values = field.enums();
+            return _.extend(_field, field);
+          })
+          .filter(field => field.type == "text" || field.type == "int" || field.type == "float")
+          .sortBy("name")
+          .value(),
+        validate: values => values,
+        action: "Search",
+        enter: true
+      }, dialog => {
+        ಠ_ಠ.Flags.log("DIALOG:", dialog);
+        _.each(dialog.find("[data-qualifier]"), element => {
+          var _element = $(element),
+              _qualifier = _element.data("qualifier");
+          dialog.find(`[data-${_qualifier}]`).on("click.qualifier", e => {
+            var _clicked = $(e.currentTarget),
+                _data = _clicked.data(_qualifier);
+            _element.text(_data === "*" ? "Type" : ರ‿ರ.db.identifiers()[_data].toUpperCase()).parents(".input-group")
+              .find("input").focus();
+          });
+        });
+      })
+      .then(values => {
+        ಠ_ಠ.Flags.log("SEARCH:", values);
+      })
+      .catch(e => e ? ಠ_ಠ.Flags.error("Advanced Search Error", e) : ಠ_ಠ.Flags.log("Advanced Search Cancelled"))
+    ,
     
-    _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
-    _hookup(ಠ_ಠ.Display.template.show(_.extend({
-      template: "results",
-      target: _results_element,
-      clear: true
-    }, _results))) : ಠ_ಠ.Display.template.show({
-      template: "empty",
-      target: _results_element,
-      clear: true
-    });
-    _reset(true);
+    basic: terms => {
+      terms = decodeURIComponent(ಱ.url.decode(terms));
+      $("header.navbar form[data-role='search'] input[role='search']").val(terms);
+      _search.action(terms, _holder());
+    },
+    
+    searcher: e => {
+      /* <!-- Stop any default form actions (e.g. Post) --> */
+      e.preventDefault();
+      e.stopPropagation();
+
+      /* <!-- Get the search terms from the triggering element (search up the tree) --> */
+      var _input = $(e.currentTarget).parents("form[data-role='search']").find("input[role='search']"),
+          _terms = _input.val();
+
+      /* <!-- Not routed, so manually tidy up! --> */
+      ಠ_ಠ.Display.tidy();
+
+      /* <!-- Perform the search and push into the history state (to allow for blended back/forward navigation) --> */
+      _search(_terms, _holder());
+      window.history.pushState(null, null, `#search.${ಱ.url.encode(encodeURIComponent(_terms))}`);
+    },
+    
   };
-  
-  var _searcher = e => {
-                /* <!-- Stop any default form actions (e.g. Post) --> */
-                e.preventDefault();
-                e.stopPropagation();
-    
-                /* <!-- Get the search terms from the triggering element (search up the tree) --> */
-                var _input = $(e.currentTarget).parents("form[data-role='search']").find("input[role='search']"),
-                    _terms = _input.val();
-    
-                /* <!-- Not routed, so manually tidy up! --> */
-                ಠ_ಠ.Display.tidy();
-    
-                /* <!-- Perform the search and push into the history state (to allow for blended back/forward navigation) --> */
-                _search(_terms, _holder());
-                window.history.pushState(null, null, `#search.${ಱ.url.encode(encodeURIComponent(_terms))}`);
-              };
   
   var _overview = (element, index) => Promise.resolve(ಠ_ಠ.Display.template.show({
                 template: "details",
@@ -172,7 +220,7 @@ App = function() {
                                 recent => ಠ_ಠ.Flags.log("RECENT:", recent)),
               }))
     .then(element => _hookup(element).find("form[data-role='search'] button[type='submit']")
-                .off("click.search").on("click.search", _searcher))
+                .off("click.search").on("click.search", _search.searcher))
     .then(() => {
       /* <!-- Set Manageable and Loanable States --> */
       ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable]);
@@ -194,7 +242,7 @@ App = function() {
               _overview(_holder(), ರ‿ರ.index).then(() => book !== undefined && book !== null ? _book(book) : null);
             
               $("header.navbar form[data-role='search'] button[type='submit']")
-                .off("click.search").on("click.search", _searcher);
+                .off("click.search").on("click.search", _search.searcher);
             
               $("input[role='search']:visible").focus();
  
@@ -330,13 +378,12 @@ App = function() {
             matches : /SEARCH/i,
             state : FN.states.library.loaded,
             trigger : FN.states.library.working,
-            length : 1,
-            tidy : true,
-            fn : command => {
-              var _terms = decodeURIComponent(ಱ.url.decode(command));
-              $("header.navbar form[data-role='search'] input[role='search']").val(_terms);
-              _search(_terms, _holder());
+            length : {
+              min: 0,
+              max: 1
             },
+            tidy : true,
+            fn : command => command ? _search.basic(command) : _search.advanced(),
           },
           
           library : {
@@ -370,6 +417,7 @@ App = function() {
                       _error = e => e ? ಠ_ಠ.Flags.error("Loan Book Error", e) : ಠ_ಠ.Flags.log("Loan Book Cancelled"),
                       _loan = copy => ಠ_ಠ.Display.text({
                         id: "loan_confirm",
+                        target: $("body"),
                         title: ಠ_ಠ.Display.doc.get({
                           name: "TITLE_CONFIRM_LOAN",
                           trim: true
@@ -385,6 +433,7 @@ App = function() {
                       
                     _available.length === 1 ? _loan(_available[0].copy) : ಠ_ಠ.Display.choose({
                       id: "return_choose",
+                      target: $("body"),
                       title: ಠ_ಠ.Display.doc.get({
                         name: "TITLE_CHOOSE_LOAN",
                         trim: true
@@ -418,6 +467,7 @@ App = function() {
                     /* <!-- Only one available item / copy --> */
                     ಠ_ಠ.Display.confirm({
                       id: "return_confirm",
+                      target: $("body"),
                       title: ಠ_ಠ.Display.doc.get({
                         name: "TITLE_CONFIRM_RETURN",
                         trim: true
@@ -434,6 +484,7 @@ App = function() {
                     /* <!-- More than one outstanding loan --> */
                     ಠ_ಠ.Display.choose({
                       id: "return_choose",
+                      target: $("body"),
                       title: ಠ_ಠ.Display.doc.get({
                         name: "TITLE_CHOOSE_RETURN",
                         trim: true
