@@ -82,6 +82,11 @@ Catalog = (options, factory) => {
     return data;
   };
   
+  var _searcher = query => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
+      if (value.public && value.multiple) memo.push(_name(key, value));
+      return memo;
+    }, []) : []), null, _data(_run(query)));
+  
   var _parse = {
     
     enums : details => {
@@ -247,20 +252,40 @@ Catalog = (options, factory) => {
   };
   /* <!-- Builder Functions --> */
   
+  /* <!-- Group Functions --> */
+  var _groups = {
+    
+    extend : (base,extend) => `${base}${extend ? "," : ""}`,
+    
+    authors : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors", extend),
+    
+    formats : extend => _groups.extend("(SELECT GROUP_CONCAT(format, '\n') FROM data WHERE data.book = books.id) Formats", extend),
+                    
+    publisher : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher", extend),
+    
+    rating : extend => _groups.extend("(SELECT rating FROM ratings WHERE ratings.id IN (SELECT rating from books_ratings_link WHERE book = books.id)) Rating", extend),
+    
+    series : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series", extend),
+    
+    tags : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags", extend),
+    
+  };
+  /* <!-- Group Functions --> */
+  
   /* <!-- Find Functions --> */
   var _find = where => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
         if (value.multiple) memo.push(_name(key, value));
         return memo;
       }, []) : []), ["Published", "Modified"], _data(_run(_.compact([
         "SELECT id ID, title Title, pubdate Published, path Path, has_Cover Cover, last_modified Modified,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher,",
+        _groups.authors(true),
+        _groups.publisher(true),
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers) : "",
-        "(SELECT rating FROM ratings WHERE ratings.id IN (SELECT rating from books_ratings_link WHERE book = books.id)) Rating,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags,",
+        _groups.rating(true),
+        _groups.series(true),
+        _groups.tags(true),
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom) : "",
-        "(SELECT GROUP_CONCAT(format, '\n') FROM data WHERE data.book = books.id) Formats",
+        _groups.formats(),
         "FROM books",
         where
       ]).join("\n"))));
@@ -273,13 +298,14 @@ Catalog = (options, factory) => {
           "'": "''",
         }),
     
-    select : (identifier_types, custom_names, extras) => ["SELECT id ID, title Title,",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors,",
+    select : (identifier_types, custom_names, extras) => [
+        "SELECT id ID, title Title,",
+        _groups.authors(true),
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers, identifier_types) : "",
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom, null, true, custom_names) : "",
-        "(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series,",
-        `(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags${extras ? "," : ""}`]
-    .concat(extras ? _.isString(extras) ? [extras] : extras : []).concat(["FROM books"]),
+        _groups.series(true),
+        _groups.tags(!!extras)
+      ].concat(extras ? _.isString(extras) ? [extras] : extras : []).concat(["FROM books"]),
   
     condition : (field, comparator, value, type, array) => {
       value = type == "text" ? _search.safe(value) : value;
@@ -310,24 +336,38 @@ Catalog = (options, factory) => {
           _array = value => ರ‿ರ.fields.array.indexOf(value) >= 0,
           _extras = [];
       
-      var _where = _.reduce(terms, (memo, term) => {
-        return term.operator ?
-          _.isString(term.term) ?
-            `${memo} ${term.operator} (${_search.like(term)})` :
-            !(term.term.field = _valid(term.term.field)) ? memo :
-              (_extras.push(term.term.field), 
-                `${memo} ${term.operator} (${_search.condition(term.term.field, term.term.comparator, term.term.value, _type(term.term.field), _array(term.term.field))})`) :
-          _.isString(term) ?
-            `${memo} (${_search.like(term)})` :
-            !(term.field = _valid(term.field)) ? memo :
-            (_extras.push(term.field), `${memo} (${_search.condition(term.field, term.comparator, term.value, _type(term.field), _array(term.field))})`);
-      }, "WHERE");
-      factory.Flags.log("Specific SQL Conditon:", _where);
+      var _initial = "WHERE",
+          _condition = (term, only) => {
+            var _children = term.term ? term.term.children : term.children,
+                _extra = !only && _children && _children.length > 0 ? "(" : "",
+                _return = term.operator ?
+                  _.isString(term.term) ?
+                    `${term.operator} ${_extra}(${_search.like(term)})` :
+                    !(term.term.field = _valid(term.term.field)) ? null :
+                      (_extras.push(term.term.field), 
+                        `${term.operator} ${_extra}(${_search.condition(term.term.field, term.term.comparator, term.term.value, _type(term.term.field), _array(term.term.field))})`) :
+                  _.isString(term) ?
+                    `(${_search.like(term)})` :
+                    !(term.field = _valid(term.field)) ? null :
+                    (_extras.push(term.field), `${_extra}(${_search.condition(term.field, term.comparator, term.value, _type(term.field), _array(term.field))})`);
+            
+            return _children && _children.length > 0 ?
+              `${_return} ${_.reduce(_children, 
+                                     (memo, child) => `${memo ? `${memo} ` : ""}${_condition(child)}`, null)}${only ? "" : ")"}` : _return;
+          },
+          _reducer = (memo, term, index, list) => `${memo} ${_condition(term, index === list.length)}`,
+          _where = _.reduce(terms, _reducer, _initial);
       
-      var identifier_types = _.intersection(ರ‿ರ.fields.identifiers, _extras),
+      factory.Flags.log("Specific SQL Condition:", _where);
+      
+      var invalid = _where == _initial,
+          identifier_types = _.intersection(ರ‿ರ.fields.identifiers, _extras),
           custom_names = _.intersection(_.union(ರ‿ರ.fields.scalar, ರ‿ರ.fields.array), _extras);
 
-      return _.compact(_search.select(identifier_types, custom_names).concat([_where])).join("\n");
+      return invalid && terms && terms.length === 1 ?
+        _search.generic(terms[0].value) : 
+        _.compact(_search.select(identifier_types, custom_names).concat(_where && _where != "WHERE" ? [_where] : [])).join("\n");
+      
     },
     
   };
@@ -383,13 +423,12 @@ Catalog = (options, factory) => {
       
       books : terms => {
         terms = options.functions.lexer.parse(terms);
-        return _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
-          if (value.public && value.multiple) memo.push(_name(key, value));
-          return memo;
-        }, []) : []), null, _data(_run(_.isString(terms) ? _search.generic(terms) : terms.length === 1 && _.isString(terms[0]) ? _search.generic(terms[0]) : _search.specific(terms))));
-        
+        return _searcher(_.isString(terms) ? 
+          _search.generic(terms) : terms.length === 1 && _.isString(terms[0]) ? _search.generic(terms[0]) : _search.specific(terms));
       },
       
+      advanced : terms => _searcher(_search.specific(terms)),
+        
     },
     
     find : {

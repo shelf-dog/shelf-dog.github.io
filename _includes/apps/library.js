@@ -40,7 +40,7 @@ App = function() {
         _header_element = _results_element.find(".header");
     _results_element = _results_element.find(".results");
     element.find("#library-details")[results ? "addClass" : "removeClass"]("d-none");
-    if (results) _.isArray(results.values) && results.values.length > 0 ?
+    results && _.isArray(results.values) && results.values.length > 0 ?
         _header_element.removeClass("d-none").text(`${results.values.length} Result${results.values.length > 1 ? "s" : ""}`) :
         _header_element.addClass("d-none").text("Results");
     return _results_element;
@@ -124,20 +124,19 @@ App = function() {
   
   var _search = {
     
-    action: (terms, element) => {
-      var _results = terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null,
-          _results_element = _display(element, _results);
-      ಠ_ಠ.Flags.log("RESULTS:", _results);
+    action: (results, element) => {
+      var _results_element = _display(element, results);
+      ಠ_ಠ.Flags.log("RESULTS:", results);
 
       /* <!-- Clear any selected Book states --> */
       _clear();
 
-      _results ? _results.values.length === 1 ? _book(_results.values[0][0]) : 
+      results ? results.values.length === 1 ? _book(results.values[0][0]) : 
       _hookup(ಠ_ಠ.Display.template.show(_.extend({
         template: "results",
         target: _results_element,
         clear: true
-      }, _results))) : ಠ_ಠ.Display.template.show({
+      }, results))) : ಠ_ಠ.Display.template.show({
         template: "empty",
         target: _results_element,
         clear: true
@@ -145,13 +144,15 @@ App = function() {
       _reset(true);
     },
         
-    advanced: () => ಠ_ಠ.Display.modal("search", {
+    advanced: () => {
+      var _customs = ರ‿ರ.db.custom() || [];
+      return ಠ_ಠ.Display.modal("search", {
         id: "advanced_search",
         target: $("body"),
         title: "Advanced Search",
         instructions: ಠ_ಠ.Display.doc.get("ADVANCED_SEARCH", null, true),
         identifiers: ರ‿ರ.db.identifiers(),
-        custom: _.chain(ರ‿ರ.db.custom() || []).map((field, key) => {
+        custom: _.chain(_customs).map((field, key) => {
             var _field = {
               key: key,
             };
@@ -161,7 +162,9 @@ App = function() {
           .filter(field => field.type == "text" || field.type == "int" || field.type == "float")
           .sortBy("name")
           .value(),
-        validate: values => values,
+        validate: values => _.some(values, 
+            value => value.Value || (_.isArray(value.Values) && value.Values.length > 0) || 
+                        (value.Values && value.Values.Value !== undefined && value.Values.Value !== null)),
         action: "Search",
         enter: true
       }, dialog => {
@@ -169,24 +172,72 @@ App = function() {
         _.each(dialog.find("[data-qualifier]"), element => {
           var _element = $(element),
               _qualifier = _element.data("qualifier");
-          dialog.find(`[data-${_qualifier}]`).on("click.qualifier", e => {
+          _element.parents(".input-group").find(`[data-${_qualifier}]`).on("click.qualifier", e => {
             var _clicked = $(e.currentTarget),
                 _data = _clicked.data(_qualifier);
-            _element.text(_data === "*" ? "Type" : ರ‿ರ.db.identifiers()[_data].toUpperCase()).parents(".input-group")
-              .find("input").focus();
+            _element.text(_data === "*" ? "Type" : _data === "==" ? "Equals" : 
+                            ರ‿ರ.db.identifiers()[_data] ? ರ‿ರ.db.identifiers()[_data].toUpperCase() : _data)
+              .parents(".input-group").find("input").focus();
           });
         });
       })
-      .then(values => {
-        ಠ_ಠ.Flags.log("SEARCH:", values);
+      .then(values => {        
+        ಠ_ಠ.Flags.log("ADVANCED SEARCH:", values);
+        var _values = _.reduce(values, (memo, value, key) => {
+          var _custom = _customs[key],
+              _return = {
+                comparator: "="
+              };
+          if (_custom) {
+            _return.field = _custom.name;
+            if (value.Values) {
+              if (_.isArray(value.Values) && value.Values.length > 0) {
+                _return.value = value.Values[0];
+                if (value.Values.length > 1) _return.children = _.map(value.Values.slice(1), child => ({
+                    operator: "or",
+                    term: {
+                      comparator: "=",
+                      field: _custom.name,
+                      value: child,
+                    },
+                  }));
+              } else {
+                if (value.Values.Comparator && value.Values.Comparator != "Equals" && value.Values.Comparator != "=") 
+                  _return.comparator = value.Values.Comparator;
+                _return.value = value.Values.Value;
+              }
+            } else {
+              _return.value = value.Value;
+            }
+          } else if (key == "Identifier") {
+            _return.field = value.Values.Type;
+            _return.value = value.Values.Value;
+            if (_return.field == "Type") _return = false;
+          } else {
+            _return.field = key;
+            _return.value = value.Value;
+          }
+          if (_return.value === undefined || _return.value === null) _return = false;
+          if (_return) {
+            if (memo.length > 0) _return = {
+              operator: "and",
+              term: _return,
+            };
+            memo.push(_return);
+          }
+          return memo;
+        }, []);
+        ಠ_ಠ.Flags.log("SEARCH PROPERTIES:", _values);
+        if (_values && _values.length > 0) _search.action(ರ‿ರ.db.search.advanced(_values), _holder());
       })
-      .catch(e => e ? ಠ_ಠ.Flags.error("Advanced Search Error", e) : ಠ_ಠ.Flags.log("Advanced Search Cancelled"))
-    ,
+      .catch(e => e ? ಠ_ಠ.Flags.error("Advanced Search Error", e) : ಠ_ಠ.Flags.log("Advanced Search Cancelled"));
+    },
     
     basic: terms => {
       terms = decodeURIComponent(ಱ.url.decode(terms));
       $("header.navbar form[data-role='search'] input[role='search']").val(terms);
-      _search.action(terms, _holder());
+      ಠ_ಠ.Flags.log("BASIC SEARCH:", terms);
+      _search.action(terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null, _holder());
     },
     
     searcher: e => {
@@ -202,7 +253,7 @@ App = function() {
       ಠ_ಠ.Display.tidy();
 
       /* <!-- Perform the search and push into the history state (to allow for blended back/forward navigation) --> */
-      _search(_terms, _holder());
+      _search.basic(_terms, _holder());
       window.history.pushState(null, null, `#search.${ಱ.url.encode(encodeURIComponent(_terms))}`);
     },
     
