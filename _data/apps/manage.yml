@@ -23,6 +23,7 @@ css:
     - custom/fonts
     - custom/tables
     - custom/ribbons
+    - custom/modals
 imports:
   - name: underscore
     load: first
@@ -98,6 +99,8 @@ templates:
   - loader
   - generic/alert
   - generic/confirm
+  - generic/text
+  - generic/inform
   - manage/overview
   - manage/details
   - manage/detail
@@ -114,9 +117,14 @@ docs:
   - shared/TUTORIALS
   - manage/README
   - manage/DETAILS
+  - manage/RETURNS
   - manage/instructions/MANAGE_SEARCH_INSTRUCTIONS
   - dialogs/CONFIRM_RETURN
+  - dialogs/CONFIRM_RETURNS
+  - dialogs/CONFIRM_LOANS
   - titles/TITLE_CONFIRM_RETURN
+  - titles/TITLE_CONFIRM_RETURNS
+  - titles/TITLE_CONFIRM_LOANS
 scopes:
   google:
     - scope: email

@@ -229,7 +229,7 @@ App = function() {
         target: $(".details .detail[data-index=2]"),
         replace: true
       })));
-    
+    ರ‿ರ.refresh = () => _show(index, library);
   };
   
   var _library = index => (index === null || index === undefined ? 
@@ -241,7 +241,7 @@ App = function() {
           .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
           .then(db => ರ‿ರ.db = db)
           .then(() => library.meta.claims && library.meta.claims.manage ? _show(ಱ.index, library) : _redirect(index)))
-          .then(ಠ_ಠ.Main.busy("Opening Library", true));
+      .then(ಠ_ಠ.Main.busy("Opening Library", true));
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */
@@ -254,6 +254,8 @@ App = function() {
       FN.states = ಠ_ಠ.States();
       
       FN.backgrounds = ಠ_ಠ.Backgrounds();
+      
+      FN.events = ಠ_ಠ.Events();
 
     },
 
@@ -405,7 +407,55 @@ App = function() {
               return : {
                 matches : /RETURN/i,
                 length : 0,
-                fn : () => ಠ_ಠ.Flags.log("RETURN ITEMS")
+                fn : () => ಠ_ಠ.Display.text({
+                        id: "returns_create",
+                        target: $("body"),
+                        title: ಠ_ಠ.Display.doc.get({
+                          name: "TITLE_CONFIRM_RETURNS",
+                          trim: true
+                        }),
+                        rows: 8,
+                        control_class: "o-80",
+                        message: ಠ_ಠ.Display.doc.get("CONFIRM_RETURNS"),
+                        action: "Return",
+                        actions: [
+                          
+                        ]
+                      })
+                      .then(copies => {
+                        if (!copies) return;
+                        copies = _.isArray(copies) ? copies : copies.split("\n");
+                        ಠ_ಠ.Flags.log("RETURNING BOOKS", copies);
+                        var _count = 0,
+                            _returns = _.chain(copies).filter(copy => copy && copy.trim())
+                              .map(copy => FN.libraries.log.returned(ರ‿ರ.library, copy.trim())
+                                .then(availability => {
+                                  ಠ_ಠ.Main.event(FN.events.returns.progress, 
+                                                 ಠ_ಠ.Main.message(_count+=1, "book", "books", "returned"));
+                                  return availability;
+                                })).value();
+                        return Promise.each(_returns)
+                          .catch(e => ಠ_ಠ.Flags.error("Return Book/s Error", e))
+                          .then(ಠ_ಠ.Main.busy(true, true, FN.events.returns.progress, 
+                                                `Processing ${_returns.length} Return${_returns.length > 1 ? "s" : ""}`))
+                          .then(availability => {
+                            ಠ_ಠ.Flags.log("RETURNED BOOKS:", availability);
+                            ಠ_ಠ.Display.inform({
+                              id: "show_Returns",
+                              title: "Returned Items",
+                              target: $("body"),
+                              content: ಠ_ಠ.Display.doc.get({
+                                name: "RETURNS",
+                                data: {
+                                  total: _count,
+                                  returned: _.filter(availability, value => !!value).length,
+                                  invalid: _.filter(availability, value => value === undefined).length,
+                                }
+                              })
+                            }).then(ರ‿ರ.refresh);
+                          });
+                      })
+                      .catch(e => e ? ಠ_ಠ.Flags.error("Return Book/s Error", e) : ಠ_ಠ.Flags.log("Loan Book/s Cancelled"))
               },
               
               loan : {

@@ -8,6 +8,12 @@ Events = () => {
     endpoints: {
       loaded : "endpoints-loaded",
     },
+    loans: {
+      progress : "loans-progress",
+    },
+    returns: {
+      progress : "returns-progress",
+    },
   };
   /* <!-- Internal Constants --> */
 

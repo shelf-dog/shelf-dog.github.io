@@ -1,12 +1,13 @@
 site :
-  0.0.5f :
-    name : Site v0.0.5f
+  0.0.5g :
+    name : Site v0.0.5g
     desc : Initial Version
-    numeric : 0.0.5.6
+    numeric : 0.0.5.7
     type:
       - alpha
     changes :
       - Advanced Search
+      - Bulk Returns
   0.0.5e :
     name : Site v0.0.5e
     desc : Initial Version
