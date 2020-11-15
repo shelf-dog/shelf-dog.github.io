@@ -1,0 +1,1 @@
+__{% raw %}{{total}}{% endraw %}__ item/s processed, __{% raw %}{{loaned}}{% endraw %}__ loaned, __{% raw %}{{unknown}}{% endraw %}__ unknown and __{% raw %}{{invalid}}{% endraw %}__ not currently recorded as available.

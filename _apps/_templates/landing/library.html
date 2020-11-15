@@ -14,11 +14,12 @@
     {{#exists meta}}{{#if meta.description}}<p class="card-text mx-0">{{meta.description}}</p>{{/if}}{{/exists}}
     <hr class="border-secondary my-2">
     <div class="d-flex justify-content-between align-items-center flex-wrap">
-      <a href="library/{{query}}#library.{{id}}" class="btn btn-action mr-1 mt-1 mb-xl-2{{#unless (is state 'READY')}} disabled{{/unless}}">Explore</a>
-      {{~#is state 'OFFLINE'}}<a href="#refresh.{{id}}" class="d-flex flex-column flex-lg-row btn btn-dark mr-1 mt-1 mb-xl-2 pl-2"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Refresh this Library to check if it is now online">refresh</span>Refresh</a>{{/is~}}
+      <a href="library/{{query}}#library.{{id}}" class="btn btn-action mr-1 mt-1 mb-xl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}">Explore</a>
+      {{~#present meta~}}{{~#if meta.capabilities~}}{{~#if meta.capabilities.loan~}}<a href="library/{{query}}#library.{{id}}.me" class="d-flex flex-column flex-lg-row btn btn-secondary border border-light mr-1 mt-1 mb-xl-2 pl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Further Details">perm_identity</span>Me</a>{{~/if~}}{{~/if~}}{{~/present~}}
+      {{~#is state 'OFFLINE'}}<a href="#refresh.{{id}}" class="d-flex flex-column flex-lg-row btn btn-dark mr-1 mt-1 mb-xl-2 pl-2 waves-effect"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Refresh this Library to check if it is now online">refresh</span>Refresh</a>{{/is~}}
       {{#exists meta}}{{~#if meta.claims~}}
-      {{~#if meta.claims.manage}}<a href="manage/{{query}}#library.{{id}}" class="d-flex flex-column flex-lg-row btn btn-outline-primary border border-primary mr-1 mt-1 mb-xl-2 pl-2{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Manage Library (handle loans etc.)">book</span>Manage</a>{{/if~}}
-      {{~#if meta.claims.admin}}<a href="settings/{{query}}#library.{{id}}" class="d-flex flex-column flex-lg-row btn btn-outline-light border border-light mt-1 mb-xl-2 pl-2{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Configure Library (select database file, managers etc.)">settings</span>Settings</a>{{/if~}}
+      {{~#if meta.claims.manage}}<a href="manage/{{query}}#library.{{id}}" class="d-flex flex-column flex-lg-row btn btn-outline-primary border border-primary mr-1 mt-1 mb-xl-2 pl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Manage Library (handle loans etc.)">book</span>Manage</a>{{/if~}}
+      {{~#if meta.claims.admin}}<a href="settings/{{query}}#library.{{id}}" class="d-flex flex-column flex-lg-row btn btn-outline-light border border-secondary mt-1 mb-xl-2 pl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Configure Library (select database file, managers etc.)">settings</span>Settings</a>{{/if~}}
       {{~/if~}}{{/exists}}
     </div>
     {{~/if~}}

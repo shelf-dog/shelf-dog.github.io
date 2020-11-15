@@ -9,7 +9,9 @@ Libraries = (options, factory) => {
   const DEFAULTS = {
     cache: factory.Dates.duration("30", "minutes"),
     db_cache: factory.Dates.duration("15", "minutes"),
-    cover_cache: factory.Dates.duration("5", "minutes"),
+    cover_cache: factory.Dates.duration("10", "minutes"),
+    statistics_cache: factory.Dates.duration("5", "minutes"),
+    users_cache: factory.Dates.duration("60", "minutes"),
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -130,7 +132,8 @@ Libraries = (options, factory) => {
     
   };
   
-  FN.statistics = value => FN.select(value).then(library => library.api("STATISTICS"));
+  FN.statistics = value => FN.select(value).then(library => options.functions.cache.get(library.cache("STATISTICS"), options.statistics_cache,
+                                                  () => library.api("STATISTICS")));
   
   FN.log = {
     
@@ -146,6 +149,9 @@ Libraries = (options, factory) => {
     })),
       
   };
+  
+  FN.users = value => FN.select(value).then(library => options.functions.cache.get(library.cache("USERS"), options.users_cache,
+                                                  () => library.api("USERS")));
   /* <!-- Public Functions --> */
   
   return FN;

@@ -1,0 +1,6 @@
+{% raw %}
+<ul class="list-group list-group-horizontal-md">
+  <li class="list-group-item p-1 px-2 text-light bg-secondary o-75">Custom Searches<span class="ml-1 text-dark d-none d-md-inline">➡</span></li>
+  {{#each this}}{{~#if this}}<li class="list-group-item p-1 px-3 bg-highlight text-dark"><a href="#search.{{#if (isString this)}}{{encode this}}{{else}}{{encode this.search}}{{/if}}" class="font-weight-bolder text-decoration-none">{{#if (isString this)}}Generic{{else}}{{this.name}}{{/if}}</a></li>{{~/if~}}{{/each}}
+</ul>
+{% endraw %}

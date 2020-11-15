@@ -1,4 +1,4 @@
-Catalog = (options, factory) => {
+  Catalog = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to provide common functionality --> */
@@ -243,7 +243,7 @@ Catalog = (options, factory) => {
       
       search : (identifiers, terms) => _.reduce(identifiers, (memo, type) => {
         if (type && type.indexOf("isbn") >= 0) 
-          memo.push(` or "${type.toUpperCase()}" like '%${terms}%'`);
+          memo.push(` or ID = (SELECT identifiers.book from identifiers WHERE type = '${type}' and val like '%${terms}%')`);
         return memo;
       }, []).join(""),
       
@@ -261,6 +261,8 @@ Catalog = (options, factory) => {
     
     formats : extend => _groups.extend("(SELECT GROUP_CONCAT(format, '\n') FROM data WHERE data.book = books.id) Formats", extend),
                     
+    identifiers : extend => _groups.extend("(SELECT GROUP_CONCAT(val, '\n') FROM identifiers WHERE identifiers.book = books.id) Identifiers", extend),
+    
     publisher : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher", extend),
     
     rating : extend => _groups.extend("(SELECT rating FROM ratings WHERE ratings.id IN (SELECT rating from books_ratings_link WHERE book = books.id)) Rating", extend),

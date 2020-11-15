@@ -22,7 +22,7 @@ Client = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.action = (endpoint, user, user_key, user_algorithm, context) => (action, params, timeout) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}${context ? `&cx=${context}`: ""}&a=${action}${params ? _.reduce(params, (memo, value, key) => `${memo}&p_${key}=${value}`, "") : ""}`, {
+  FN.action = (endpoint, user, user_key, user_algorithm, context) => (action, params, timeout) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}${context ? `&cx=${context}`: ""}&a=${action}${params ? _.reduce(params, (memo, value, key) => `${memo}&p_${encodeURIComponent(key)}=${encodeURIComponent(value)}`, "") : ""}`, {
     timeout: timeout || options.timeout,
   })
     .then(response => response.json())

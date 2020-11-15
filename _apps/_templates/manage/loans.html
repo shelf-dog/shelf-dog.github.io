@@ -25,9 +25,11 @@
         {{~#if command}}</div>{{/if~}}
       </th>
       <td>
-        <a href="#search.{{encode who}}" class="text-decoration-none link-action">{{who}}</a>
+        <div class="d-flex align-items-center flex-row" data-who="{{who}}">
+          <a href="#search.{{encode who}}" class="text-decoration-none link-action">{{who}}</a>
+        </div>
       </td>
-      <td class="small align-middle">     
+      <td class="small align-middle">
         <span class="o-75">{{#if ../full}}{{localeDate when}}{{else}}{{fromNow when}}{{/if}}</span>
       </td>
       {{#if ../full}}<td class="small align-middle">

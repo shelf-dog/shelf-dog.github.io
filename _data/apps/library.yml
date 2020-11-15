@@ -111,6 +111,7 @@ templates:
   - library/cover
   - library/value
   - library/availability
+  - library/searches
 docs:
   - shared/PUBLIC
   - shared/FEATURES
@@ -122,6 +123,7 @@ docs:
   - library/instructions/SEARCH_INSTRUCTIONS
   - library/instructions/SEARCH_FREETEXT_INSTRUCTIONS
   - library/instructions/SEARCH_STRUCTURED_INSTRUCTIONS
+  - library/instructions/RECENT_ADDITIONS
   - dialogs/CONFIRM_RETURN
   - dialogs/CHOOSE_RETURN
   - dialogs/CHOOSE_LOAN

@@ -8,6 +8,9 @@
     @include animation(fadeOutGracefully 0.6s ease-in-out);
     visibility: hidden;
   }
+  .btn-action {
+    border: 1px solid $colour-background !important;
+  }
 }
 
 @include animation-keyframes(fadeOutGracefully) {

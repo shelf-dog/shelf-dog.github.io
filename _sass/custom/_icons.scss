@@ -17,5 +17,5 @@
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 .material-icons { cursor: default; }
-a > .material-icons { cursor: pointer; }
+a > .material-icons, button > .material-icons { cursor: pointer; }
 // -- Material Design Icons -- //

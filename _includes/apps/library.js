@@ -262,7 +262,14 @@ App = function() {
   var _overview = (element, index) => Promise.resolve(ಠ_ಠ.Display.template.show({
                 template: "details",
                 target: element,
-                details: ಠ_ಠ.Display.doc.get("LIBRARY"),
+                details: ಠ_ಠ.Display.doc.get({
+                            name: "LIBRARY",
+                            data: {
+                              name: ರ‿ರ.library.meta && ರ‿ರ.library.meta.details && ರ‿ರ.library.meta.details.display ?
+                                ರ‿ರ.library.meta.details.display : ಠ_ಠ.me.display_name(),
+                            }
+                          }),
+                searches: ರ‿ರ.library.meta && ರ‿ರ.library.meta.details ? ರ‿ರ.library.meta.details.search : null,
                 clear: true,
                 query: window.location.search,
                 index: index,
@@ -279,6 +286,8 @@ App = function() {
       ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
     })
     .then(_clear);
+  
+  var _me = () => ಠ_ಠ.Flags.log("ME");
   
   var _library = (index, book) => (index === null || index === undefined ? 
       FN.libraries.first().then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : FN.libraries.one(ರ‿ರ.index = index))
@@ -412,6 +421,12 @@ App = function() {
           ],
           show: "SEARCH_INSTRUCTIONS",
           title: "Searching a Library ..."
+        }, {
+          match: [
+            /RECENT/i
+          ],
+          show: "RECENT_ADDITIONS",
+          title: "Recent Additions to the Library ..."
         }],
         
         routes : {
@@ -446,10 +461,11 @@ App = function() {
             },
             tidy : true,
             fn : command => command && _.isArray(command) ? 
-                command.length == 2 ? _library(command[0], command[1]) : 
-                command.length == 3 ? _library(command[0]).then(() => command[1] && command[1].toLowerCase() == "search" ?
+                command.length == 2 ? command[1].equals("me", true) ? 
+                  _library(command[0]).then(_me) : _library(command[0], command[1]) : 
+                  command.length == 3 ? _library(command[0]).then(() => command[1] && command[1].toLowerCase() == "search" ?
                                                                   _search(command[2], _holder()) : null) : 
-              _library(command) : _library(command),
+                _library(command) : _library(command),
           },
           
           item : {

@@ -5,7 +5,7 @@
 
     <div class="m-2 pb-1 details d-none d-md-block">{{{details}}}</div>
     
-    <div class="mx-2 mb-3 d-none d-md-block">
+    <div class="mx-2 mb-{{#if searches}}2{{else}}3{{/if}} d-none d-md-block">
       <form class="w-100 d-inline-flex flex-row align-items-center" data-role="search">
         <div class="input-group">
           <input type="text" class="form-control" role="search" placeholder="What would you like to find?" aria-label="Search">
@@ -16,6 +16,9 @@
         </div>
       </form>
     </div>
+    
+    <!-- SEARCHES (if available) -->
+    {{~#if searches~}}<div class="searches mx-2 mb-2">{{> searches searches}}</div>{{~/if~}}
     
     <!-- DETAILS -->
     <h4 class="mt-1 ml-2 mb-2 pb-1">Recent</h4>

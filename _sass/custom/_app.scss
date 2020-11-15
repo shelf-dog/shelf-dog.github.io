@@ -150,3 +150,15 @@ a.link-action {
 .modal-content {
   color: $colour-background !important;
 }
+
+.border-top-dashed, .entry {
+  border-top-width: 1px;
+  border-top-style: dashed;
+  border-top-color: $colour-background-lightest;
+}
+
+.border-bottom-dashed, .entry:last-of-type {
+  border-bottom-width: 1px;
+  border-bottom-style: dashed;
+  border-bottom-color: $colour-background-lightest;
+}

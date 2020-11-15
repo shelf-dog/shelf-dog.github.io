@@ -59,7 +59,7 @@ App = function() {
   
   var _book = id => {
     var book = ರ‿ರ.library.meta.capabilities.loan_field ? 
-        ರ‿ರ.db.find.copy(id, ರ‿ರ.library.meta.capabilities.loan_field) : ರ‿ರ.db.find.book(id);
+        ರ‿ರ.db.find.copy(id, ರ‿ರ.library.meta.capabilities.loan_field) : /\d+/.test(id) ? ರ‿ರ.db.find.book(id) : null;
     return book ? _.object(book.columns, book.values[0]) : book;
   };
   
@@ -170,7 +170,7 @@ App = function() {
     
     /* <!-- Load and Display Current Loans --> */
     FN.libraries.loans.outstanding(ರ‿ರ.library)
-      .then(loans => (ಠ_ಠ.Flags.log("OUTSTANDING LOANS:", loans), ಠ_ಠ.Display.template.show({
+      .then(loans => (ರ‿ರ.loans = loans, ಠ_ಠ.Flags.log("OUTSTANDING LOANS:", loans), ಠ_ಠ.Display.template.show({
         id: 1,
         template: "outstanding",
         title: "Loans",
@@ -179,7 +179,21 @@ App = function() {
         loans: loans && loans.length ? _.map(loans, _loan) : null,
         target: $(".details .detail[data-index=1]"),
         replace: true
-      })));
+      })))
+      .then(loans => FN.libraries.users(ರ‿ರ.library)
+        .then(users => _.each(users, user => {
+          var _rows = loans.find(`[data-who='${user.id}']`);
+          if (_rows.length > 0) {
+            var _message = `${_rows.length} loan${_rows.length > 1 ? "s" : ""}`;
+            _.each(_rows, row => ಠ_ಠ.Display.template.show({
+              template: "user",
+              name: user.name,
+              message: _message,
+              target: row,
+              prepend: true
+            }));
+          }
+        })));
     
     /* <!-- Load and Display Statistics --> */
     FN.libraries.statistics(ರ‿ರ.library)
@@ -229,6 +243,12 @@ App = function() {
         target: $(".details .detail[data-index=2]"),
         replace: true
       })));
+    
+    /* <!-- Set Manageable and Loanable States --> */
+    ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable]);
+    ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
+    ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
+    
     ರ‿ರ.refresh = () => _show(index, library);
   };
   
@@ -418,9 +438,7 @@ App = function() {
                         control_class: "o-80",
                         message: ಠ_ಠ.Display.doc.get("CONFIRM_RETURNS"),
                         action: "Return",
-                        actions: [
-                          
-                        ]
+                        actions: []
                       })
                       .then(copies => {
                         if (!copies) return;
@@ -461,7 +479,102 @@ App = function() {
               loan : {
                 matches : /LOAN/i,
                 length : 0,
-                fn : () => ಠ_ಠ.Flags.log("LOAN ITEMS")
+                fn : () => ಠ_ಠ.Display.modal("loan", {
+                            id: "loans_create",
+                            target: $("body"),
+                            title:  ಠ_ಠ.Display.doc.get({
+                                      name: "TITLE_CREATE_LOANS",
+                                      trim: true
+                                    }),
+                            instructions: ಠ_ಠ.Display.doc.get("CREATE_LOANS_INSTRUCTIONS", null, true),
+                            validate: values => values.Loans && values.Loans.Values && 
+                                        ((_.isArray(values.Loans.Values.Entries) && values.Loans.Values.Entries.length > 0) || 
+                                         (values.Loans.Values.Entries && values.Loans.Values.Entries.Item)),
+                            enter: true,
+                          }, dialog => {
+                            ಠ_ಠ.Flags.log("DIALOG:", dialog);
+                  
+                            var _action = () => {
+                              var _source = dialog.find("[data-type='source']"),
+                                  _loan = ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_source);
+                              if (!_loan.Item || !_loan.Item.Value) {
+                                _source.find("[data-output-field='Item']").focus();
+                              } else if (!_loan.Who || !_loan.Who.Value) {
+                                _source.find("[data-output-field='Who']").focus();
+                              } else {
+                                ಠ_ಠ.Display.template.show({
+                                  template: "entry",
+                                  target: dialog.find("[data-type='output']"),
+                                  item: _loan.Item.Value,
+                                  who: _loan.Who.Value,
+                                  prepend: true,
+                                }).find("[data-action='remove']").on("click.remove", e => (
+                                  e.preventDefault(), $(e.currentTarget).parents(".entry").remove()));
+                                _source.find("[data-output-field='Item']").val("");
+                                _source.find("[data-output-field='Who']").val("");
+                                _source.find("[data-output-field]").first().focus();
+                              }
+                            };
+                  
+                            dialog.find("[data-click='add']").on("click.add", _action);
+                            _.each(dialog.find("[data-enter]"), element => {
+                              var _element = $(element);
+                             _element.on("keypress.enter", e => {
+                                if (e.keyCode == 13) {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  _action();
+                                }
+                              });
+                            });
+                  
+                          })
+                          .then(values => {
+                            if (!values) return;
+                            ಠ_ಠ.Flags.log("LOANS:", values);
+                            var _entries = _.isArray(values.Loans.Values.Entries) ? 
+                                               values.Loans.Values.Entries : [values.Loans.Values.Entries],
+                                _total = _entries.length,
+                                _count = 0,
+                                _unknown = [],
+                                _loan = loan => {
+                                    var item = _book(loan.Item),
+                                        action = (id, isbn, copy) => FN.libraries.log.loan(ರ‿ರ.library, loan.Who, id, isbn, copy)
+                                            .then(availability => {
+                                              ಠ_ಠ.Main.event(FN.events.loans.progress, 
+                                                             ಠ_ಠ.Main.message(_count += 1, "book", "books", "loaned"));
+                                              return availability;
+                                            });
+                                    ಠ_ಠ.Flags.log(`ITEM (${loan.Item}):`, item);
+                                    return item ? 
+                                      action(item.ID, item.ISBN, ರ‿ರ.library.meta.capabilities.loan_field ? loan.Item : item.ID) :
+                                      (_unknown.push(loan), Promise.resolve(false));
+                                  },
+                                _loans = _.map(_entries, _loan);
+                            
+                        return Promise.each(_loans)
+                          .catch(e => ಠ_ಠ.Flags.error("Loan Book/s Error", e))
+                          .then(ಠ_ಠ.Main.busy(true, true, FN.events.loans.progress, `Processing ${_total} Loan{_total > 1 ? "s" : ""}`))
+                          .then(availability => {
+                            ಠ_ಠ.Flags.log("LOANED BOOKS:", availability);
+                            if (_unknown && _unknown.length > 0) ಠ_ಠ.Flags.log("UNKNOWN BOOKS:", _unknown);
+                            ಠ_ಠ.Display.inform({
+                              id: "show_Loans",
+                              title: "Loaned Items",
+                              target: $("body"),
+                              content: ಠ_ಠ.Display.doc.get({
+                                name: "LOANS",
+                                data: {
+                                  total: _total,
+                                  loaned: _.filter(availability, value => !!value).length,
+                                  unknown: _.filter(availability, value => value === false).length,
+                                  invalid: _.filter(availability, value => value === undefined).length,
+                                }
+                              })
+                            }).then(ರ‿ರ.refresh);
+                          });
+                
+                  }),
               }
               
             }

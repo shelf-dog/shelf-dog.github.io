@@ -101,6 +101,7 @@ templates:
   - generic/confirm
   - generic/text
   - generic/inform
+  - shared/dialog
   - manage/overview
   - manage/details
   - manage/detail
@@ -108,8 +109,11 @@ templates:
   - manage/statistics
   - manage/return
   - manage/returned
+  - manage/loan
   - manage/loans
   - manage/log
+  - manage/entry
+  - manage/user
 docs:
   - shared/PUBLIC
   - shared/FEATURES
@@ -118,13 +122,16 @@ docs:
   - manage/README
   - manage/DETAILS
   - manage/RETURNS
+  - manage/LOANS
   - manage/instructions/MANAGE_SEARCH_INSTRUCTIONS
+  - manage/instructions/CREATE_LOANS_INSTRUCTIONS
   - dialogs/CONFIRM_RETURN
   - dialogs/CONFIRM_RETURNS
   - dialogs/CONFIRM_LOANS
   - titles/TITLE_CONFIRM_RETURN
   - titles/TITLE_CONFIRM_RETURNS
   - titles/TITLE_CONFIRM_LOANS
+  - titles/TITLE_CREATE_LOANS
 scopes:
   google:
     - scope: email

@@ -37,7 +37,8 @@ Create = (options, factory) => {
       type : "TYPE",
     },
     values: {
-      current_loans : "CURRENT_LOANS"
+      current_loans : "CURRENT_LOANS",
+      users : "USERS",
     }
   }];
 
@@ -202,6 +203,7 @@ Create = (options, factory) => {
       .then(value => Promise.each([
         Promise.resolve(value),
         FN.sheet.add(value.sheet.spreadsheetId, "STATISTICS", null, _colours.colour("LIME")),
+        FN.sheet.add(value.sheet.spreadsheetId, "USERS", null, _colours.colour("BLACK")),
       ]))
             
       /* <!-- Populate and Format Sheets --> */
@@ -220,7 +222,7 @@ Create = (options, factory) => {
             values[0].helpers.format.align.vertical("MIDDLE"),
           ]),
                                    
-          /* <!-- Set Top 2 Rows as a Header --> */
+          /* <!-- Set Top Row as a Header --> */
           values[0].helpers.format.cells(values[0].helpers.grid.rows(0, 1).range(), [
             values[0].helpers.format.background("black"),
             values[0].helpers.format.align.horizontal("CENTER"),
@@ -260,7 +262,7 @@ Create = (options, factory) => {
             ["Statistics", code, null, null, null, null, null, null, null],
             ["Outstanding Loans:", "=IFERROR(QUERY('CURRENT LOANS'!A2:F, \"select count(A) where D is not null and F is null label count(A) ''\",0),)", null, null, null, null, null, null, null],
             ["Longest Outstanding Loan:", "=IFERROR(DATEDIF(INDEX(SPLIT(QUERY('CURRENT LOANS'!A2:F, \"select A where D is not null and F is null order by A limit 1\",0),\"T\"),1,1),NOW(),\"D\"),)", "=IF(LEN(B3)>0, IF(B3>1,\"day/s\",\"day\"),)", null, null, null, null, null, null],
-            ["Most Popular Item:", "=IFERROR(TRANSPOSE(QUERY('CURRENT LOANS'!A2:F, \"select B, count(A) where D is not null group by B order by count(A) desc limit 1 label count(A) ''\",0)),)", null, null, null, null, null, null, null],
+            ["Most Popular Item:", "=IFERROR(TRANSPOSE(QUERY('CURRENT LOANS'!A2:F, \"select B, count(A) where B is not null and D is not null group by B order by count(A) desc limit 1 label count(A) ''\",0)),)", null, null, null, null, null, null, null],
             ["Loan Count:", null, null, null, null, null, null, null, null],
             [null, null, null, null, null, null, null, null, null],
             ["Outstanding Loans", null, null, null, "Completed Loans", null, null, null, "Completed Loans"],
@@ -278,10 +280,10 @@ Create = (options, factory) => {
               values[1].helpers.format.background("black"),
             ]),
             values[1].helpers.format.cells(values[1].helpers.grid.range(0, 1, 0, 1), [
-              values[0].helpers.format.text("yellow", 18, true)
+              values[1].helpers.format.text("yellow", 18, true)
             ]),
             values[1].helpers.format.cells(values[1].helpers.grid.range(0, 1, 1, 2), [
-              values[0].helpers.format.text("verydarkgrey", 10, true)
+              values[1].helpers.format.text("verydarkgrey", 10, true)
             ]),
             values[1].helpers.format.cells(values[1].helpers.grid.range(0, 1, 2, 3), [
               values[1].helpers.format.text("white", 8)
@@ -335,7 +337,7 @@ Create = (options, factory) => {
             /* <!-- Resize the Columns --> */
             values[1].helpers.format.dimension(values[1].helpers.grid.columns(0, 1).dimension(240)),
             values[1].helpers.format.dimension(values[1].helpers.grid.columns(1, 2).dimension(80)),
-            values[1].helpers.format.dimension(values[1].helpers.grid.columns(2, 4).dimension(40)),
+            values[1].helpers.format.dimension(values[1].helpers.grid.columns(2, 4).dimension(50)),
             values[1].helpers.format.dimension(values[1].helpers.grid.columns(4, 5).dimension(240)),
             values[1].helpers.format.dimension(values[1].helpers.grid.columns(5, 6).dimension(80)),
             values[1].helpers.format.dimension(values[1].helpers.grid.columns(6, 8).dimension(40)),
@@ -377,6 +379,41 @@ Create = (options, factory) => {
             
           ])
           .then(() => factory.Flags.log("SHEET 2 | STATISTICS:", values[1]))),
+      
+          /* <!-- Format Third Tab (USERS) --> */
+          FN.sheet.update(values[2], values[2].helpers.notation.grid(0, 1, 0, 4, true, "USERS"), [
+            ["ID", "FULL_NAME", "DISPLAY_NAME","CUSTOM_SEARCHES"]
+          ], "USER_ENTERED")
+          .then(() => FN.sheet.batch(values[2], [
+
+            /* <!-- Set Default Format --> */
+             values[2].helpers.format.cells(values[2].helpers.grid.rows(0, 26).range(), [
+              values[2].helpers.format.align.vertical("MIDDLE"),
+            ]),
+
+            /* <!-- Set Top Row as a Header --> */
+            values[2].helpers.format.cells(values[2].helpers.grid.rows(0, 1).range(), [
+              values[2].helpers.format.background("black"),
+              values[2].helpers.format.align.horizontal("CENTER"),
+              values[2].helpers.format.text("white", 12, true)
+            ]),
+
+            /* <!-- Freeze Heading Rows/Columns (1) --> */
+            values[2].helpers.properties.update([
+              values[2].helpers.properties.grid.frozen.rows(1),
+              values[2].helpers.properties.grid.frozen.columns(1),
+            ]),
+
+            /* <!-- Resize the Columns --> */
+            values[2].helpers.format.dimension(values[2].helpers.grid.columns(0, 1).dimension(300)),
+            values[2].helpers.format.dimension(values[2].helpers.grid.columns(1, 3).dimension(200)),
+            values[2].helpers.format.dimension(values[2].helpers.grid.columns(3, 4).dimension(500)),
+
+            /* <!-- Add Metadata Key to Sheet (Schema only on value 0) --> */
+            FN.metadata.sheet(values[2].helpers, values[0].schema.keys.type, values[0].schema.values.users),
+            
+          ]))
+          .then(() => factory.Flags.log("SHEET 1 | CURRENT LOANS:", values[0])),
 
       ]))
             

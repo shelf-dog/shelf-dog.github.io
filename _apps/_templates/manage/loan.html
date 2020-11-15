@@ -1,0 +1,39 @@
+{% raw %}
+{{#> dialog class="modal-xl" tabindex=3 }}
+<div data-type="source" class="row align-items-center">
+
+  <div class="container col-xl-5">
+    <div class="form-group row my-1">
+      <label for="{{#if id}}{{id}}_{{/if}}item" class="col-sm-2 col-form-label text-white">Item</label>
+      <div class="col-sm-10">
+        <input id="{{#if id}}{{id}}_{{/if}}item" data-enter="next" data-output-field="Item" data-output-always="true"
+               type="text" class="form-control" tabindex="1" />
+      </div>
+    </div>
+  </div>
+
+  <div class="container col-xl-6">
+    <div class="form-group row my-1">
+      <label for="{{#if id}}{{id}}_{{/if}}who" class="col-sm-2 col-form-label text-white">Who</label>
+      <div class="col-sm-10">
+        <input id="{{#if id}}{{id}}_{{/if}}who" data-enter="next" data-output-field="Who" data-output-always="true"
+               type="text" class="form-control" tabindex="2" />
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-1 d-flex align-items-center">
+    <button type="button" class="btn btn-success d-flex p-2 waves-effect ml-auto mt-2 mt-xl-0" data-click="add" tabindex="3">
+      <i class="material-icons md-24 text-light">playlist_add</i>
+    </button>
+  </div>
+  
+</div>
+
+<form class="needs-validation mt-3" novalidate>
+  <div data-output-field="Loans">
+    <div data-type="output" data-holder-field="Entries"></div>  
+  </div>
+</form>
+{{/dialog}}
+{% endraw %}
