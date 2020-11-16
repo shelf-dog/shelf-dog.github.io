@@ -1,13 +1,14 @@
 site :
-  0.0.5h :
-    name : Site v0.0.5h
+  0.0.5i :
+    name : Site v0.0.5i
     desc : Initial Version
-    numeric : 0.0.5.8
+    numeric : 0.0.5.9
     type:
       - alpha
     changes :
       - Bulk Loans
       - Custom Searches
+      - Biug Fixes
   0.0.5g :
     name : Site v0.0.5g
     desc : Initial Version

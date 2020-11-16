@@ -506,7 +506,7 @@ App = function() {
                                   template: "entry",
                                   target: dialog.find("[data-type='output']"),
                                   item: _loan.Item.Value,
-                                  who: _loan.Who.Value,
+                                  who: FN.common.process.user(_loan.Who.Value),
                                   prepend: true,
                                 }).find("[data-action='remove']").on("click.remove", e => (
                                   e.preventDefault(), $(e.currentTarget).parents(".entry").remove()));

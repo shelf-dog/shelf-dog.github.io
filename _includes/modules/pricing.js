@@ -5,8 +5,8 @@ Page = function() {
 	if (this && this._isF && this._isF(this.Page)) return new this.Page().initialise(this);
 
 	/* <!-- Internal Constants --> */
-  const email = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
-        domain = /([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+  const email = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i,
+        domain = /([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i;
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */

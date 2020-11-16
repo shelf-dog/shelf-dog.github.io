@@ -32,9 +32,9 @@ App = function() {
         _button = _element.find(".forward-button:visible");
     _button.attr("href", _button.data("href") || _button.attr("href"));
     if (header) _element.find(".back-button").attr("href", "#overview");
-    $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
+    if (!FN.common.capabilities.touch) $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
   };
-  
+
   var _display = (element, results) => {
     var _results_element = element.find("#search-results").removeClass("d-none"),
         _header_element = _results_element.find(".header");
@@ -48,7 +48,7 @@ App = function() {
   
   var _book = id => Promise.resolve(ರ‿ರ.db.find.book(id))
     .then(book => book ? _.tap(_.object(book.columns, book.values[0]), book => ಠ_ಠ.Flags.log("BOOK:", book)) : book)
-    .then(book => ($("header.navbar form[data-role='search'] input[role='search']").focus(), book))
+    .then(book => (FN.common.capabilities.touch ? null : $("header.navbar form[data-role='search'] input[role='search']").focus(), book))
     .then(book => book ? Promise.resolve(ಠ_ಠ.Display.template.show({
                   template: "item",
                   target: _display(_holder(), book),
@@ -493,7 +493,7 @@ App = function() {
                         action: "Loan",
                         simple: true
                       })
-                      .then(user => FN.libraries.log.loan(ರ‿ರ.library, user, ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, copy)
+                      .then(user => FN.libraries.log.loan(ರ‿ರ.library, FN.common.process.user(user), ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, copy)
                             .then(ಠ_ಠ.Main.busy("Loaning Book", true))
                             .then(_process))
                       .catch(_error);
