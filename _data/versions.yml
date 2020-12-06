@@ -1,4 +1,13 @@
 site :
+  0.0.5j :
+    name : Site v0.0.5j
+    desc : Initial Version
+    numeric : 0.0.5.10
+    type:
+      - alpha
+    changes :
+      - Updated Client (Loan Details)
+      - Update Alert now dark
   0.0.5i :
     name : Site v0.0.5i
     desc : Initial Version
@@ -8,7 +17,7 @@ site :
     changes :
       - Bulk Loans
       - Custom Searches
-      - Biug Fixes
+      - Bug Fixes
   0.0.5g :
     name : Site v0.0.5g
     desc : Initial Version

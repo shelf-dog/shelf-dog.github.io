@@ -539,7 +539,8 @@ App = function() {
                                 _unknown = [],
                                 _loan = loan => {
                                     var item = _book(loan.Item),
-                                        action = (id, isbn, copy) => FN.libraries.log.loan(ರ‿ರ.library, loan.Who, id, isbn, copy)
+                                        action = (id, isbn, copy, item) => FN.libraries.log.loan(ರ‿ರ.library, loan.Who, id, isbn, copy,
+                                                                                                 FN.common.format.details(item))
                                             .then(availability => {
                                               ಠ_ಠ.Main.event(FN.events.loans.progress, 
                                                              ಠ_ಠ.Main.message(_count += 1, "book", "books", "loaned"));
@@ -547,7 +548,7 @@ App = function() {
                                             });
                                     ಠ_ಠ.Flags.log(`ITEM (${loan.Item}):`, item);
                                     return item ? 
-                                      action(item.ID, item.ISBN, ರ‿ರ.library.meta.capabilities.loan_field ? loan.Item : item.ID) :
+                                      action(item.ID, item.ISBN, ರ‿ರ.library.meta.capabilities.loan_field ? loan.Item : item.ID, item) :
                                       (_unknown.push(loan), Promise.resolve(false));
                                   },
                                 _loans = _.map(_entries, _loan);

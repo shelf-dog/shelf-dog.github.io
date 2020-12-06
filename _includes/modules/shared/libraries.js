@@ -137,11 +137,12 @@ Libraries = (options, factory) => {
   
   FN.log = {
     
-    loan : (value, user, id, isbn, copy) => FN.select(value).then(library => library.api("LOG_LOANED", {
+    loan : (value, user, id, isbn, copy, details) => FN.select(value).then(library => library.api("LOG_LOANED", {
       user : user,
       id : id,
       isbn : isbn || "",
-      copy : copy
+      copy : copy,
+      details : details || ""
     })),
     
     returned : (value, copy) => FN.select(value).then(library => library.api("LOG_RETURNED", {

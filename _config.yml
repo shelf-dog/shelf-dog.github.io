@@ -69,6 +69,7 @@ analytics:
   id:									"UA-53673057-8"
   
 app:
+  alert:              dark
   content:            content
   namespace:          shelf_dog
   tests:              _tests

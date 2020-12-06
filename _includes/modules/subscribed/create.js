@@ -213,7 +213,7 @@ Create = (options, factory) => {
       
         /* <!-- Format First Tab (CURRENT LOANS) --> */
         FN.sheet.update(values[0], values[0].helpers.notation.grid(0, 1, 0, 8, true, "CURRENT LOANS"), [
-          ["DATE", "ID", "ISBN","COPY", "USER", "RETURNED", "AUTH_USER", "LOAN"]
+          ["DATE", "ID", "ISBN","COPY", "USER", "RETURNED", "AUTH_USER", "LOAN", "DETAILS"]
         ], "USER_ENTERED")
         .then(() => FN.sheet.batch(values[0], [
 
@@ -242,12 +242,13 @@ Create = (options, factory) => {
           values[0].helpers.format.dimension(values[0].helpers.grid.columns(4, 5).dimension(240)),
           values[0].helpers.format.dimension(values[0].helpers.grid.columns(5, 6).dimension(200)),
           values[0].helpers.format.dimension(values[0].helpers.grid.columns(6, 7).dimension(240)),
-          values[0].helpers.format.dimension(values[0].helpers.grid.columns(7, 9).dimension(80)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(7, 8).dimension(80)),
+          values[0].helpers.format.dimension(values[0].helpers.grid.columns(8, 9).dimension(200)),
 
           /* <!-- Conditional Formats --> */
           
           /* <!-- Returned Loans - whole row lighter font colour --> */
-          values[0].helpers.format.conditional(values[0].helpers.grid.range(1, 1000, 0, 8))
+          values[0].helpers.format.conditional(values[0].helpers.grid.range(1, 1000, 0, 9))
             .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=LEN($F2)>0"), values[0].helpers.format.text("mediumdarkgrey")),
           
            /* <!-- Outstanding Loans - user name in bold --> */

@@ -493,7 +493,8 @@ App = function() {
                         action: "Loan",
                         simple: true
                       })
-                      .then(user => FN.libraries.log.loan(ರ‿ರ.library, FN.common.process.user(user), ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, copy)
+                      .then(user => FN.libraries.log.loan(ರ‿ರ.library, FN.common.process.user(user), ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, copy,
+                            FN.common.format.details(ರ‿ರ.book))
                             .then(ಠ_ಠ.Main.busy("Loaning Book", true))
                             .then(_process))
                       .catch(_error);

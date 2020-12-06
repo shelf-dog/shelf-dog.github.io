@@ -35,8 +35,10 @@ Common = () => {
   
   FN.format = {
     
-    book : (book, copy) => `${book.Title}${book.ISBN ? ` [${book.ISBN}]` : ""}${copy !== undefined && copy !== null && copy !== false ? ` [${copy}]` : ""}`
+    book : (book, copy) => `${book.Title}${book.ISBN ? ` [${book.ISBN}]` : ""}${copy !== undefined && copy !== null && copy !== false ? ` [${copy}]` : ""}`,
     
+    details : book => book ? `${book.Title}${book.Authors && book.Authors.length > 0 ? ` by ${_.isArray(book.Authors) ? book.Authors[0] : book.Authors}` : ""}` : "",
+
   };
   
   FN.process = {
