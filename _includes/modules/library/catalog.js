@@ -57,11 +57,11 @@
 
       /* <!-- Process Book Formats | Deals with Ordering Concatenations --> */
       if (ರ‿ರ.capabilities && ರ‿ರ.capabilities.online_items) {
-        var _index = data.columns.indexOf("Formats");
-        if (_index >= 0) {
-          data.columns.splice(_index + 1, 0, "Format_Files", "Format_Sizes");
+        var _format_index = data.columns.indexOf("Formats");
+        if (_format_index >= 0) {
+          data.columns.splice(_format_index + 1, 0, "Format_Files", "Format_Sizes");
           _.each(data.values, row => {
-            var _formats = row[_index];
+            var _formats = row[_format_index];
             if (_formats && _formats.length > 0) {
               var _types = new Array(_formats.length),
                   _files = new Array(_formats.length),
@@ -72,9 +72,9 @@
                 _files[i] = _format[1] || null;
                 _sizes[i] = _format[2] || null;
               });
-              row.splice(_index, 1, _types, _files, _sizes);
+              row.splice(_format_index, 1, _types, _files, _sizes);
             } else {
-              row.splice(_index + 1, 0, null, null);
+              row.splice(_format_index + 1, 0, null, null);
             }
           }); 
         }
@@ -479,11 +479,11 @@
       
       modified : (limit, since) => _dated.recent(limit, since, _search.select(), "last_modified"),
       
-      all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT ID, Title, Authors, ISBN, Series, Tags, max(Updated) FROM ("]
+      all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT ID, Title, Authors, ISBN, Series, Tags, max(Updated) Updated FROM ("]
         .concat(_search.select(null, null, `last_modified AS '${options.updated}'`))
         .concat(["UNION ALL"])
         .concat(_search.select(null, null, `timestamp AS '${options.updated}'`))
-        .concat([")", "GROUP BY ID"]), options.updated),
+        .concat([")", "WHERE Tags <> 'UNKNOWN_BOOK'", "GROUP BY ID"]), options.updated),
 
     },
     
