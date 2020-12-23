@@ -90,7 +90,8 @@ App = function() {
  
   var _library = index => FN.libraries.one(index)
               .then(library => Promise.all(
-                [Promise.resolve(library), FN.libraries.settings(library), FN.libraries.db(library).then(result => FN.catalog.load(result.data))]
+                [Promise.resolve(library), FN.libraries.settings(library), 
+                  FN.libraries.db(library).then(result => FN.catalog.load(result.data, library.meta.capabilities))]
               ))
               .then(results => {
 
@@ -184,6 +185,20 @@ App = function() {
               .then(ಠ_ಠ.Main.busy("Loading Libraries", true));
   
   var _select = {
+    
+    logo : () => ಠ_ಠ.Router.pick.single({
+                      title: "Select a Logo Image for Emails",
+                      view: "SPREADSHEETS",
+                      all: true,
+                      recent: true,
+                      team: true,
+                      mime: ಠ_ಠ.Google.files.natives()[1],
+                      properties: _.object([ಱ.schema.property.name], [ಱ.schema.property.value]),
+                    }).then(file => {
+                      if (!file) return;
+                      var _log = $("#settings_log");
+                      _log.val(file.id).change();
+                    }),
     
     log : () => ಠ_ಠ.Router.pick.single({
                       title: "Select a Reading Log to Open",
@@ -280,10 +295,6 @@ App = function() {
 
     /* <!-- App is authenticated and routed! --> */
     routed: () => {
-
-      /* <!-- Sets the currently focussed date | Done here as this is called when app restarts etc. --> */
-      /* <!-- Overidden when a file is loaded --> */
-      ರ‿ರ.current = ಠ_ಠ.Dates.now().startOf("day");
       
       /* <!-- Set the Initial State --> */
       ಠ_ಠ.Display.state().change(FN.states.views, FN.states.settings.in);
@@ -324,6 +335,13 @@ App = function() {
           select: {
             matches: /SELECT/i,
             routes: {
+              logo: {
+                matches: /LOGO/i,
+                scopes: ["https://www.googleapis.com/auth/drive.file"],
+                requires: ["google"],
+                length: 0,
+                fn: _select.logo,
+              },
               database: {
                 matches: /DATABASE/i,
                 scopes: ["https://www.googleapis.com/auth/drive.file"],

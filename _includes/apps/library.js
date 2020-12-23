@@ -32,7 +32,8 @@ App = function() {
         _button = _element.find(".forward-button:visible");
     _button.attr("href", _button.data("href") || _button.attr("href"));
     if (header) _element.find(".back-button").attr("href", "#overview");
-    if (!FN.common.capabilities.touch) $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
+    if (!FN.common.capabilities.touch) 
+      $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
   };
 
   var _display = (element, results) => {
@@ -46,8 +47,20 @@ App = function() {
     return _results_element;
   };
   
+  var _download = (library, id, format, path, name, size) => ({
+    desc: `Read this Book${size ? ` (<strong>${ಠ_ಠ.handlebars.bytes(size, 2)}</strong>)` : ""}!`,
+    text: format,
+    url: `/app/reader/${window.location.search}#google,library.${library}.${id}.${format}.${FN.encode(path)}.${FN.encode(name)}.${size}`,
+  });
+  
+  var _reader = (library, book) => _.tap(book, book => book.Formats = book.Formats && book.Format_Files ? 
+                              _.isArray(book.Formats) ? _.map(book.Formats, 
+                                (format, i) => _download(library, book.ID, format, book.Path, book.Format_Files[i], book.Format_Sizes[i])) :
+                                _download(library, book.ID, book.Formats, book.Path, book.Format_Files, book.Format_Sizes) : book.Formats);
+                              
   var _book = id => Promise.resolve(ರ‿ರ.db.find.book(id))
     .then(book => book ? _.tap(_.object(book.columns, book.values[0]), book => ಠ_ಠ.Flags.log("BOOK:", book)) : book)
+    .then(book => book && ರ‿ರ.library.meta.capabilities.online_items ? _reader(ರ‿ರ.library.code, book) : book)
     .then(book => (FN.common.capabilities.touch ? null : $("header.navbar form[data-role='search'] input[role='search']").focus(), book))
     .then(book => book ? Promise.resolve(ಠ_ಠ.Display.template.show({
                   template: "item",
@@ -293,7 +306,7 @@ App = function() {
       FN.libraries.first().then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : FN.libraries.one(ರ‿ರ.index = index))
           .then(library => ರ‿ರ.library = library)
           .then(library => FN.libraries.db(library)
-            .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
+            .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities)))
             .then(db => ರ‿ರ.db = db)
             .then(() => {
               ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
@@ -320,6 +333,8 @@ App = function() {
       FN.states = ಠ_ಠ.States();
       
       FN.backgrounds = ಠ_ಠ.Backgrounds();
+      
+      FN.encode = ಠ_ಠ.Strings().base64.encode;
 
     },
 
@@ -357,10 +372,6 @@ App = function() {
 
     /* <!-- App is authenticated and routed! --> */
     routed: () => {
-
-      /* <!-- Sets the currently focussed date | Done here as this is called when app restarts etc. --> */
-      /* <!-- Overidden when a file is loaded --> */
-      ರ‿ರ.current = ಠ_ಠ.Dates.now().startOf("day");
       
       /* <!-- Set the Initial State --> */
       ಠ_ಠ.Display.state().change(FN.states.views, FN.states.library.in);

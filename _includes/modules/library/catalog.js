@@ -8,7 +8,12 @@
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
     sql_config: {},
-    updated: "Updated"
+    updated: "Updated",
+    arrays: ["Authors", "Tags", "Formats"],
+    separators: {
+      array: "\n",
+      data: ":*:"
+    }
   }, FN = {};
   /* <!-- Internal Constants --> */
   
@@ -47,10 +52,37 @@
     if (data) {
       
       /* <!-- Process Arrays --> */
-      if (array_columns && array_columns.length > 0) _.each(_columns(array_columns, data), column => _.each(data.values, row => row[column] = row[column] ? row[column].split("\n") : row[column]));
+      if (array_columns && array_columns.length > 0) _.each(_columns(array_columns, data), 
+            column => _.each(data.values, row => row[column] = row[column] ? row[column].split("\n") : row[column]));
 
+      /* <!-- Process Book Formats | Deals with Ordering Concatenations --> */
+      if (ರ‿ರ.capabilities && ರ‿ರ.capabilities.online_items) {
+        var _index = data.columns.indexOf("Formats");
+        if (_index >= 0) {
+          data.columns.splice(_index + 1, 0, "Format_Files", "Format_Sizes");
+          _.each(data.values, row => {
+            var _formats = row[_index];
+            if (_formats && _formats.length > 0) {
+              var _types = new Array(_formats.length),
+                  _files = new Array(_formats.length),
+                  _sizes = new Array(_formats.length);
+              _.each(_formats, (format, i) => {
+                var _format = format.split(options.separators.data);
+                _types[i] = _format[0] || format;
+                _files[i] = _format[1] || null;
+                _sizes[i] = _format[2] || null;
+              });
+              row.splice(_index, 1, _types, _files, _sizes);
+            } else {
+              row.splice(_index + 1, 0, null, null);
+            }
+          }); 
+        }
+      }
+      
       /* <!-- Process Dates --> */
-      if (date_columns && date_columns.length > 0) _.each(_columns(date_columns, data), column => _.each(data.values, row => row[column] = row[column] ? factory.Dates.parse(row[column]) : row[column]));
+      if (date_columns && date_columns.length > 0) _.each(_columns(date_columns, data), 
+            column => _.each(data.values, row => row[column] = row[column] ? factory.Dates.parse(row[column]) : row[column]));
 
       /* <!-- Process Custom Columns --> */
       if (ರ‿ರ.custom) {
@@ -82,7 +114,7 @@
     return data;
   };
   
-  var _searcher = query => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
+  var _searcher = query => _process(options.arrays.concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
       if (value.public && value.multiple) memo.push(_name(key, value));
       return memo;
     }, []) : []), null, _data(_run(query)));
@@ -257,25 +289,25 @@
     
     extend : (base,extend) => `${base}${extend ? "," : ""}`,
     
-    authors : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors", extend),
+    authors : extend => _groups.extend(`(SELECT GROUP_CONCAT(name, '${options.separators.array}') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors`, extend),
     
-    formats : extend => _groups.extend("(SELECT GROUP_CONCAT(format, '\n') FROM data WHERE data.book = books.id) Formats", extend),
-                    
-    identifiers : extend => _groups.extend("(SELECT GROUP_CONCAT(val, '\n') FROM identifiers WHERE identifiers.book = books.id) Identifiers", extend),
+    formats : extend => _groups.extend(`(SELECT GROUP_CONCAT(format||'${options.separators.data}'||name||'.'||LOWER(format)||'${options.separators.data}'||uncompressed_size, '${options.separators.array}') FROM data WHERE data.book = books.id) Formats`, extend),
     
-    publisher : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher", extend),
+    identifiers : extend => _groups.extend(`(SELECT GROUP_CONCAT(val, '${options.separators.array}') FROM identifiers WHERE identifiers.book = books.id) Identifiers`, extend),
+    
+    publisher : extend => _groups.extend(`(SELECT GROUP_CONCAT(name, '${options.separators.array}') FROM publishers WHERE publishers.id IN (SELECT publisher from books_publishers_link WHERE book = books.id)) Publisher`, extend),
     
     rating : extend => _groups.extend("(SELECT rating FROM ratings WHERE ratings.id IN (SELECT rating from books_ratings_link WHERE book = books.id)) Rating", extend),
     
-    series : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series", extend),
+    series : extend => _groups.extend(`(SELECT GROUP_CONCAT(name, '${options.separators.array}') FROM series WHERE series.id IN (SELECT series from books_series_link WHERE book = books.id)) Series`, extend),
     
-    tags : extend => _groups.extend("(SELECT GROUP_CONCAT(name, '\n') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags", extend),
+    tags : extend => _groups.extend(`(SELECT GROUP_CONCAT(name, '${options.separators.array}') FROM tags WHERE tags.id IN (SELECT tag from books_tags_link WHERE book = books.id)) Tags`, extend),
     
   };
   /* <!-- Group Functions --> */
-  
+
   /* <!-- Find Functions --> */
-  var _find = where => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
+  var _find = where => _process(options.arrays.concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
         if (value.multiple) memo.push(_name(key, value));
         return memo;
       }, []) : []), ["Published", "Modified"], _data(_run(_.compact([
@@ -285,9 +317,9 @@
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers) : "",
         _groups.rating(true),
         _groups.series(true),
-        _groups.tags(true),
+        ರ‿ರ.capabilities && ರ‿ರ.capabilities.online_items ? _groups.formats(true) : null,
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom) : "",
-        _groups.formats(),
+        _groups.tags(),
         "FROM books",
         where
       ]).join("\n"))));
@@ -378,7 +410,7 @@
   /* <!-- Dated Functions --> */
   var _dated = {
     
-    recent : (limit, since, queries, date_column) => _process(["Authors", "Tags"].concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
+    recent : (limit, since, queries, date_column) => _process(options.arrays.concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
           if (value.public && value.multiple) memo.push(_name(key, value));
           return memo;
         }, []) : []), [date_column], _data(_run(_.compact(queries.concat([
@@ -447,11 +479,11 @@
       
       modified : (limit, since) => _dated.recent(limit, since, _search.select(), "last_modified"),
       
-      all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT * FROM ("]
+      all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT ID, Title, Authors, ISBN, Series, Tags, max(Updated) FROM ("]
         .concat(_search.select(null, null, `last_modified AS '${options.updated}'`))
         .concat(["UNION ALL"])
         .concat(_search.select(null, null, `timestamp AS '${options.updated}'`))
-        .concat([")"]), options.updated),
+        .concat([")", "GROUP BY ID"]), options.updated),
 
     },
     
@@ -469,10 +501,10 @@
   /* <!-- Initial Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.load = data => initSqlJs(options.sql_config)
+  FN.load = (data, capabilities) => (ರ‿ರ.capabilities = capabilities, initSqlJs(options.sql_config)
     .then(sql => ರ‿ರ.db = new sql.Database(data))
     .then(_interrogate)
-    .then(() => _queries);
+    .then(() => _queries));
   /* <!-- Public Functions --> */
   
   return FN;

@@ -1,0 +1,10 @@
+{% raw %}
+<li>
+  <a href="#" class="text-decoration-none" data-dismiss="modal" data-navigate="{{id}}">{{text}}</a>
+  {{~#present children~}}
+  <ul>
+    {{#each children}}{{> navigate_link}}{{/each}}
+  </ul>
+  {{~/present~}}
+</li>
+{% endraw %}

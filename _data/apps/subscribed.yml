@@ -49,6 +49,8 @@ imports:
     load: last
   - name: mousetrap
     load: last
+  - name: uuid_new
+    load: last
   - name: fetchjsonp
     load: last
 helpers:

@@ -20,12 +20,14 @@ $colour-background: 					#000000;
 $colour-background-dark:      lighten($colour-background, 5%);
 $colour-background-light:     lighten($colour-background, 10%);
 $colour-background-lightest:  lighten($colour-background, 50%);
+
 $colour-navigator:            rgba(#871f52, 0.1);
 $colour-navigator-input:      rgba(#871f52, 0.2);
 $colour-bright: 	  					#ffffff;
 $colour-emphasis: 						#cccccc;
 $colour-deemphasise:          #f3f3f3;
 $colour-foreground: 					darken($colour-emphasis, 10%);
+$colour-main:                 transparentize($colour-background, 0.7);
 $colour-header:               transparentize($colour-background, 0.4);
 $colour-page:                 transparentize($colour-background, 0.25);
 $colour-dark:                 transparentize($colour-background, 0.2);

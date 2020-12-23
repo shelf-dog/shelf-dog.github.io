@@ -258,7 +258,7 @@ App = function() {
       FN.libraries.one(ಱ.index = index))
         .then(library => ರ‿ರ.library = library)
         .then(library => FN.libraries.db(library)
-          .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data)))
+          .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities)))
           .then(db => ರ‿ರ.db = db)
           .then(() => library.meta.claims && library.meta.claims.manage ? _show(ಱ.index, library) : _redirect(index)))
       .then(ಠ_ಠ.Main.busy("Opening Library", true));

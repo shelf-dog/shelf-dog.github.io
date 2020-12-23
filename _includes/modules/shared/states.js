@@ -37,13 +37,20 @@ States = () => {
         STATE_SUBSCRIBED = "subscribed",
         STATE_SUBSCRIBED_WORKING = "subscribed-working",
         
+        STATE_READER = "reader",
+        STATE_READER_LOADED = "reader-loaded",
+        
+        STATE_FULLSCREEN = "fullscreen",
+        
         STATES = [
           STATE_CONFIG, STATE_LANDING, STATE_LANDING_LIBRARIES, 
           STATE_LIBRARIES, STATE_LIBRARIES_LOADED, STATE_LIBRARIES_OVERVIEW,
           STATE_LIBRARY, STATE_LIBRARY_WORKING, STATE_LIBRARY_LOADED, STATE_LIBRARY_MANAGEABLE, STATE_LIBRARY_LOANABLE, STATE_LIBRARY_ITEM, STATE_LIBRARY_AVAILABLE, STATE_LIBRARY_RETURNABLE,
           STATE_MANAGE, STATE_MANAGE_WORKING, STATE_MANAGE_LOADED, STATE_MANAGE_LOG,
           STATE_SETTINGS, STATE_SETTINGS_PERSONAL, STATE_SETTINGS_ALL, STATE_SETTINGS_LIBRARY,
-          STATE_SUBSCRIBED
+          STATE_SUBSCRIBED,
+          STATE_READER, STATE_READER_LOADED,
+          STATE_FULLSCREEN
         ];
   /* <!-- Internal Constants --> */
 
@@ -105,6 +112,11 @@ States = () => {
       log : STATE_MANAGE_LOG,
     },
     
+    reader : {
+      in : STATE_READER,
+      loaded : STATE_READER_LOADED
+    },
+    
     settings : {
       in : STATE_SETTINGS,
       personal : STATE_SETTINGS_PERSONAL,
@@ -120,8 +132,10 @@ States = () => {
       working : STATE_SUBSCRIBED_WORKING,
     },
     
+    fullscreen: STATE_FULLSCREEN,
+    
     views : [
-      STATE_LANDING, STATE_LIBRARY, STATE_MANAGE, STATE_SETTINGS
+      STATE_LANDING, STATE_LIBRARY, STATE_MANAGE, STATE_SETTINGS, STATE_READER
     ],
     
   };

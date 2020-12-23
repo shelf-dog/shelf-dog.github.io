@@ -12,6 +12,7 @@ Libraries = (options, factory) => {
     cover_cache: factory.Dates.duration("10", "minutes"),
     statistics_cache: factory.Dates.duration("5", "minutes"),
     users_cache: factory.Dates.duration("60", "minutes"),
+    download_cache: factory.Dates.duration("7", "days"),
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -20,7 +21,8 @@ Libraries = (options, factory) => {
   /* <!-- Internal Options --> */
   
   /* <!-- Internal Variables --> */
-  var ರ‿ರ = {}; /* <!-- Session State --> */
+  var ರ‿ರ = {}, /* <!-- Session State --> */
+      s = factory.Strings();
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
@@ -74,6 +76,8 @@ Libraries = (options, factory) => {
         factory.Flags.log("LIBRARIES:", libraries);
         return (ರ‿ರ.all = _.sortBy(libraries, "name"));
       });
+  
+  var _bytes = data => new Uint8Array(_.isArray(data) ? data : _.isString(data) ? s.base64.bytes(data) : []);
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
@@ -95,20 +99,28 @@ Libraries = (options, factory) => {
     .then(library => options.functions.cache.get(library.cache("DB"), {
       age: options.db_cache,
       fn: (stored, data) => library.api("HASH").then(hash => hash == data.hash),
-    }, () => _fetch(library, "DB", 60000).then(result => {
+    }, () => library.api("DB", {base64: true}, 60000).then(result => {
       if (!result) return false;
-      result.data = new Uint8Array(result.data);
+      result.data = _bytes(result.data);
       var spark_md5 = new SparkMD5.ArrayBuffer();
       spark_md5.append(result.data);
       result.local_hash = spark_md5.end();
       return result;
     })));
   
-  FN.cover = (value, path) => FN.select(value)
+  FN.cover = (value, path, blob) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`COVER_${SparkMD5.hash(path)}`), options.cover_cache,
-                                                  () => library.api("COVER", {path: path, link: true}, 20000)))
-    .then(cover => cover && _.isArray(cover) ? 
-          URL.createObjectURL(new Blob([new Uint8Array(cover)], {"type": "image/jpeg"})) : cover);
+                                                  () => library.api("COVER", {path: path, link: blob ? false : true}, 20000)))
+    .then(cover => cover ? blob ? new Blob([_bytes(cover)], {"type": "image/jpeg"}) :
+          cover.indexOf && cover.indexOf("https://") === 0 ? cover : 
+          URL.createObjectURL(new Blob([_bytes(cover)], {"type": "image/jpeg"})) : cover);
+  
+  FN.download = (value, path, name, blob) => FN.select(value)
+    .then(library => options.functions.cache.get(library.cache(`DOWNLOAD_${SparkMD5.hash(path)}_${SparkMD5.hash(name)}`),
+                        options.download_cache, () => library.api("DOWNLOAD", {path: path, name: name, base64: true}, 60000)))
+    .then(downloaded => downloaded && downloaded.data ? 
+          blob ? new Blob([_bytes(downloaded.data)]) : 
+          URL.createObjectURL(new Blob([_bytes(downloaded.data)]), {"type": downloaded.type}) : null),
   
   FN.available = (value, copies) =>  FN.select(value).then(library => library.api("AVAILABLE", {copies: copies}));
   

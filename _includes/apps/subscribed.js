@@ -129,10 +129,6 @@ App = function() {
 
     /* <!-- App is authenticated and routed! --> */
     routed: () => {
-
-      /* <!-- Sets the currently focussed date | Done here as this is called when app restarts etc. --> */
-      /* <!-- Overidden when a file is loaded --> */
-      ರ‿ರ.current = ಠ_ಠ.Dates.now().startOf("day");
       
       /* <!-- Bind Escape --> */
       if (window.Mousetrap) {

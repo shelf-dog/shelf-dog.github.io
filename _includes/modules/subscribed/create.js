@@ -267,7 +267,7 @@ Create = (options, factory) => {
             ["Loan Count:", null, null, null, null, null, null, null, null],
             [null, null, null, null, null, null, null, null, null],
             ["Outstanding Loans", null, null, null, "Completed Loans", null, null, null, "Completed Loans"],
-            ["=QUERY('CURRENT LOANS'!A2:F, \"select E, count(A) where D is not null and F is not null group by E order by count(A) desc label E 'Users', count(A) 'Loans'\",0)", null, null, null, "=QUERY('CURRENT LOANS'!A2:F, \"select E, count(A) where D is not null and F is null group by E order by count(A) desc label E 'Users', count(A) 'Loans'\",0)", null, null, null, "=QUERY('CURRENT LOANS'!A2:F, \"select D, count(A) where E is not null and F is null group by D order by count(A) desc label D 'Items', count(A) 'Loans'\",0)"],
+            ["=QUERY('CURRENT LOANS'!A2:F, \"select E, count(A) where D is not null and F is null group by E order by count(A) desc label E 'Users', count(A) 'Loans'\",0)", null, null, null, "=QUERY('CURRENT LOANS'!A2:F, \"select E, count(A) where D is not null and F is not null group by E order by count(A) desc label E 'Users', count(A) 'Loans'\",0)", null, null, null, "=QUERY('CURRENT LOANS'!A2:F, \"select D, count(A) where E is not null and F is not null group by D order by count(A) desc label D 'Items', count(A) 'Loans'\",0)"],
           ], "USER_ENTERED")
           .then(() => FN.sheet.batch(values[1], [
 
@@ -383,7 +383,7 @@ Create = (options, factory) => {
       
           /* <!-- Format Third Tab (USERS) --> */
           FN.sheet.update(values[2], values[2].helpers.notation.grid(0, 1, 0, 4, true, "USERS"), [
-            ["ID", "FULL_NAME", "DISPLAY_NAME","CUSTOM_SEARCHES"]
+            ["ID", "FULL_NAME", "DISPLAY_NAME","CUSTOM_SEARCHES", "NOTIFICATIONS_TO"]
           ], "USER_ENTERED")
           .then(() => FN.sheet.batch(values[2], [
 
@@ -409,6 +409,7 @@ Create = (options, factory) => {
             values[2].helpers.format.dimension(values[2].helpers.grid.columns(0, 1).dimension(300)),
             values[2].helpers.format.dimension(values[2].helpers.grid.columns(1, 3).dimension(200)),
             values[2].helpers.format.dimension(values[2].helpers.grid.columns(3, 4).dimension(500)),
+            values[2].helpers.format.dimension(values[2].helpers.grid.columns(4, 5).dimension(300)),
 
             /* <!-- Add Metadata Key to Sheet (Schema only on value 0) --> */
             FN.metadata.sheet(values[2].helpers, values[0].schema.keys.type, values[0].schema.values.users),

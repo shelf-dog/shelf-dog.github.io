@@ -15,20 +15,26 @@
       <li class="nav-item{% if page.app == 'landing' %} active{% endif %}">
         <a class="nav-link" href="/app/">{% if page.app and page.layout == "app" %}Home{% else %}App{% endif %}{% if page.app == 'landing' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
-      {% if page.app and page.layout == "app" %}<li class="nav-item{% if page.app == 'libraries' %} active{% endif %}">
+      {% if page.app and page.layout == "app" %}{% unless page.app == "reader" %}<li class="nav-item{% if page.app == 'libraries' %} active{% endif %}">
         <a class="nav-link disabled state-authenticated" href="/app/libraries/">Libraries{% if page.app == 'libraries' %}<span class="sr-only">(current)</span>{% endif %}</a>
+      </li>{% endunless %}
+      {% if page.app == "reader" %}<li class="nav-item">
+        <a class="nav-link disabled state-reader-loaded" href="#navigate">Navigate</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link disabled state-reader-loaded" href="#expand">Expand</a>
+      </li>{% endif %}
       {% if page.app == "library" %}<li class="nav-item">
-        <a class="nav-link disabled state-authenticated state-library-loaded" href="#search">Search</a>
+        <a class="nav-link disabled state-library-loaded" href="#search">Search</a>
       </li>{% else %}<li class="nav-item{% if page.app == 'settings' %} active{% endif %}">
-        <a class="nav-link disabled state-authenticated" href="/app/settings/">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
+        <a class="nav-link disabled state-authenticated" href="{% if page.app == 'reader' %}#settings{% else %}/app/settings/{% endif %}">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>{% endif %}{% else %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'subscriptions' %} active{% endif %}">
         <a class="nav-link" href="/subscriptions/">Subscriptions{% if page.layout == 'page' and page.permalink contains 'subscriptions' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
       <li class="nav-item{% if page.layout == 'page' and page.permalink contains 'pricing' %} active{% endif %}">
         <a class="nav-link" href="/pricing/">Pricing{% if page.layout == 'page' and page.permalink contains 'pricing' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>{% endif %}
-      {% unless page.app == "library" or page.app == "manage" %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'about' %} active{% endif %}">
+      {% unless page.app == "library" or page.app == "manage" or page.app == "reader" %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'about' %} active{% endif %}">
         <a class="nav-link" href="/about/">About{% if page.layout == 'page' and page.permalink contains 'about' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>{% endunless %}
     </ul>
@@ -52,7 +58,7 @@
 
     </ul>
     
-    <div class="d-none show-library-loaded mr-sm-3 mr-md-0 mt-1 mt-md-0">
+    <div class="d-none show-library-loaded show-reader-loaded mr-sm-3 mr-md-0 mt-1 mt-md-0">
       
       <form class="d-inline-flex flex-row align-items-center" data-role="search">
         <a class="d-none d-md-flex align-items-center text-decoration-none align-self-stretch mr-2 help-link" href="#instructions.search">

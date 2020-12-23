@@ -8,6 +8,7 @@
     <small id="settings_description_HELP" class="form-text text-muted">Description for this library.</small>
   </div>
   
+  <!-- LIBRARY CAPABILITIES -->
   <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
     
     <!-- CAPABILITIES -->
@@ -24,7 +25,7 @@
             <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan" data-output-name="Value" data-output-always="true"{{#if capabilities_loan}} checked{{/if}}>
             <label class="custom-control-label" for="settings_capabilities_loan">Are Loans available with this Library?</label>
         </div>
-        <small id="settings_contents_books_audio_HELP" class="form-text text-muted">Further details.</small>
+        <small id="settings_capabilities_loan_HELP" class="form-text text-muted">Further details.</small>
       </div>
       
       <!-- LOAN COPY FIELD IDENTIFIER -->
@@ -46,8 +47,25 @@
       
     </div>
     
+    <!-- ONLINE -->
+    <div class="border border-dark p-2 pt-3 mb-2">
+      
+      <h5 class="mt-0 mb-2 o-75 text-highlight">Online</h5>
+      
+      <!-- ONLINE ITEMS AVAILABLE -->
+      <div class="form-group form-check pl-2" data-output-field="capabilities_online_items">
+        <div class="custom-control custom-checkbox mr-sm-2">
+            <input type="checkbox" class="custom-control-input" id="settings_capabilities_online_items" data-output-name="Value" data-output-always="true"{{#if capabilities_online_items}} checked{{/if}}>
+            <label class="custom-control-label" for="settings_capabilities_online_items">Online Access to Items in this Library?</label>
+        </div>
+        <small id="settings_capabilities_online_items_HELP" class="form-text text-muted">Further details.</small>
+      </div>
+     
+    </div>
+    
   </div>
   
+  <!-- LIBRARY CONTENTS -->
   <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
     
     <!-- CONTENTS -->
@@ -93,7 +111,8 @@
   <div class="form-group" data-output-field="database">
     <label for="settings_database">Database</label>
     <div class="input-group">
-      <input type="text" class="form-control" id="settings_database" data-type="file" aria-describedby="settings_database_HELP" data-output-name="Value" data-output-always="true"{{#if database}} value="{{ database }}"{{/if}}>
+      <input type="text" class="form-control" id="settings_database" data-type="file" aria-describedby="settings_database_HELP" 
+             data-output-name="Value" data-output-always="true"{{#if database}} value="{{ database }}"{{/if}}>
       <div class="input-group-append d-none d-md-flex">
         <a class="btn btn-outline-light{{#unless database}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if database}}https://drive.google.com/file/d/{{database}}/view{{else}}#{{/if}}" role="button">View</a>
         <a class="btn btn-outline-secondary" href="#google,select.database" role="button">Select</a>
@@ -130,8 +149,93 @@
   <!-- MANAGERS -->
   <div class="form-group" data-output-field="managers">
     <label for="settings_managers">Managers</label>
-    <textarea class="form-control" id="settings_managers" rows="4" data-output-name="Value" data-output-always="true">{{#if managers}}{{ managers }}{{/if}}</textarea>
+    <textarea class="form-control" id="settings_managers" rows="4" data-output-name="Value" 
+              data-output-always="true">{{#if managers}}{{ managers }}{{/if}}</textarea>
     <small id="settings_managers_HELP" class="form-text text-muted">Managers for this library.</small>
+  </div>
+  
+  <!-- OVERDUE EMAIL -->
+  <div class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
+    
+    <!-- OVERDUE EMAIL NOTIFICATION -->
+    <h4 class="mt-0 mb-2 pb-1 border-bottom border-dark">Overdue Email Notification</h4>
+
+    <!-- EMAIL SUBJECT -->
+    <div class="form-group" data-output-field="email_overdue_subject">
+      <label for="settings_email_overdue_subject">Subject</label>
+      <textarea class="form-control" id="settings_email_overdue_subject" rows="1" data-output-name="Value" 
+                data-output-always="true">{{#if email_overdue_subject}}{{ email_overdue_subject }}{{/if}}</textarea>
+      <small id="settings_email_overdue_subject_HELP" class="form-text text-muted"></small>
+    </div>
+
+    <!-- EMAIL FROM -->
+    <div class="form-group" data-output-field="email_overdue_from">
+      <label for="settings_email_overdue_from">From</label>
+      <textarea class="form-control" id="settings_email_overdue_from" rows="1" data-output-name="Value" 
+                data-output-always="true">{{#if email_overdue_from}}{{ email_overdue_from }}{{/if}}</textarea>
+      <small id="settings_email_overdue_from_HELP" class="form-text text-muted"></small>
+    </div>
+
+    <!-- EMAIL PREVIEW -->
+    <div class="form-group" data-output-field="email_overdue_preview">
+      <label for="settings_email_overdue_preview">Subject</label>
+      <textarea class="form-control" id="settings_email_overdue_preview" rows="1" data-output-name="Value" 
+                data-output-always="true">{{#if email_overdue_preview}}{{ email_overdue_preview }}{{/if}}</textarea>
+      <small id="settings_email_overdue_preview_HELP" class="form-text text-muted"></small>
+    </div>
+
+    <!-- EMAIL SALUTATION -->
+    <div class="form-group" data-output-field="email_overdue_salutation">
+      <label for="settings_email_overdue_salutation">Salutation</label>
+      <textarea class="form-control" id="settings_email_overdue_salutation" rows="1" data-output-name="Value" 
+                data-output-always="true">{{#if email_overdue_salutation}}{{ email_overdue_salutation }}{{/if}}</textarea>
+      <small id="settings_email_overdue_salutation_HELP" class="form-text text-muted"></small>
+    </div>
+
+    <!-- EMAIL CONTENT -->
+    <div class="form-group" data-output-field="email_overdue_content">
+      <label for="settings_email_overdue_content">Content</label>
+      <textarea class="form-control" id="settings_email_overdue_content" rows="3" data-output-name="Value" 
+                data-output-always="true">{{#if email_overdue_content}}{{ email_overdue_content }}{{/if}}</textarea>
+      <small id="settings_email_overdue_content_HELP" class="form-text text-muted"></small>
+    </div>
+
+    <!-- EMAIL CONCLUSION -->
+    <div class="form-group" data-output-field="email_overdue_conclusion">
+      <label for="settings_email_overdue_conclusion">Conclusion</label>
+      <textarea class="form-control" id="settings_email_overdue_conclusion" rows="3" data-output-name="Value" 
+                data-output-always="true">{{#if email_overdue_conclusion}}{{ email_overdue_conclusion }}{{/if}}</textarea>
+      <small id="settings_email_overdue_conclusion_HELP" class="form-text text-muted"></small>
+    </div>
+
+    <!-- EMAIL VALEDICTION -->
+    <div class="form-group" data-output-field="email_overdue_valediction">
+      <label for="settings_email_overdue_valediction">Valediction</label>
+      <textarea class="form-control" id="settings_email_overdue_valediction" rows="1" data-output-name="Value" 
+                data-output-always="true">{{#if email_overdue_valediction}}{{ email_overdue_valediction }}{{/if}}</textarea>
+      <small id="settings_email_overdue_valediction_HELP" class="form-text text-muted"></small>
+    </div>
+    
+    <!-- LOGO / IMAGE FILE -->
+    <div class="form-group" data-output-field="email_logo">
+      <label for="settings_email_logo">Logo</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="settings_email_logo" data-type="file" aria-describedby="settings_email_logo_HELP"
+               data-output-name="Value" data-output-always="true"{{#if email_logo}} value="{{ email_logo }}"{{/if}}>
+        <div class="input-group-append d-none d-md-flex">
+          <a class="btn btn-outline-light{{#unless email_logo}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if email_logo}}https://drive.google.com/file/d/{{email_logo}}/view{{else}}#{{/if}}" role="button">View</a>
+          <a class="btn btn-outline-secondary" href="#google,select.logo" role="button">Select</a>
+        </div>
+      </div>
+      <div class="d-flex">
+        <div role="group" class="btn-group float-right my-1 d-inline-flex ml-auto d-md-none">
+          <a class="btn btn-outline-light{{#unless email_logo}} disabled{{/unless}}" data-action="view" target="_blank" href="{{#if database}}https://drive.google.com/file/d/{{email_logo}}/view{{else}}#{{/if}}" role="button">View</a>
+          <a class="btn btn-outline-secondary" href="#google,select.logo" role="button">Select</a>
+        </div>
+      </div>
+      <small id="settings_email_logo_HELP" class="form-text text-muted">Email Logo File.</small>
+    </div>
+    
   </div>
   
   <!-- SAVE BUTTON -->

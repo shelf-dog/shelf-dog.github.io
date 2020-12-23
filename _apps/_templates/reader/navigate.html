@@ -1,0 +1,11 @@
+{% raw %}
+{{#> dialog class="modal-xl" no_action="true" }}
+<div class="mt-2">
+  {{~#present contents~}}
+  <ul class="navigation">
+    {{#each contents}}{{> navigate_link}}{{/each}}
+  </ul>
+  {{~/present~}}
+</div>
+{{/dialog}}
+{% endraw %}

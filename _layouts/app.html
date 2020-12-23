@@ -47,6 +47,8 @@ css:
     - custom/mixins/transforms
     - custom/mixins/animations
     - custom/mixins/filter
+    - custom/mixins/box-shadows
+    - custom/mixins/select
     - custom/variables
     - custom/background
     - custom/common
@@ -59,7 +61,7 @@ css:
 	
 	{% include plumbing/head.html %}
 
-	<body class="bg-transparent">
+	<body class="bg-transparent{% if page.classes and page.classes.body %} {{ page.classes.body }}{% endif %}">
     
     <a class="skippy sr-only sr-only-focusable" href="#{{ site.app.content }}">
       <span class="skippy-text">Skip to main content</span>
@@ -71,7 +73,7 @@ css:
     	aria-live="polite" aria-atomic="true"
       id="{{page.app}}_Notify" class="notifications"><div class="holder"></div></div>{% endif %}
 		
-    <div id="{{ site.app.content }}" class="app {{ site.app.content }} mt-2 mt-xl-3">{{ content }}</div>
+    <div id="{{ site.app.content }}" class="app {{ site.app.content }}{% unless page.full %} mt-2 mt-xl-3{% endunless %}{% if page.classes and page.classes.content %} {{ page.classes.content }}{% endif %}">{{ content }}</div>
 		
     {% include plumbing/footer.html type="app" %}
     {% include plumbing/breakpoints.html %}

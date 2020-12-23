@@ -4,6 +4,7 @@ Cache = (options, factory) => {
   /* <!-- MODULE: Provides an interface to provide common functionality --> */
   /* <!-- PARAMETERS: Receives the global app context --> */
   /* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Display --> */
+  /* <!-- TODO: Deal with 'large' objects, e.g. PDFs | Perhaps a Max size for Uint8Array (e.g. data object or data.data object) --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {

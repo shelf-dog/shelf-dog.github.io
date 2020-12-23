@@ -59,6 +59,7 @@ globals:
   SparkMD5: false
   uuidv4: false
   Stripe: false
+  screenfull: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -169,3 +170,5 @@ globals:
   Semiotics: true
   Common: true
   Subscribe: true
+  EPUB: true
+  PDF: true

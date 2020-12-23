@@ -1,0 +1,149 @@
+#############################################################################################################################
+#                                                                                                                           #
+#   ____/\\\\\\\\\______/\\\\\\\\\\\\\\\_____/\\\\\\\\\_____/\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\____/\\\\\\\\\_____           #
+#    __/\\\///////\\\___\/\\\///////////____/\\\\\\\\\\\\\__\/\\\////////\\\__\/\\\///////////___/\\\///////\\\___          #
+#     _\/\\\_____\/\\\___\/\\\______________/\\\/////////\\\_\/\\\______\//\\\_\/\\\_____________\/\\\_____\/\\\___         #
+#      _\/\\\\\\\\\\\/____\/\\\\\\\\\\\_____\/\\\_______\/\\\_\/\\\_______\/\\\_\/\\\\\\\\\\\_____\/\\\\\\\\\\\/____        #
+#       _\/\\\//////\\\____\/\\\///////______\/\\\\\\\\\\\\\\\_\/\\\_______\/\\\_\/\\\///////______\/\\\//////\\\____       #
+#        _\/\\\____\//\\\___\/\\\_____________\/\\\/////////\\\_\/\\\_______\/\\\_\/\\\_____________\/\\\____\//\\\___      #
+#         _\/\\\_____\//\\\__\/\\\_____________\/\\\_______\/\\\_\/\\\_______/\\\__\/\\\_____________\/\\\_____\//\\\__     #
+#          _\/\\\______\//\\\_\/\\\\\\\\\\\\\\\_\/\\\_______\/\\\_\/\\\\\\\\\\\\/___\/\\\\\\\\\\\\\\\_\/\\\______\//\\\_    #
+#           _\///________\///__\///////////////__\///________\///__\////////////_____\///////////////__\///________\///__   #
+#                                                                                                                           #
+#############################################################################################################################
+
+name: Reader
+link: /app/reader/
+css:
+  primary:
+  secondary:
+    - material/menu
+    - material/general
+    - material/dialogs
+    - custom/mixins/transitions
+    - custom/mixins/gradients
+    - custom/variables
+    - custom/fonts
+    - custom/tables
+    - custom/modals
+    - custom/reader
+imports:
+  - name: underscore
+    load: first
+  - name: jquery_slim
+    load: first
+  - name: popper
+    load: first
+  - name: day
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: mousetrap
+    load: last
+  - name: hammer
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: localforage
+    load: last
+  - name: fetchjsonp
+    load: last
+  - name: spark-md5
+    load: last
+  - name: jszip
+    load: last
+  - name: rsvp
+    load: last
+  - name: uuid_new
+    load: last
+  - name: epub-js
+    load: last
+  - name: pdf-js-viewer-css
+    load: last
+  - name: pdf-js-viewer-js
+    load: last
+  - name: screenfull
+    load: last
+  - name: google
+    load: lazy
+helpers:
+  - network
+  - strings
+  - google
+  - css
+  - data
+  - fields
+  - dialog
+  - colours
+  - handlebars
+  - backgrounds
+  - network
+  - url
+modules:
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
+  - shared/states
+  - shared/events
+  - shared/common
+  - shared/client
+  - shared/cache
+  - shared/libraries
+  - reader/readers/epub
+  - reader/readers/pdf
+scripts: 
+  - extends/string
+  - extends/regex
+  - extends/array
+  - extends/math
+templates:
+  - loader
+  - generic/alert
+  - generic/confirm
+  - generic/choose
+  - generic/text
+  - shared/dialog
+  - shared/selector
+  - reader/book
+  - reader/navigate
+  - reader/navigate_link
+  - reader/settings
+docs:
+  - shared/PUBLIC
+  - shared/FEATURES
+  - shared/INSTRUCTIONS
+  - shared/TUTORIALS
+  - dialogs/CONFIRM_READER
+  - titles/TITLE_CONFIRM_READER
+  - titles/TITLE_READER_NAVIGATE
+  - titles/TITLE_READER_SETTINGS
+  - reader/instructions/SEARCH_INSTRUCTIONS
+  - reader/instructions/NAVIGATE_INSTRUCTIONS
+  - reader/instructions/SETTINGS_INSTRUCTIONS
+  - reader/README
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+keys:
+  google: 
+      oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com
+published: true
