@@ -7,12 +7,13 @@ Libraries = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-    cache: factory.Dates.duration("30", "minutes"),
-    db_cache: factory.Dates.duration("15", "minutes"),
-    cover_cache: factory.Dates.duration("10", "minutes"),
+    cache: factory.Dates.duration("45", "minutes"),
+    db_cache: factory.Dates.duration("30", "minutes"),
+    cover_cache: factory.Dates.duration("2", "days"),
     statistics_cache: factory.Dates.duration("5", "minutes"),
     users_cache: factory.Dates.duration("60", "minutes"),
     download_cache: factory.Dates.duration("7", "days"),
+    folder_cache: factory.Dates.duration("120", "minutes"),
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -107,6 +108,10 @@ Libraries = (options, factory) => {
       result.local_hash = spark_md5.end();
       return result;
     })));
+  
+  FN.folder = (value, path) => FN.select(value)
+    .then(library => options.functions.cache.get(library.cache(`FOLDER_${SparkMD5.hash(path)}`), options.folder_cache,
+                                                  () => library.api("FOLDER", {path: path}, 20000)));
   
   FN.cover = (value, path, blob) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`COVER_${SparkMD5.hash(path)}`), options.cover_cache,

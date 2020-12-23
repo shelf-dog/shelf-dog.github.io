@@ -53,10 +53,18 @@ App = function() {
     url: `/app/reader/${window.location.search}#google,library.${library}.${id}.${format}.${FN.encode(path)}.${FN.encode(name)}.${size}`,
   });
   
-  var _reader = (library, book) => _.tap(book, book => book.Formats = book.Formats && book.Format_Files ? 
+  var _formats = (library, book) => book.Formats = book.Formats && book.Format_Files ? 
                               _.isArray(book.Formats) ? _.map(book.Formats, 
                                 (format, i) => _download(library, book.ID, format, book.Path, book.Format_Files[i], book.Format_Sizes[i])) :
-                                _download(library, book.ID, book.Formats, book.Path, book.Format_Files, book.Format_Sizes) : book.Formats);
+                                _download(library, book.ID, book.Formats, book.Path.text || book.Path, book.Format_Files, book.Format_Sizes) :
+                              book.Formats;
+  
+  var _paths = (library, book) => book.Path = ರ‿ರ.library.meta.claims.manage ? {
+    action: `folder.${FN.encode(book.Path)}`,
+    text: book.Path,
+  } : book.Path;
+  
+  var _reader = (library, book) => _.tap(book, book => _.each([_formats, _paths], fn => fn(library, book)));
                               
   var _book = id => Promise.resolve(ರ‿ರ.db.find.book(id))
     .then(book => book ? _.tap(_.object(book.columns, book.values[0]), book => ಠ_ಠ.Flags.log("BOOK:", book)) : book)
@@ -74,7 +82,7 @@ App = function() {
             ಠ_ಠ.Display.state().enter(FN.states.library.item);
       
             /* <!-- Start Cover Download --> */
-            if (book && book.Cover === 1) FN.libraries.cover(ರ‿ರ.library, book.Path)
+            if (book && book.Cover === 1) FN.libraries.cover(ರ‿ರ.library, book.Path.text || book.Path)
                 .then(cover => ಠ_ಠ.Display.template.show({
                   template: "cover",
                   target: element.find(".img-placeholder"),
@@ -335,6 +343,8 @@ App = function() {
       FN.backgrounds = ಠ_ಠ.Backgrounds();
       
       FN.encode = ಠ_ಠ.Strings().base64.encode;
+      
+      FN.decode = ಠ_ಠ.Strings().base64.decode;
 
     },
 
@@ -477,6 +487,16 @@ App = function() {
                   command.length == 3 ? _library(command[0]).then(() => command[1] && command[1].toLowerCase() == "search" ?
                                                                   _search(command[2], _holder()) : null) : 
                 _library(command) : _library(command),
+          },
+          
+          folder : {
+            matches : /FOLDER/i,
+            state : FN.states.library.loaded,
+            trigger : FN.states.library.working,
+            length : 1,
+            tidy : true,
+            fn : command => FN.libraries.folder(ರ‿ರ.library, FN.decode(command)).then(value => Object.assign(document.createElement("a"), 
+                                                                         {target: "_blank", href: value}).click())
           },
           
           item : {

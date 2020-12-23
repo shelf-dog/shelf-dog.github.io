@@ -27,6 +27,8 @@ PDF = (options, factory) => {
 
   /* <!-- External Functions --> */
   FN.state = () => ರ‿ರ;
+  
+  FN.load = value => (ರ‿ರ.value = value, Promise.resolve(FN));
   /* <!-- External Functions --> */
   
   

@@ -99,6 +99,18 @@ App = function() {
                 return FN.epub.load(downloaded)
                   .then(value => ರ‿ರ.reader = value);
     
+              } else if (format && format.toLowerCase() == "pdf") {
+                
+                ಠ_ಠ.Display.template.show(_.extend({
+                  template: "document",
+                  target: $("#content"),
+                  clear: true
+                }));
+                
+                /* <!-- Load PDF Method --> */
+                return FN.pdf.load(downloaded)
+                  .then(value => ರ‿ರ.reader = value);
+                
               }
               
             })
@@ -148,7 +160,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Cache", "Client", "Libraries", "EPUB"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Cache", "Client", "Libraries", "EPUB", "PDF"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;

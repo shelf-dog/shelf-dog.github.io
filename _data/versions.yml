@@ -1,12 +1,13 @@
 site :
   0.0.6a :
-    name : Site v0.0.6a
+    name : Site v0.0.6b
     desc : Initial Version
-    numeric : 0.0.6.1
+    numeric : 0.0.6.2
     type:
       - alpha
     changes :
       - Initial EPUB Reader
+      - Paths for Drive Folders
   0.0.5j :
     name : Site v0.0.5j
     desc : Initial Version

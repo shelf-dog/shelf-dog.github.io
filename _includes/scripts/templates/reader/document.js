@@ -1,0 +1,1 @@
+!function(){var a=Handlebars.template;(Handlebars.templates=Handlebars.templates||{}).document=a({compiler:[8,">= 4.3.0"],main:function(a,e,n,l,t){return'<div id="main" class="d-flex flex-column h-100 pb-2 pb-xl-4">\n</div>\n'},useData:!0})}();

@@ -117,6 +117,7 @@ templates:
   - shared/dialog
   - shared/selector
   - reader/book
+  - reader/document
   - reader/navigate
   - reader/navigate_link
   - reader/settings
