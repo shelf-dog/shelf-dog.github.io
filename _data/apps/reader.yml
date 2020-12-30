@@ -64,14 +64,14 @@ imports:
     load: last
   - name: uuid_new
     load: last
-  - name: epub-js
-    load: last
-  - name: pdf-js-viewer-css
-    load: last
-  - name: pdf-js-viewer-js
-    load: last
   - name: screenfull
     load: last
+  - name: epub-js
+    load: lazy
+  - name: pdf-js-viewer-css
+    load: lazy
+  - name: pdf-js-viewer-js
+    load: lazy
   - name: google
     load: lazy
 helpers:

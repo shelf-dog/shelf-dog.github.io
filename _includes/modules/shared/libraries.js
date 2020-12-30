@@ -114,11 +114,12 @@ Libraries = (options, factory) => {
                                                   () => library.api("FOLDER", {path: path}, 20000)));
   
   FN.cover = (value, path, blob) => FN.select(value)
-    .then(library => options.functions.cache.get(library.cache(`COVER_${SparkMD5.hash(path)}`), options.cover_cache,
+    .then(library => options.functions.cache.get(library.cache(`COVER_${SparkMD5.hash(path)}_${blob ? "B" : "P"}`), options.cover_cache,
                                                   () => library.api("COVER", {path: path, link: blob ? false : true}, 20000)))
     .then(cover => cover ? blob ? new Blob([_bytes(cover)], {"type": "image/jpeg"}) :
           cover.indexOf && cover.indexOf("https://") === 0 ? cover : 
-          URL.createObjectURL(new Blob([_bytes(cover)], {"type": "image/jpeg"})) : cover);
+          URL.createObjectURL(new Blob([_bytes(cover)], {"type": "image/jpeg"})) : cover)
+    .catch(e => (factory.Flags.error("COVER DOWNLOAD Error:", e), "/images/logo.png"));
   
   FN.download = (value, path, name, blob) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`DOWNLOAD_${SparkMD5.hash(path)}_${SparkMD5.hash(name)}`),

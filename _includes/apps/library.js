@@ -82,13 +82,30 @@ App = function() {
             ಠ_ಠ.Display.state().enter(FN.states.library.item);
       
             /* <!-- Start Cover Download --> */
-            if (book && book.Cover === 1) FN.libraries.cover(ರ‿ರ.library, book.Path.text || book.Path)
-                .then(cover => ಠ_ಠ.Display.template.show({
-                  template: "cover",
-                  target: element.find(".img-placeholder"),
-                  image: cover || "",
-                  replace: true
-                }));
+            if (book && book.Cover === 1) {
+              var _load = blob => FN.libraries.cover(ರ‿ರ.library, book.Path.text || book.Path, blob),
+                  _show = (holder, cover) => ಠ_ಠ.Display.template.show({
+                    template: "cover",
+                    target: holder,
+                    image: cover || "",
+                    replace: true
+                  }),
+                  _retry = img => {
+                    ಠ_ಠ.Flags.log("COVER IMAGE FAILED TO LOAD:", img);
+                    _load(true).then(cover => _show($(img).parent(), cover));
+                  };
+              _load(false)
+                .then(cover => _show(element.find(".img-placeholder"), cover))
+                .then(value => {
+                  var _img = value.find("img")[0];
+                  return _img.complete ? _img : new Promise((resolve, reject) => {
+                    _img.onload = () => resolve(_img);
+                    _img.onerror = () => reject(_img);
+                  });
+                })
+                .then(img => !img.complete || (typeof img.naturalWidth != "undefined" && img.naturalWidth == 0) ? _retry(img) : img)
+                .catch(_retry);
+            }
       
             /* <!-- Available Tagging --> */
             ರ‿ರ.available = availability => {

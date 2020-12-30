@@ -1,5 +1,5 @@
 {% raw %}
-<div id="main" class="d-flex flex-column h-100 pb-2 pb-xl-4">
+<div id="main" class="d-flex flex-column h-100">
   <div id="titlebar" class="d-flex w-100 align-items-center justify-content-between py-1 px-2 mb-2 mb-xl-4">
     <div class="d-flex flex-row justify-content-between align-items-center">
       <a class="d-flex text-decoration-none ml-1" href="#font.size">
@@ -32,10 +32,10 @@
       </a>
     </div>
   </div>
-  <a id="prev" href="#previous" class="arrow text-decoration-none">‹</a>
+  <a id="prev" href="#" data-action="previous" class="arrow text-decoration-none">‹</a>
   <div id="viewer" class="position-relative w-100 h-100" style="pointer-events: none;">
     <div id="divider" class="d-none position-absolute"></div>
   </div>
-  <a id="next" href="#next" class="arrow text-decoration-none">›</a>
+  <a id="next" href="#" data-action="next" class="arrow text-decoration-none">›</a>
 </div>
 {% endraw %}

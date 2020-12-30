@@ -42,6 +42,12 @@ Cache = (options, factory) => {
     }
   };
   
+  var _touch = (key, value) => ರ‿ರ.db.setItem(key, {
+      accessed: factory.Dates.now().toISOString(),
+      stored: value.stored,
+      data: value.data
+    }).catch(e => (factory.Flags.error("CACHE Touch Error:", e), key));
+  
   var _get = (key, age, force, hit) => force ? 
       (factory.Flags.log("CACHE Forced Override for:", key), Promise.resolve(undefined)) : 
       ರ‿ರ.db.getItem(key).then(value => {
@@ -49,12 +55,14 @@ Cache = (options, factory) => {
           if (value.stored) {
             if (hit) {
               factory.Flags.log("CACHE Forced Hit for:", key);
+              _touch(key, value);
               return value.data;
             } else {
               return _valid(value, age).then(valid => {
                 if (valid) {
                   /* <!-- Cache Hit / Not Stale --> */
                   factory.Flags.log("CACHE Hit for:", key);
+                  _touch(key, value);
                   return value.data;
                 } else {
                   /* <!-- Cache Stale --> */

@@ -21,9 +21,36 @@ App = function() {
   /* <!-- EPUB Reader --> */
   
 	/* <!-- Internal Functions --> */
+  var _navigate = contents => ಠ_ಠ.Display.modal("navigate", {
+                            id: "dialog_navigate",
+                            target: $("body"),
+                            title:  ಠ_ಠ.Display.doc.get({
+                                      name: "TITLE_READER_NAVIGATE",
+                                      trim: true
+                                    }),
+                            instructions: ಠ_ಠ.Display.doc.get("NAVIGATE_INSTRUCTIONS", null, true),
+                            contents: contents,
+                            enter: true,
+                          }, dialog => {
+                            ಠ_ಠ.Flags.log("DIALOG:", dialog);
+                            dialog.find("[data-navigate]")
+                              .on("click.navigate", e => ರ‿ರ.reader.navigate($(e.target).data("navigate")));
+                          });
+  
   var _search = {
     
-    basic: terms => ಠ_ಠ.Flags.log("SEARCHED:", terms),
+    basic: terms => {
+      if (terms) {
+        ಠ_ಠ.Flags.log("SEARCHED:", terms);
+        Promise.resolve(ರ‿ರ.reader.search(terms)).then(results => {
+          ಠ_ಠ.Display.state().enter(FN.states.searched);
+          _navigate(results);
+        });
+      } else {
+        ರ‿ರ.reader.clear();
+        ಠ_ಠ.Display.state().exit(FN.states.searched);
+      }
+    },
     
     searcher: e => {
       /* <!-- Stop any default form actions (e.g. Post) --> */
@@ -39,7 +66,7 @@ App = function() {
 
       /* <!-- Perform the search and push into the history state (to allow for blended back/forward navigation) --> */
       _search.basic(_terms);
-      window.history.pushState(null, null, `#search.${ಱ.url.encode(encodeURIComponent(_terms))}`);
+      if (_terms) window.history.pushState(null, null, `#search.${ಱ.url.encode(encodeURIComponent(_terms))}`);
     },
     
   };
@@ -61,22 +88,6 @@ App = function() {
                             ಠ_ಠ.Flags.log("VALUES:", values);
                           });
   
-  var _navigate = () => ಠ_ಠ.Display.modal("navigate", {
-                            id: "dialog_navigate",
-                            target: $("body"),
-                            title:  ಠ_ಠ.Display.doc.get({
-                                      name: "TITLE_READER_NAVIGATE",
-                                      trim: true
-                                    }),
-                            instructions: ಠ_ಠ.Display.doc.get("NAVIGATE_INSTRUCTIONS", null, true),
-                            contents: ರ‿ರ.reader.contents(),
-                            enter: true,
-                          }, dialog => {
-                            ಠ_ಠ.Flags.log("DIALOG:", dialog);
-                            dialog.find("[data-navigate]")
-                              .on("click.navigate", e => ರ‿ರ.reader.navigate($(e.target).data("navigate")));
-                          });
-  
   var _read = (index, book, format, path, name) => (index === null || index === undefined ? 
         FN.libraries.first().then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : FN.libraries.one(ರ‿ರ.index = index))
             .then(library => ರ‿ರ.library = library)
@@ -89,11 +100,17 @@ App = function() {
               
               if (format && format.toLowerCase() == "epub") {
                 
-                ಠ_ಠ.Display.template.show(_.extend({
+                var _book = ಠ_ಠ.Display.template.show(_.extend({
                   template: "book",
                   target: $("#content"),
                   clear: true
                 }));
+                
+                /* <!-- Hook Up Forward / Back Navigation --> */
+                _book.find("[data-action='previous']")
+                  .on("click.previous", e => (e.preventDefault(), e.stopPropagation(), ರ‿ರ.reader ? ರ‿ರ.reader.previous() : null));
+                _book.find("[data-action='next']")
+                  .on("click.next", e => (e.preventDefault(), e.stopPropagation(), ರ‿ರ.reader ? ರ‿ರ.reader.next() : null));
                 
                 /* <!-- Load EPUB Method --> */
                 return FN.epub.load(downloaded)
@@ -150,8 +167,10 @@ App = function() {
       /* <!-- Setup Helpers --> */
       _.each([{
         name: "Strings"
+      }, {
+        name: "Url"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
-
+      
       /* <!-- Setup Function Modules --> */
       var _options = {
         functions: FN,
@@ -226,6 +245,7 @@ App = function() {
               min: 5,
               max: 6
             },
+            requires: ["epub-js", "pdf-js-viewer-css", "pdf-js-viewer-js"],
             tidy : true,
             fn : command => {
               if (ಠ_ಠ.Display.state().in(FN.states.reader.loaded)) return;
@@ -321,7 +341,7 @@ App = function() {
             matches : /NAVIGATE/i,
             keys: ["n", "N"],
             state : FN.states.reader.loaded,
-            fn : _navigate
+            fn : () => Promise.resolve(ರ‿ರ.reader.contents()).then(_navigate)
           },
           
           expand : {
@@ -343,6 +363,20 @@ App = function() {
             state : FN.states.reader.loaded,
             length : 1,
             fn : command => _search.basic(command)
+          },
+          
+          clear : {
+            matches : /CLEAR/i,
+            state : FN.states.reader.loaded,
+            length : {
+              min: 0,
+              max: 1
+            },
+            fn: command => {
+              $("form[data-role='search'] input[role='search']").val("");
+              ರ‿ರ.reader.clear(command);
+              ಠ_ಠ.Display.state().exit(FN.states.searched);
+            }
           },
           
         },

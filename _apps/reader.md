@@ -7,5 +7,5 @@ full: true
 permalink: /app/reader/
 classes:
   body: display-fixed vh-100 vw-100 position-relative d-flex flex-column
-  content: d-flex flex-column h-100
+  content: d-flex flex-column h-100 pb-2 pb-xl-4
 ---

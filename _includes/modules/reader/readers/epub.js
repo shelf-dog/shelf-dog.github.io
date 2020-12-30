@@ -57,6 +57,17 @@ EPUB = (options, factory) => {
   
   
   /* <!-- Event Handlers --> */
+  var _freeze = fn => () => {
+    var _element = ರ‿ರ.element.parentElement;
+    _element.style["max-height"] = _element.style["min-height"] = window.getComputedStyle(_element).height;
+    var _return = fn();
+    return (_return.then ? _return : Promise.resolve(_return))
+      .then(value => {
+        window.setTimeout(() => _element.style["max-height"] = _element.style["min-height"] = "", 500);
+        return value;
+      });
+  };
+  
   var _next = () => ರ‿ರ.reader.package.metadata.direction === "rtl" ? ರ‿ರ.rendition.prev() : ರ‿ರ.rendition.next();
   
   var _prev = () => ರ‿ರ.reader.package.metadata.direction === "rtl" ? ರ‿ರ.rendition.next() : ರ‿ರ.rendition.prev();
@@ -76,7 +87,6 @@ EPUB = (options, factory) => {
         ರ‿ರ.element.style["background-color"] = _theme.body["background-color"];
         ರ‿ರ.rendition.themes.select(theme);
         ರ‿ರ.rendition.themes.override("color", _theme.body.color, true);
-
       }
 
     },
@@ -92,12 +102,24 @@ EPUB = (options, factory) => {
     
   };
   
+  var _clear = location => {
+    var _clear = annotations => (_.map(annotations, value => ರ‿ರ.rendition.annotations.remove(value.cfiRange, value.type)), annotations);
+    if (location) {
+      ರ‿ರ.annotations = _.difference(ರ‿ರ.annotations, _clear(_.filter(ರ‿ರ.annotations || [], 
+                                                     annotation => String.equal(annotation.cfiRange, location, true))));
+    } else {
+      _clear(ರ‿ರ.annotations || []);
+      ರ‿ರ.annotations = []; 
+    }
+  };
+  
   var _reset = () => {
     ರ‿ರ.element = document.getElementById("viewer");
     delete ರ‿ರ.rendition;
     delete ರ‿ರ.navigation;
     return Promise.resolve(ರ‿ರ.reader = window.ePub());
   };
+  
   
   var _render = value => reader => {
     
@@ -112,6 +134,11 @@ EPUB = (options, factory) => {
     ರ‿ರ.rendition.on("layout", props => _toggleDivider(props.spread === true));
 
     ರ‿ರ.rendition.on("relocated", location => {
+      if (!location) return;
+      factory.Flags.log("LOCATION:", location);
+      if ((ರ‿ರ.start && ರ‿ರ.start.href != location.start.href) || (ರ‿ರ.end && ರ‿ರ.end.href != location.end.href)) _clear();
+      ರ‿ರ.start = location.start;
+      ರ‿ರ.end = location.end;
       document.getElementById("prev").classList.toggle("invisible", !!location.atStart);
       document.getElementById("next").classList.toggle("invisible", !!location.atEnd);
     });
@@ -162,9 +189,9 @@ EPUB = (options, factory) => {
   /* <!-- External Functions --> */
   FN.load = value => _reset().then(_render(value)).then(_ready).then(() => FN);
   
-  FN.next = _next;
+  FN.next = _freeze(_next);
   
-  FN.previous = _prev;
+  FN.previous = _freeze(_prev);
   
   FN.theme = theme => theme ? 
     _update.theme(ರ‿ರ.current.theme = theme) : _update.theme(ರ‿ರ.current.theme = _cycle(ರ‿ರ.current.theme, _.keys(THEMES)));
@@ -188,6 +215,27 @@ EPUB = (options, factory) => {
       return memo;
     };  
     return _.reduce(ರ‿ರ.reader.navigation.toc, _reducer, []);
+  };
+  
+  FN.search = terms => (ರ‿ರ.annotations = ರ‿ರ.annotations || [], _.map(ರ‿ರ.reader.section(ರ‿ರ.start ? ರ‿ರ.start.cfi : null).find(terms),
+    result => {
+      if (!_.find(ರ‿ರ.annotations, annotation => String.equal(annotation.cfiRange, result.cfi, true)))
+        ರ‿ರ.annotations.push(ರ‿ರ.rendition.annotations.highlight(result.cfi));
+      return {
+        id : result.cfi,
+        text : result.excerpt,
+      };
+    }));
+  
+  FN.clear = location => {
+    var _clear = annotations => (_.map(annotations, value => ರ‿ರ.rendition.annotations.remove(value.cfiRange, value.type)), annotations);
+    if (location) {
+      ರ‿ರ.annotations = _.difference(ರ‿ರ.annotations, _clear(_.filter(ರ‿ರ.annotations || [], 
+                                                     annotation => String.equal(annotation.cfiRange, location, true))));
+    } else {
+      _clear(ರ‿ರ.annotations || []);
+      ರ‿ರ.annotations = []; 
+    }
   };
   
   FN.navigate = destination => ರ‿ರ.rendition.display(destination ? destination : ರ‿ರ.reader.navigation.toc[0].href);

@@ -1,5 +1,14 @@
 site :
-  0.0.6a :
+  0.0.6c :
+    name : Site v0.0.6c
+    desc : Initial Version
+    numeric : 0.0.6.3
+    type:
+      - alpha
+    changes :
+      - Initial EPUB Search
+      - Visual Glitch Fixes
+  0.0.6b :
     name : Site v0.0.6b
     desc : Initial Version
     numeric : 0.0.6.2

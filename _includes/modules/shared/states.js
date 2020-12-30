@@ -42,6 +42,8 @@ States = () => {
         
         STATE_FULLSCREEN = "fullscreen",
         
+        STATE_SEARCHED = "searched",
+        
         STATES = [
           STATE_CONFIG, STATE_LANDING, STATE_LANDING_LIBRARIES, 
           STATE_LIBRARIES, STATE_LIBRARIES_LOADED, STATE_LIBRARIES_OVERVIEW,
@@ -50,7 +52,8 @@ States = () => {
           STATE_SETTINGS, STATE_SETTINGS_PERSONAL, STATE_SETTINGS_ALL, STATE_SETTINGS_LIBRARY,
           STATE_SUBSCRIBED,
           STATE_READER, STATE_READER_LOADED,
-          STATE_FULLSCREEN
+          STATE_FULLSCREEN,
+          STATE_SEARCHED
         ];
   /* <!-- Internal Constants --> */
 
@@ -133,6 +136,8 @@ States = () => {
     },
     
     fullscreen: STATE_FULLSCREEN,
+    
+    searched: STATE_SEARCHED,
     
     views : [
       STATE_LANDING, STATE_LIBRARY, STATE_MANAGE, STATE_SETTINGS, STATE_READER
