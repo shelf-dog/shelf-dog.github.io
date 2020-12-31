@@ -60,7 +60,7 @@ Service = function() {
 
 			}).then((version) => {
 
-				var _details, _urgency = "info";
+				var _details, _urgency;
 				if (version) {
 					if (version.VERSION_TYPE == "security") {
 						_urgency = "danger";

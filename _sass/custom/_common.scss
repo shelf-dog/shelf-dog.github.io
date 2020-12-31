@@ -27,6 +27,13 @@ p {margin: 0.5em 0.5em;}
 a {text-decoration: none; color: inherit;}
 // -- Regular Elements -- //
 
+// -- Alerts -- //
+.alert {
+  border: none !important;
+  border-radius: 0 !important;
+}
+// -- Alerts -- //
+
 // -- Highlight Elements -- //
 .bg-highlight {
   background-color: $colour-highlight;

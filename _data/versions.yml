@@ -1,8 +1,8 @@
 site :
-  0.0.6d :
-    name : Site v0.0.6d
+  0.0.6e :
+    name : Site v0.0.6e
     desc : Initial Version
-    numeric : 0.0.6.4
+    numeric : 0.0.6.5
     type:
       - alpha
     changes :
