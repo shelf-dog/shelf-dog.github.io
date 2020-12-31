@@ -346,6 +346,7 @@ App = function() {
           
           expand : {
             matches : /EXPAND/i,
+            keys: ["f", "F"],
             fn : () => screenfull && screenfull.isEnabled ? 
               screenfull.isFullscreen ? 
                 screenfull.exit().then(() => ಠ_ಠ.Display.state().exit(FN.states.fullscreen)) :

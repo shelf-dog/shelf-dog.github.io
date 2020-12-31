@@ -50,6 +50,7 @@ App = function() {
   var _download = (library, id, format, path, name, size) => ({
     desc: `Read this Book${size ? ` (<strong>${ಠ_ಠ.handlebars.bytes(size, 2)}</strong>)` : ""}!`,
     text: format,
+    icon: "help_outline",
     url: `/app/reader/${window.location.search}#google,library.${library}.${id}.${format}.${FN.encode(path)}.${FN.encode(name)}.${size}`,
   });
   
@@ -83,7 +84,7 @@ App = function() {
       
             /* <!-- Start Cover Download --> */
             if (book && book.Cover === 1) {
-              var _load = blob => FN.libraries.cover(ರ‿ರ.library, book.Path.text || book.Path, blob),
+              var _load = link => FN.libraries.cover(ರ‿ರ.library, book.Path.text || book.Path, link),
                   _show = (holder, cover) => ಠ_ಠ.Display.template.show({
                     template: "cover",
                     target: holder,
@@ -92,9 +93,11 @@ App = function() {
                   }),
                   _retry = img => {
                     ಠ_ಠ.Flags.log("COVER IMAGE FAILED TO LOAD:", img);
-                    _load(true).then(cover => _show($(img).parent(), cover));
+                    _load(false)
+                      .catch(e => ( ಠ_ಠ.Flags.error("COVER DOWNLOAD Error:", e), "/images/logo.png"))
+                      .then(cover => _show($(img).parent(), cover));
                   };
-              _load(false)
+              _load(true)
                 .then(cover => _show(element.find(".img-placeholder"), cover))
                 .then(value => {
                   var _img = value.find("img")[0];
