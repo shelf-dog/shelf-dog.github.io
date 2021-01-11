@@ -111,6 +111,7 @@ templates:
   - manage/returned
   - manage/loan
   - manage/loans
+  - manage/requests
   - manage/log
   - manage/entry
   - manage/user
@@ -128,10 +129,12 @@ docs:
   - dialogs/CONFIRM_RETURN
   - dialogs/CONFIRM_RETURNS
   - dialogs/CONFIRM_LOANS
+  - dialogs/CHOOSE_LOAN
   - titles/TITLE_CONFIRM_RETURN
   - titles/TITLE_CONFIRM_RETURNS
   - titles/TITLE_CONFIRM_LOANS
   - titles/TITLE_CREATE_LOANS
+  - titles/TITLE_CHOOSE_LOAN
 scopes:
   google:
     - scope: email

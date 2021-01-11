@@ -19,14 +19,42 @@ Client = (options, factory) => {
   
   /* <!-- Internal Variables --> */
   var s = factory.Strings();
+  /* <!-- Internal Variables --> */
+  
+  /* <!-- Internal Functions --> */
+  
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.action = (endpoint, user, user_key, user_algorithm, context) => (action, params, timeout) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}${context ? `&cx=${context}`: ""}&a=${action}${params ? _.reduce(params, (memo, value, key) => `${memo}&p_${encodeURIComponent(key)}=${encodeURIComponent(value)}`, "") : ""}`, {
-    timeout: timeout || options.timeout,
-  })
-    .then(response => response.json())
-    .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
+  FN.action = (endpoint, user, user_key, user_algorithm, context) => (action, params, timeout, idempotent) => {
+    
+    var _action = (action, params, timeout) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}${context ? `&cx=${context}`: ""}&a=${action}${params ? _.reduce(params, (memo, value, key) => `${memo}&p_${encodeURIComponent(key)}=${encodeURIComponent(value)}`, "") : ""}`, {
+      timeout: timeout || options.timeout,
+    });
+
+    var _retry = times => (action, params, timeout) => {
+      var _caller = timeout => _action(action, params, timeout)
+        .catch(e => {
+          factory.Flags.error("Action Error", e);
+          if (/timed out\s*^/i.test(e)) {
+            if (times > 0) {
+              times -= 1;
+              return _caller(timeout * 2);
+            } else {
+              return undefined;
+            } 
+          } else {
+            throw e;
+          }
+        });
+      return _caller(timeout);
+    };
+    
+    return (idempotent ? _retry(3) : _action)(action, params, timeout)
+      .then(response => response.json())
+      .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
+    
+  };
   
   FN.endpoints = () => factory.Google.scripts.execute(options.directory, "list")
     .then(value => (value && value.done ? 

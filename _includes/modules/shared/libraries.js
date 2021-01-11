@@ -34,7 +34,7 @@ Libraries = (options, factory) => {
     cache: endpoint.id ? key => `endpoint_${endpoint.id}${key ? `_${key.toLowerCase()}` : ""}` : false,
     api: endpoint.id ? 
       options.functions.client.action(endpoint.id, endpoint.user, endpoint.key, endpoint.algorithm, endpoint.context) : 
-      () => Promise.resolve(false),
+      () => Promise.resolve(false)
   });
   
   var _fetch = (endpoint, action, timeout) => endpoint.api(action, null, timeout).catch(e => {
@@ -100,7 +100,7 @@ Libraries = (options, factory) => {
     .then(library => options.functions.cache.get(library.cache("DB"), {
       age: options.db_cache,
       fn: (stored, data) => library.api("HASH").then(hash => hash == data.hash),
-    }, () => library.api("DB", {base64: true}, 60000).then(result => {
+    }, () => library.api("DB", {base64: true}, 60000, true).then(result => {
       if (!result) return false;
       result.data = _bytes(result.data);
       var spark_md5 = new SparkMD5.ArrayBuffer();
@@ -111,46 +111,69 @@ Libraries = (options, factory) => {
   
   FN.folder = (value, path) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`FOLDER_${SparkMD5.hash(path)}`), options.folder_cache,
-                                                  () => library.api("FOLDER", {path: path}, 20000)));
+                                                  () => library.api("FOLDER", {path: path}, 20000, true)));
   
   FN.cover = (value, path, link, blob) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`COVER_${SparkMD5.hash(path)}_${link ? "L" : "B"}`), options.cover_cache,
-                                                  () => library.api("COVER", {path: path, link: link}, 20000)))
+                                                  () => library.api("COVER", {path: path, link: link}, 20000, true)))
     .then(cover => !cover || link && cover.indexOf && cover.indexOf("https://") === 0 ? cover :
           blob ? new Blob([_bytes(cover)], {"type": "image/jpeg"}) :
           URL.createObjectURL(new Blob([_bytes(cover)], {"type": "image/jpeg"})));
   
   FN.download = (value, path, name, blob) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`DOWNLOAD_${SparkMD5.hash(path)}_${SparkMD5.hash(name)}`),
-                        options.download_cache, () => library.api("DOWNLOAD", {path: path, name: name, base64: true}, 60000)))
+                        options.download_cache, () => library.api("DOWNLOAD", {path: path, name: name, base64: true}, 60000, true)))
     .then(downloaded => downloaded && downloaded.data ? 
           blob ? new Blob([_bytes(downloaded.data)]) : 
           URL.createObjectURL(new Blob([_bytes(downloaded.data)]), {"type": downloaded.type}) : null),
   
-  FN.available = (value, copies) =>  FN.select(value).then(library => library.api("AVAILABLE", {copies: copies}));
+  FN.available = (value, copies) =>  FN.select(value).then(library => library.api("AVAILABLE", {copies: copies}, null, true));
   
   FN.settings = (value, settings) => FN.select(value).then(library => library.api("SETTINGS", settings));
   
   FN.loans = {
   
-    outstanding: value => FN.select(value).then(library => library.api("LOANS")),
+    outstanding: value => FN.select(value).then(library => library.api("LOANS", null, null, true)),
     
     overdue: value => FN.select(value).then(library => library.api("LOANS", {
       overdue: true
-    })),
+    }, null, true)),
     
     copy: (value, copy) => FN.select(value).then(library => library.api("LOANS", {
       copy: copy
-    })),
+    }, null, true)),
     
     user: (value, user) => FN.select(value).then(library => library.api("LOANS", {
       user: user
-    })),
+    }, null, true)),
+    
+  };
+  
+  FN.request = (value, id, isbn, details, user) => FN.select(value).then(library => library.api("REQUEST", {
+      user : user,
+      id : id,
+      isbn : isbn || "",
+      details : details || ""
+    }));
+  
+  FN.requests = {
+    
+    all: value => FN.select(value).then(library => library.api("REQUESTS", {
+      details: true
+    }, null, true)),
+    
+    item: (value, id) => FN.select(value).then(library => library.api("REQUESTS", {
+      id: id
+    }, null, true)),
+    
+    user: (value, user) => FN.select(value).then(library => library.api("REQUESTS", {
+      user: user
+    }, null, true)),
     
   };
   
   FN.statistics = value => FN.select(value).then(library => options.functions.cache.get(library.cache("STATISTICS"), options.statistics_cache,
-                                                  () => library.api("STATISTICS")));
+                                                  () => library.api("STATISTICS", null, null, true)));
   
   FN.log = {
     
@@ -165,11 +188,23 @@ Libraries = (options, factory) => {
     returned : (value, copy) => FN.select(value).then(library => library.api("LOG_RETURNED", {
       copy : copy
     })),
-      
+    
+    concluded : (value, user, id, copy) => FN.select(value).then(library => {
+      var _data = {
+        user : user,
+        id : id
+      };
+      if (copy) {
+        _data.loaned = true;
+        _data.copy = copy;
+      }
+      return library.api("LOG_CONCLUDED", _data);
+    }),
+    
   };
   
   FN.users = value => FN.select(value).then(library => options.functions.cache.get(library.cache("USERS"), options.users_cache,
-                                                  () => library.api("USERS")));
+                                                  () => library.api("USERS", null, null, true)));
   /* <!-- Public Functions --> */
   
   return FN;

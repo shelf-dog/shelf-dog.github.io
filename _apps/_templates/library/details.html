@@ -48,13 +48,13 @@
     </a>
     
     <!-- RIGHT BUTTONS -->
-    <div class="d-none show-library-manageable">
+    <div class="d-none show-library-manageable show-library-requestable">
       
       <div class="d-flex flex-row">
         
         <div class="d-none show-library-returnable">
           
-          <a class="d-flex flex-column flex-lg-row pr-2 mr-2 btn btn-outline-light border border-light waves-effect" href="#item.return">
+          <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-light border border-light waves-effect" href="#item.return">
             <span>Return</span>
             <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book as Returned">school</span>
           </a>
@@ -63,16 +63,28 @@
         
         <div class="d-none show-library-available">
           
-          <a class="d-flex flex-column flex-lg-row pr-2 mr-2 btn btn-outline-success border border-success waves-effect" href="#item.loan">
+          <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-success border border-success waves-effect" href="#item.loan">
             <span>Loan</span>
             <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book as Loaned">local_library</span>
+          </a>
+          
+        </div>
+        
+        <div class="d-none show-library-requestable">
+          
+          <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-secondary border border-secondary waves-effect"
+             href="#item.request" data-action="request">
+            <span>Request</span>
+            <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Request to Borrow this Book">shopping_basket</span>
+            <i class="material-icons ml-2 float-right result result-success text-light font-weight-bold d-none" data-toggle="tooltip">check</i>
+            <i class="material-icons ml-2 float-right result result-failure text-warning d-none" data-toggle="tooltip">error</i>
           </a>
           
         </div>
 
         <div class="hide-library-item">
           
-          <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-primary border border-primary waves-effect forward-button" href="/app/manage/{{query}}#google,library.{{this.index}}">
+          <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-primary border border-primary waves-effect forward-button" href="/app/manage/{{query}}#google,library.{{this.index}}">
             <span>Manage</span>
             <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Manage Libraries">arrow_forward</span>
           </a>

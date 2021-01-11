@@ -23,7 +23,7 @@
       <div class="form-group form-check pl-2" data-output-field="capabilities_loan">
         <div class="custom-control custom-checkbox mr-sm-2">
             <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan" data-output-name="Value" data-output-always="true"{{#if capabilities_loan}} checked{{/if}}>
-            <label class="custom-control-label" for="settings_capabilities_loan">Are Loans available with this Library?</label>
+            <label class="custom-control-label" for="settings_capabilities_loan">Are loans available with this Library?</label>
         </div>
         <small id="settings_capabilities_loan_HELP" class="form-text text-muted">Further details.</small>
       </div>
@@ -43,6 +43,15 @@
         <label for="settings_capabilities_loan_length">Loan Length</label>
         <input type="number" class="form-control" id="settings_capabilities_loan_length" min="0" aria-describedby="settings_capabilities_loan_length_HELP" data-output-name="Value" data-output-always="true"{{#exists capabilities_loan_length}} value="{{ capabilities_loan_length }}"{{/exists}}>
         <small id="settings_capabilities_loan_length_HELP" class="form-text text-muted">Length of loans in days (0 = unlimited loan length).</small>
+      </div>
+      
+      <!-- REQUESTS AVAILABLE -->
+      <div class="form-group form-check pl-2" data-output-field="capabilities_loan_requests">
+        <div class="custom-control custom-checkbox mr-sm-2">
+            <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan_requests" data-output-name="Value" data-output-always="true"{{#if capabilities_loan_requests}} checked{{/if}}>
+            <label class="custom-control-label" for="settings_capabilities_loan_requests">Can requests be made for loans with this Library?</label>
+        </div>
+        <small id="settings_capabilities_loan_requests_HELP" class="form-text text-muted">Further details.</small>
       </div>
       
     </div>

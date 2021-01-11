@@ -54,6 +54,24 @@ Common = () => {
     },
     
   };
+  
+  FN.result = target => (value, details) => {
+    var _result = value ? target.find(".material-icons.result-success") : target.find(".material-icons.result-failure"),
+        _existing = target.find(".material-icons:visible");
+    _existing.addClass("d-none");
+    var _title;
+    if (details) {
+      _title = _result.attr("title") || "";
+      _result.attr("title", details);
+    }
+    _result.removeClass("d-none");
+    _.delay(() => {
+      _result.addClass("d-none");
+      _existing.removeClass("d-none");
+      if (details) _result.attr("title", _title);
+    }, 5000);
+    return _result;
+  };
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */

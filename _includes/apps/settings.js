@@ -19,12 +19,6 @@ App = function() {
 	/* <!-- Internal Functions --> */
   var _holder = () => $(".settings");
   
-  var _result = target => value => {
-    var _result = value ? target.find(".material-icons.result-success") : target.find(".material-icons.result-failure");
-    _result.removeClass("d-none");
-    _.delay(() => _result.addClass("d-none"), 5000);
-  };
-  
   var _link = (form, inputs, link) => form.find(inputs).on("change.id", e => {
       var _target = $(e.target),
           _value = _target.val(),
@@ -82,7 +76,7 @@ App = function() {
         ಠ_ಠ.Flags.log(`Personal Settings to Save [Empty=${_isEmpty}]`, _settings);
 
         (_isEmpty ? FN.configuration.clear() : FN.configuration.set(_settings))
-          .then(_result($(e.currentTarget)))
+          .then(FN.common.result($(e.currentTarget)))
           .then(ಠ_ಠ.Main.busy("Saving Settings", true));
 
       });
@@ -139,7 +133,7 @@ App = function() {
 
                     FN.libraries.settings(library, _settings)
                       .then(value => value ? FN.libraries.refresh(library) : value)
-                      .then(_result($(e.currentTarget)))
+                      .then(FN.common.result($(e.currentTarget)))
                       .then(ಠ_ಠ.Main.busy("Saving Settings", true));
 
                   });
@@ -279,7 +273,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Cache", "Client", "Configuration", "Libraries", "Catalog"], 
+      _.each(["Common", "Cache", "Client", "Configuration", "Libraries", "Catalog"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Create Schema Reference --> */

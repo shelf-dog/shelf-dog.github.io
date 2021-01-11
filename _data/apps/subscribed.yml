@@ -93,12 +93,14 @@ templates:
   - subscribed/subscription
   - subscribed/link
   - subscribed/upgrade
+  - subscribed/update
 docs:
   - subscribed/PUBLIC
   - subscribed/README
   - subscribed/INSTRUCTIONS
   - subscribed/MANAGE
   - subscribed/titles/UPGRADE_CLIENT
+  - subscribed/titles/UPDATE_CLIENT
   - subscribed/titles/VERSION_CLIENT
   - subscribed/titles/HELP_CLIENT
   - subscribed/titles/CANCEL_CLIENT

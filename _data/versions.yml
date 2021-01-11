@@ -1,4 +1,12 @@
 site :
+  0.0.7 :
+    name : Site v0.0.7
+    desc : Initial Version
+    numeric : 0.0.7.0
+    type:
+      - alpha
+    changes :
+      - Requests and Request Management
   0.0.6e :
     name : Site v0.0.6e
     desc : Initial Version

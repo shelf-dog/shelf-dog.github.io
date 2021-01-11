@@ -39,6 +39,7 @@ Create = (options, factory) => {
     values: {
       current_loans : "CURRENT_LOANS",
       users : "USERS",
+      requests : "REQUESTS"
     }
   }];
 
@@ -204,6 +205,7 @@ Create = (options, factory) => {
         Promise.resolve(value),
         FN.sheet.add(value.sheet.spreadsheetId, "STATISTICS", null, _colours.colour("LIME")),
         FN.sheet.add(value.sheet.spreadsheetId, "USERS", null, _colours.colour("BLACK")),
+        FN.sheet.add(value.sheet.spreadsheetId, "REQUESTS", null, _colours.colour("YELLOW")),
       ]))
             
       /* <!-- Populate and Format Sheets --> */
@@ -381,41 +383,77 @@ Create = (options, factory) => {
           ])
           .then(() => factory.Flags.log("SHEET 2 | STATISTICS:", values[1]))),
       
-          /* <!-- Format Third Tab (USERS) --> */
-          FN.sheet.update(values[2], values[2].helpers.notation.grid(0, 1, 0, 4, true, "USERS"), [
-            ["ID", "FULL_NAME", "DISPLAY_NAME","CUSTOM_SEARCHES", "NOTIFICATIONS_TO"]
-          ], "USER_ENTERED")
-          .then(() => FN.sheet.batch(values[2], [
+        /* <!-- Format Third Tab (USERS) --> */
+        FN.sheet.update(values[2], values[2].helpers.notation.grid(0, 1, 0, 4, true, "USERS"), [
+          ["ID", "FULL_NAME", "DISPLAY_NAME","CUSTOM_SEARCHES", "NOTIFICATIONS_TO"]
+        ], "USER_ENTERED")
+        .then(() => FN.sheet.batch(values[2], [
 
-            /* <!-- Set Default Format --> */
-             values[2].helpers.format.cells(values[2].helpers.grid.rows(0, 26).range(), [
-              values[2].helpers.format.align.vertical("MIDDLE"),
-            ]),
+          /* <!-- Set Default Format --> */
+           values[2].helpers.format.cells(values[2].helpers.grid.rows(0, 26).range(), [
+            values[2].helpers.format.align.vertical("MIDDLE"),
+          ]),
 
-            /* <!-- Set Top Row as a Header --> */
-            values[2].helpers.format.cells(values[2].helpers.grid.rows(0, 1).range(), [
-              values[2].helpers.format.background("black"),
-              values[2].helpers.format.align.horizontal("CENTER"),
-              values[2].helpers.format.text("white", 12, true)
-            ]),
+          /* <!-- Set Top Row as a Header --> */
+          values[2].helpers.format.cells(values[2].helpers.grid.rows(0, 1).range(), [
+            values[2].helpers.format.background("black"),
+            values[2].helpers.format.align.horizontal("CENTER"),
+            values[2].helpers.format.text("white", 12, true)
+          ]),
 
-            /* <!-- Freeze Heading Rows/Columns (1) --> */
-            values[2].helpers.properties.update([
-              values[2].helpers.properties.grid.frozen.rows(1),
-              values[2].helpers.properties.grid.frozen.columns(1),
-            ]),
+          /* <!-- Freeze Heading Rows/Columns (1) --> */
+          values[2].helpers.properties.update([
+            values[2].helpers.properties.grid.frozen.rows(1),
+            values[2].helpers.properties.grid.frozen.columns(1),
+          ]),
 
-            /* <!-- Resize the Columns --> */
-            values[2].helpers.format.dimension(values[2].helpers.grid.columns(0, 1).dimension(300)),
-            values[2].helpers.format.dimension(values[2].helpers.grid.columns(1, 3).dimension(200)),
-            values[2].helpers.format.dimension(values[2].helpers.grid.columns(3, 4).dimension(500)),
-            values[2].helpers.format.dimension(values[2].helpers.grid.columns(4, 5).dimension(300)),
+          /* <!-- Resize the Columns --> */
+          values[2].helpers.format.dimension(values[2].helpers.grid.columns(0, 1).dimension(300)),
+          values[2].helpers.format.dimension(values[2].helpers.grid.columns(1, 3).dimension(200)),
+          values[2].helpers.format.dimension(values[2].helpers.grid.columns(3, 4).dimension(500)),
+          values[2].helpers.format.dimension(values[2].helpers.grid.columns(4, 5).dimension(300)),
 
-            /* <!-- Add Metadata Key to Sheet (Schema only on value 0) --> */
-            FN.metadata.sheet(values[2].helpers, values[0].schema.keys.type, values[0].schema.values.users),
-            
-          ]))
-          .then(() => factory.Flags.log("SHEET 1 | CURRENT LOANS:", values[0])),
+          /* <!-- Add Metadata Key to Sheet (Schema only on value 0) --> */
+          FN.metadata.sheet(values[2].helpers, values[0].schema.keys.type, values[0].schema.values.users),
+
+        ]))
+        .then(() => factory.Flags.log("SHEET 3 | USERS:", values[2])),
+      
+        /* <!-- Format Fourth Tab (REQUESTS) --> */
+        FN.sheet.update(values[3], values[3].helpers.notation.grid(0, 1, 0, 4, true, "REQUESTS"), [
+          ["DATE", "ID", "ISBN", "USER","DETAILS"]
+        ], "USER_ENTERED")
+        .then(() => FN.sheet.batch(values[3], [
+
+          /* <!-- Set Default Format --> */
+           values[3].helpers.format.cells(values[3].helpers.grid.rows(0, 26).range(), [
+            values[3].helpers.format.align.vertical("MIDDLE"),
+          ]),
+
+          /* <!-- Set Top Row as a Header --> */
+          values[3].helpers.format.cells(values[3].helpers.grid.rows(0, 1).range(), [
+            values[3].helpers.format.background("black"),
+            values[3].helpers.format.align.horizontal("CENTER"),
+            values[3].helpers.format.text("white", 12, true)
+          ]),
+
+          /* <!-- Freeze Heading Rows (1) --> */
+          values[3].helpers.properties.update([
+            values[3].helpers.properties.grid.frozen.rows(1),
+          ]),
+
+          /* <!-- Resize the Columns --> */
+          values[3].helpers.format.dimension(values[3].helpers.grid.columns(0, 1).dimension(200)),
+          values[3].helpers.format.dimension(values[3].helpers.grid.columns(1, 2).dimension(100)),
+          values[3].helpers.format.dimension(values[3].helpers.grid.columns(2, 3).dimension(120)),
+          values[3].helpers.format.dimension(values[3].helpers.grid.columns(3, 4).dimension(200)),
+          values[3].helpers.format.dimension(values[3].helpers.grid.columns(4, 5).dimension(500)),
+
+          /* <!-- Add Metadata Key to Sheet (Schema only on value 0) --> */
+          FN.metadata.sheet(values[3].helpers, values[0].schema.keys.type, values[0].schema.values.requests),
+
+        ]))
+        .then(() => factory.Flags.log("SHEET 4 | REQUESTS:", values[3])),
 
       ]))
             

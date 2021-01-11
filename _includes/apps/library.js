@@ -35,7 +35,7 @@ App = function() {
     if (!FN.common.capabilities.touch) 
       $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
   };
-
+  
   var _display = (element, results) => {
     var _results_element = element.find("#search-results").removeClass("d-none"),
         _header_element = _results_element.find(".header");
@@ -79,23 +79,31 @@ App = function() {
                 }))
           .then(element => {
             
-            /* <!-- Set Item Selected State --> */
+            /* <!-- Set Item Selected State and Requestable (if allowed) --> */
             ಠ_ಠ.Display.state().enter(FN.states.library.item);
+            ಠ_ಠ.Display.state().set(FN.states.library.requestable, 
+              ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && ರ‿ರ.library.meta.capabilities.loan_requests);
       
             /* <!-- Start Cover Download --> */
             if (book && book.Cover === 1) {
               var _load = link => FN.libraries.cover(ರ‿ರ.library, book.Path.text || book.Path, link),
-                  _show = (holder, cover) => ಠ_ಠ.Display.template.show({
+                  _show = (holder, cover, style) => ಠ_ಠ.Display.template.show({
                     template: "cover",
                     target: holder,
                     image: cover || "",
+                    style: style,
                     replace: true
                   }),
                   _retry = img => {
+                    var _holder = ಠ_ಠ.Display.template.show({
+                      template: "placeholder",
+                      target: $(img).parent(),
+                      replace: true
+                    });
                     ಠ_ಠ.Flags.log("COVER IMAGE FAILED TO LOAD:", img);
                     _load(false)
                       .catch(e => ( ಠ_ಠ.Flags.error("COVER DOWNLOAD Error:", e), "/images/logo.png"))
-                      .then(cover => _show($(img).parent(), cover));
+                      .then(cover => _show(_holder, cover, "max-width: 200px;"));
                   };
               _load(true)
                 .then(cover => _show(element.find(".img-placeholder"), cover))
@@ -322,7 +330,7 @@ App = function() {
                 .off("click.search").on("click.search", _search.searcher))
     .then(() => {
       /* <!-- Set Manageable and Loanable States --> */
-      ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable]);
+      ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable]);
       ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
       ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
     })
@@ -551,7 +559,7 @@ App = function() {
                       .catch(_error);
                       
                     _available.length === 1 ? _loan(_available[0].copy) : ಠ_ಠ.Display.choose({
-                      id: "return_choose",
+                      id: "loan_choose",
                       target: $("body"),
                       title: ಠ_ಠ.Display.doc.get({
                         name: "TITLE_CHOOSE_LOAN",
@@ -620,6 +628,23 @@ App = function() {
                     
                   }
                   
+                }
+              },
+              
+              request : {
+                matches : /REQUEST/i,
+                length : {
+                  min: 0,
+                  max: 1
+                },
+                fn: command => {
+                  var _result = FN.common.result($("[data-action='request']"));
+                  return FN.libraries.request(ರ‿ರ.library, ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, 
+                                                    FN.common.format.details(ರ‿ರ.book), command || ರ‿ರ.library.meta.user)
+                              .then(ಠ_ಠ.Main.busy("Requesting Book", true))
+                              .then(value => value ? ಠ_ಠ.Display.tooltips(_result(value.requested, value.type == "NEW" ? 
+                                              "Created new request" : "You have already requested this item!").tooltip("dispose")) : _result())
+                              .catch(e => (e ? ಠ_ಠ.Flags.error("Request Book Error", e) : ಠ_ಠ.Flags.log("Request Book Cancelled"), _result()));
                 }
               }
               

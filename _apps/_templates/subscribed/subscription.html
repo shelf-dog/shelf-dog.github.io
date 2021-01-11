@@ -9,7 +9,7 @@
     <div class="d-flex flex-row justify-content-between">
       {{~#exists file~}}
       {{>link file details=version_details}}
-      {{~#if upgradable}}{{>upgrade command=upgradable desc=details}}{{~/if~}}
+      {{~#if upgradable}}{{>upgrade command=upgradable desc=details}}{{~else~}}{{~#if updateable}}{{>update command=updateable desc=details}}{{~/if~}}{{~/if~}}
       {{~/exists~}}
       {{~#unless endpoint~}}
       <a href="#create.{{code}}"{{#if create_details}} data-toggle="tooltip" data-html="true" title="{{create_details}}"{{/if}} data-action="create" class="badge badge-dark d-flex align-items-center">

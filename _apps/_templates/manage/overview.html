@@ -5,10 +5,10 @@
 
 <div id="library-details" class="bg-dark main p-2 p-xl-3 mb-2 rounded-lg">
   
-  <!-- MANAGEMENT DESCRIPTION -->
+  <!-- MANAGEMENT DESCRIPTION --> 
   {{#if description}}{{{description}}}{{/if}}
 
-  <div class="d-flex justify-content-between px-2 pt-1 pt-xl-2 loaded-content">
+  <div class="d-flex justify-content-between px-2 loaded-content{{#present description}} pt-1 pt-xl-2{{/present}}">
     
     <!-- LEFT BUTTON -->
     <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
@@ -22,13 +22,23 @@
        
       <div class="d-flex flex-row">
 
-        <a class="d-flex flex-column flex-lg-row pr-2 mr-2 btn btn-outline-light border border-light waves-effect"
+        <div class="d-none show-library-requestable">
+          
+          <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-secondary border border-secondary waves-effect"
+             data-route="items.requests" href="#">
+            <span>Requests</span>
+            <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="View / Fulfill Book Requests">shopping_basket</span>
+          </a>
+          
+        </div>
+        
+        <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-light border border-light waves-effect"
            data-route="items.return" href="#">
           <span>Return</span>
           <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book/s as Returned">school</span>
         </a>
 
-        <a class="d-flex flex-column flex-lg-row pr-2 mr-2 btn btn-outline-success border border-success waves-effect"
+        <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-success border border-success waves-effect"
            data-route="items.loan" href="#">
           <span>Loan</span>
           <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book/s as Loaned">local_library</span>

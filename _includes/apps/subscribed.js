@@ -27,18 +27,20 @@ App = function() {
     if (subscription.version) subscription.version_details = ಠ_ಠ.Display.doc.get("VERSION_CLIENT", subscription.version);
     subscription.latest = latest.version;
 
+    var _name = () => subscription.file.name.indexOf("SHELF-DOG") === 0 && subscription.file.name.indexOf(" | ") > 0 ?
+            subscription.file.name.split(" | ")[1].trim() : subscription.file.name;
     subscription.upgradable = subscription.file && subscription.version != subscription.latest ?
       `upgrade.${subscription.file.id}` : null;
+    subscription.updateable = subscription.file && !subscription.upgradable ? `update.${subscription.file.id}` : null;
     subscription.details = subscription.upgradable ? 
       ಠ_ಠ.Display.doc.get({
         name: "UPGRADE_CLIENT",
         data: {
-          name: subscription.file.name.indexOf("SHELF-DOG") === 0 && subscription.file.name.indexOf(" | ") > 0 ?
-            subscription.file.name.split(" | ")[1].trim() : subscription.file.name,
+          name: _name(),
           version: subscription.version,
           latest: subscription.latest
         }
-      }) : null;
+      }) : subscription.updateable ? ಠ_ಠ.Display.doc.get("UPDATE_CLIENT", _name()) : null;
 
     subscription.create_details = ಠ_ಠ.Display.doc.get("CREATE_CLIENT");
     subscription.help_details = ಠ_ಠ.Display.doc.get("HELP_CLIENT");
@@ -81,7 +83,26 @@ App = function() {
       })
       .then(() => ಠ_ಠ.Display.state().enter(FN.states.subscribed.in))
       .catch(e => ಠ_ಠ.Flags.error("Subscriptions Service Error:", e))
-      .then(ಠ_ಠ.Main.busy("Fetching Subscription Details"));                
+      .then(ಠ_ಠ.Main.busy("Fetching Subscription Details"));        
+  
+  FN.update = id => {
+      var _subscription = ಱ.subscriptions ?
+          _.find(ಱ.subscriptions, 
+                  subscription => subscription.id == id || (subscription.file && subscription.file.id == id)) : ಱ.subscription;
+      return _subscription ? FN.create.script(FN.create.script_id.get(_subscription.file), _subscription.public)
+        .then(script => Promise.all([ಠ_ಠ.Google.scripts.versions(script).list(), script]))
+        .then(results => {
+          var _version = _.chain(results[0]).sortBy("versionNumber").last().value();
+          return [results[1], _version ? _version.versionNumber + 1 : 1];
+        })
+        .then(results => FN.create.app(results[0], results[1], _subscription.endpoint))
+        .then(result => result ? ಠ_ಠ.Google.files.update(_subscription.file.id, FN.create.version.set(),
+                                                            _subscription.file.teamDriveId || null) : result)
+        .then(result => result ? {
+            result: result,
+            subscription: _subscription
+          } : result) : Promise.resolve(false);
+    };
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */
@@ -245,6 +266,18 @@ App = function() {
                             .then(ಠ_ಠ.Main.busy("Creating Sheet and Script")) : Promise.resolve(false)
           },
           
+          update: {
+            matches: /UPDATE/i,
+            state: FN.states.subscribed.in,
+            scopes: [
+              "https://www.googleapis.com/auth/script.projects",
+              "https://www.googleapis.com/auth/script.deployments",
+            ],
+            length: 1,
+            tidy: true,
+            fn: id => FN.update(id).catch(e => ಠ_ಠ.Flags.error("Logging Sheet Update Error:", e)).then(ಠ_ಠ.Main.busy("Updating Script"))
+          },
+          
           upgrade: {
             matches: /UPGRADE/i,
             state: FN.states.subscribed.in,
@@ -254,35 +287,22 @@ App = function() {
             ],
             length: 1,
             tidy: true,
-            fn: id => {
-              var _subscription = ಱ.subscriptions ?
-                  _.find(ಱ.subscriptions, 
-                          subscription => subscription.id == id || (subscription.file && subscription.file.id == id)) : ಱ.subscription;
-              return _subscription ? FN.create.script(FN.create.script_id.get(_subscription.file), _subscription.public)
-                .then(script => Promise.all([ಠ_ಠ.Google.scripts.versions(script).list(), script]))
-                .then(results => {
-                  var _version = _.chain(results[0]).sortBy("versionNumber").last().value();
-                  return [results[1], _version ? _version.versionNumber + 1 : 1];
-                })
-                .then(results => FN.create.app(results[0], results[1], _subscription.endpoint))
-                .then(result => result ? ಠ_ಠ.Google.files.update(_subscription.file.id, FN.create.version.set(),
-                                                                    _subscription.file.teamDriveId || null) : result)
-                .then(result => {
-                  if (result) {
-                    _subscription.file.appProperties.VERSION = ರ‿ರ.version.version;
-                    _subscription = FN.subscription(_subscription, _subscription.file, ರ‿ರ.version);
-                    ಠ_ಠ.Flags.log("Updated Subscription:", _subscription);
+            fn: id => FN.update(id)
+              .then(result => {
+                  if (result && result.subscription) {
+                    result.subscription.file.appProperties.VERSION = ರ‿ರ.version.version;
+                    result.subscription = FN.subscription(result.subscription, result.subscription.file, ರ‿ರ.version);
+                    ಠ_ಠ.Flags.log("Updated Subscription:", result.subscription);
                     ಠ_ಠ.Display.template.show(_.extend({
-                      target: $(`tr[data-code='${_subscription.code}']`),
+                      target: $(`tr[data-code='${result.subscription.code}']`),
                       template: "subscription",
                       replace: true,
-                    }, _subscription));
+                    }, result.subscription));
                   }
                   return result;
                 })
-                .catch(e => ಠ_ಠ.Flags.error("Logging Sheet Update Error:", e))
-                .then(ಠ_ಠ.Main.busy("Updating Script")) : false;
-            }
+              .catch(e => ಠ_ಠ.Flags.error("Logging Sheet Upgrade Error:", e))
+              .then(ಠ_ಠ.Main.busy("Upgrading Script"))
           },
           
         },

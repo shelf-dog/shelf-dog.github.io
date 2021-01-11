@@ -22,8 +22,8 @@ App = function() {
   /* <!-- Overview Functions --> */
   var _overview = {
     
-    contents : () => ({
-      title : "Contents",
+    contents : name => ({
+      title : name || "Contents",
       icon : "arrow_circle_up",
       background : "highlight",
       admin : ರ‿ರ.library.admin,
@@ -146,17 +146,16 @@ App = function() {
   
   var _show = (index, library) => {
     ಠ_ಠ.Display.state().enter([FN.states.library.loaded, FN.states.manage.loaded]);
-    $("#manage-library .library-name").text(library.name);
-
+    
     _hookup(ಠ_ಠ.Display.template.show({
         template: "overview",
         target: _holder(),
         clear: true,
         query: window.location.search,
         index: index,
-        description: ಠ_ಠ.Display.doc.get("DETAILS"),
+        description: ಠ_ಠ.Display.doc.get("DETAILS", null, true),
         details: [
-          _overview.contents(),
+          _overview.contents(library.name),
           _overview.loans(),
           _overview.statistics()
         ]
@@ -245,9 +244,11 @@ App = function() {
       })));
     
     /* <!-- Set Manageable and Loanable States --> */
-    ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable]);
+    ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable]);
     ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
     ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
+    ಠ_ಠ.Display.state().set(FN.states.library.requestable, 
+        ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && ರ‿ರ.library.meta.capabilities.loan_requests);
     
     ರ‿ರ.refresh = () => _show(index, library);
   };
@@ -576,8 +577,45 @@ App = function() {
                           });
                 
                   }),
-              }
+              },
               
+              requests : {
+                matches : /REQUESTS/i,
+                length : 0,
+                fn : () => FN.libraries.requests.all(ರ‿ರ.library)
+                  .then(requests => FN.libraries.users(ರ‿ರ.library)
+                      .then(users => _.each(users, user => {
+                        _.chain(requests)
+                          .filter(request => request.user == user.id)
+                          .each(request => {
+                            request.user = {
+                              id: request.user,
+                              name: user.name
+                            };
+                            request.command = `/app/library/${window.location.search}#library.${ಱ.index}.${request.id}`;
+                            request.when = request.date ? ಠ_ಠ.Dates.parse(request.date) : "";
+                          });
+                      })).then(() => requests))
+                  .then(requests => {
+                    ಠ_ಠ.Flags.log("Requests:", requests);
+                    var _holder = $("#details"),
+                        _id = _holder.find("[data-index]").length,
+                        _requests = ಠ_ಠ.Display.template.show({
+                            template: "requests",
+                            title: "Requests",
+                            icon: "shopping_basket",
+                            requests: requests,
+                            target: _holder,
+                            id: _id
+                          });
+                    _requests.find("[data-action='close']").on("click.close", e => {
+                      e.preventDefault();
+                      $(e.target).parents(".card").remove();
+                    });
+                  })
+                  .catch(e => ಠ_ಠ.Flags.error("Book Requests Error", e))
+                  .then(ಠ_ಠ.Main.busy("Loading Requests", true)),
+              }
             }
             
           },
@@ -590,6 +628,76 @@ App = function() {
             
             routes : {
               
+              loan : {
+                matches : /LOAN/i,
+                length : 2,
+                state : FN.states.library.loanable,
+                fn : commands => {
+                  
+                  var _id = commands[0],
+                      _user = decodeURIComponent(commands[1]);
+                  
+                  ಠ_ಠ.Flags.log(`Loaning Item ${_id} to user ${_user}`);
+                  
+                  return Promise.resolve(ರ‿ರ.db.find.book(_id))
+                    
+                    .then(ಠ_ಠ.Main.busy("Getting Book", true))
+                  
+                    /* <!-- Process Book --> */
+                    .then(book => book ? _.tap(_.object(book.columns, book.values[0]), book => ಠ_ಠ.Flags.log("BOOK:", book)) : book)
+                  
+                    /* <!-- Handle Book --> */
+                    .then(book => {
+                    
+                      /* <!-- Get Availability --> */
+                      return book ? FN.libraries.available(ರ‿ರ.library,  book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
+                        
+                        /* <!-- Get Available Copies --> */
+                        .then(availability => _.tap(_.filter(availability, available => available.available === true), 
+                                                    available => ಠ_ಠ.Flags.log("Item Availability:", available)))
+                        
+                        .then(ಠ_ಠ.Main.busy("Getting Availability", true))
+                    
+                        .then(available => {
+                        
+                          var _choose = () => ಠ_ಠ.Display.choose({
+                              id: "loan_choose",
+                              target: $("body"),
+                              title: ಠ_ಠ.Display.doc.get({
+                                name: "TITLE_CHOOSE_LOAN",
+                                trim: true
+                              }),
+                              message: ಠ_ಠ.Display.doc.get("CHOOSE_LOAN"),
+                              action: "Loan",
+                              choices: _.map(available, loan => ({
+                                desc: ರ‿ರ.book.Title,
+                                name: loan.copy
+                              }))
+                            });
+                        
+                          return available.length === 1 ? 
+                            available[0].copy :
+                            available.length > 1 ? _choose().then(loan => loan ? loan.name : false) : false;
+                        
+                        })
+                    
+                        .then(copy => copy ? FN.libraries.log.concluded(ರ‿ರ.library, _user, _id, copy)
+                                .then(ಠ_ಠ.Main.busy("Loaning Book", true)) : null)
+                      
+                        .then(result => {
+                          if (!result) return;
+                          ಠ_ಠ.Flags.log("Loan Result", result);
+                          $(`[data-type='request'][data-id='${_id}'][data-user='${_user}']`).remove();
+                        }) : null;
+                    
+                    })
+                  
+                    /* <!-- Handle Exception --> */
+                    .catch(e => e ? ಠ_ಠ.Flags.error("Loan Book Error", e) : ಠ_ಠ.Flags.log("Loan Book Cancelled"));
+                  
+                }
+              },
+                
               return : {
                 matches : /RETURN/i,
                 length : 1,
