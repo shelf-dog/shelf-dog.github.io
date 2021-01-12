@@ -1,0 +1,37 @@
+{% raw %}
+<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library mb-2 mb-xl-3 pb-2" 
+     style="{{~#if min-height}}min-height: {{max-height}}px;{{/if~}}{{~#if max-height}}max-height: {{max-height}}px;{{/if~}}{{~#if min-width}}min-width: {{min-width}}px;{{/if~}}{{~#if max-width}}max-width: {{max-width}}px;{{/if~}}">
+  
+  {{~#if loading~}}
+  
+  <div class="card-header d-flex align-items-center">
+    <span>{{either name 'Loading …'}}</span>
+    <div class="spinner-border ml-auto text-highlight o-25" role="status" aria-hidden="true"><span class="sr-only">Loading …</span></div>
+  </div>
+  
+  {{~else~}}
+  
+  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-body mb-1">
+    <div class="d-flex align-items-center">
+      <a href="#" data-action="close" class="d-flex mr-1 text-{{#if (any (is background 'dark') (is background 'secondary'))}}light{{else}}dark{{/if}}white text-decoration-none o-50">
+        <span class="material-icons">close</span>
+      </a>
+      <span class="font-weight-bold">{{either title "Details"}}</span>
+    </div>
+    <span class="material-icons">{{either icon 'check_circle'}}</span>
+  </div>
+  
+  <div class="card-body py-0 px-1 overflow-auto">
+    {{> @partial-block }}
+  </div>
+  
+  {{~#present commands~}}<div class="card-footer text-muted d-flex justify-content-between">
+    {{#each commands}}<a href="#{{command}}" class="btn btn-action mr-1 mt-1{{#is @index 'gt' 0}} pl-2{{/is}}">{{#if icon}}<span class="material-icons mr-1"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{desc}}"{{/if}}>{{icon}}</span>{{/if}}{{name}}</a>{{/each}}
+  </div>{{~/present~}}
+  
+  {{~/if~}}
+  
+  {{~#if admin~}}<div class="corner-ribbon top-right bg-light text-body shadow-deep d-flex align-items-center justify-content-center"><span class="material-icons md-18 mr-1">security</span>Admin</div>{{~/if~}}
+  
+</div>
+{% endraw %}

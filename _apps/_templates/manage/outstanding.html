@@ -1,20 +1,8 @@
 {% raw %}
-<div data-index="{{id}}" class="card bg-dark border border-background overflow-hidden library mb-2 mb-xl-3 pb-2" style="max-height: 400px; min-width: 400px;">
-  
-  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-body mb-2"><span class="font-weight-bold"{{#if admin}} data-toggle="tooltip" data-html="true" title="You are an <strong>admin</strong> for this library"{{/if}}>{{either title "Details"}}</span><span class="material-icons">{{either icon 'check_circle'}}</span></div>
-
-  <div class="card-body py-0 px-1 px-xl-2 overflow-auto">
-    {{#if name}}<h2 class="card-title mt-0">{{name}}</h2>{{/if}}
-    {{#if description}}<p class="card-text mx-0">{{description}}</p>{{/if}}
-    {{#if (any name description)}}<hr class="border-secondary my-2">{{/if}}
-    
-    {{#present loans}}{{> loans}}{{/present}}
-    
-  </div>
-  
-  {{~#present commands~}}<div class="card-footer text-muted d-flex justify-content-between">
-    {{#each commands}}<a href="#{{command}}" class="btn btn-action mr-1 mt-1{{#is @index 'gt' 0}} pl-2{{/is}}">{{#if icon}}<span class="material-icons mr-1"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{desc}}"{{/if}}>{{icon}}</span>{{/if}}{{name}}</a>{{/each}}
-  </div>{{~/present~}}
-  
-</div>
+{{#> card max-height="400" min-width="400"}}
+{{#if name}}<h2 class="card-title mt-0">{{name}}</h2>{{/if}}
+{{#if description}}<p class="card-text mx-0">{{description}}</p>{{/if}}
+{{#if (any name description)}}<hr class="border-secondary my-2">{{/if}}
+{{#present loans}}{{> loans}}{{/present}}
+{{/card}}
 {% endraw %}

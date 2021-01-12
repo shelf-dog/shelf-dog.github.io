@@ -24,6 +24,7 @@ css:
     - custom/tables
     - custom/ribbons
     - custom/modals
+    - custom/cards
 imports:
   - name: underscore
     load: first
@@ -54,6 +55,8 @@ imports:
   - name: sql-js
     load: last
   - name: spark-md5
+    load: last
+  - name: uuid_new
     load: last
   - name: google
     load: lazy
@@ -115,6 +118,7 @@ templates:
   - manage/log
   - manage/entry
   - manage/user
+  - manage/card
 docs:
   - shared/PUBLIC
   - shared/FEATURES

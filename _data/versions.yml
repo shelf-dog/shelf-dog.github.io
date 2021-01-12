@@ -1,11 +1,12 @@
 site :
-  0.0.7 :
-    name : Site v0.0.7
+  0.0.7a :
+    name : Site v0.0.7a
     desc : Initial Version
-    numeric : 0.0.7.0
+    numeric : 0.0.7.1
     type:
       - alpha
     changes :
+      - Improvement Manage Panels
       - Requests and Request Management
   0.0.6e :
     name : Site v0.0.6e

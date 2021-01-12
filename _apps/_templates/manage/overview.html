@@ -12,8 +12,8 @@
     
     <!-- LEFT BUTTON -->
     <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
-       href="/app/library/{{query}}{{#present index}}#library.{{index}}{{/present}}">
-      <span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
+      href="/app/library/{{query}}{{#present index}}#library.{{index}}{{/present}}">
+      <span class="d-none d-md-block material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
       <span>Close</span>
     </a>
     
@@ -24,24 +24,38 @@
 
         <div class="d-none show-library-requestable">
           
-          <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-secondary border border-secondary waves-effect"
-             data-route="items.requests" href="#">
-            <span>Requests</span>
-            <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="View / Fulfill Book Requests">shopping_basket</span>
-          </a>
+          <div class="btn-group">
+            
+            <a data-busy="engagement" href="#items.requests"
+               class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-secondary border border-secondary waves-effect">
+              <span class="loading float-left"><span class="d-block spinner"></span></span>
+              <span class="d-none d-md-block material-icons mr-1" data-toggle="tooltip" data-html="true" title="View / Fulfill Book Requests">shopping_basket</span>
+              <span>Requests</span>
+            </a>
+            <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    class="btn btn btn-outline-secondary border border-secondary waves-effect dropdown-toggle dropdown-toggle-split">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right bg-dark">
+              <a class="dropdown-item text-light" href="#contents">Contents</a>
+              <a class="dropdown-item text-light" href="#items.loans">Loans</a>
+              <a class="dropdown-item text-light" href="#statistics">Statistics</a>
+           </div>
           
+          </div>
+        
         </div>
         
         <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-light border border-light waves-effect"
            data-route="items.return" href="#">
+          <span class="d-none d-md-block material-icons mr-1" data-toggle="tooltip" data-html="true" title="Log Book/s as Returned">school</span>
           <span>Return</span>
-          <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book/s as Returned">school</span>
         </a>
 
         <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-success border border-success waves-effect"
            data-route="items.loan" href="#">
+          <span class="d-none d-md-block material-icons mr-1" data-toggle="tooltip" data-html="true" title="Log Book/s as Loaned">local_library</span>
           <span>Loan</span>
-          <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book/s as Loaned">local_library</span>
         </a>
 
       </div>
