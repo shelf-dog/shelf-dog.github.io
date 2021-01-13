@@ -1,11 +1,12 @@
 site :
-  0.0.7b :
-    name : Site v0.0.7b
+  0.0.7c :
+    name : Site v0.0.7c
     desc : Initial Version
-    numeric : 0.0.7.2
+    numeric : 0.0.7.3
     type:
       - alpha
     changes :
+      - Search Handling change for Titles
       - Improvement Manage Panels
       - Requests and Request Management
   0.0.6e :

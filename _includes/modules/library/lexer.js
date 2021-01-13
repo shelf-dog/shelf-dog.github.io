@@ -73,13 +73,14 @@ Lexer = (options, factory) => {
       
       /* <!-- This is a quoted search term, so we shouldn't attempt to parse it --> */
       factory.Flags.log("Quoted Search Terms:", _quoted[1]);
-      return _quoted[1];
+      return {
+        quoted: true,
+        terms: _quoted[1]
+      };
       
     } else {
       
-      var _operated = _operators(terms);
-      factory.Flags.log("Operator Parsed Terms:", _operated);
-      return _operated;
+      return _.tap(_operators(terms), operated => factory.Flags.log("Operator Parsed Terms:", operated));
       
     }
     

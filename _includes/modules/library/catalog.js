@@ -353,8 +353,19 @@
     },
   
     like : terms => {
-      terms = _search.safe(terms);
-      return `Title like '%${terms}%' or Authors like '%${terms}%' or Tags like '%${terms}%'${ರ‿ರ.identifiers ? _builders.identifiers.search(ರ‿ರ.identifiers, terms) : ""}${ರ‿ರ.custom ? _builders.custom.search(ರ‿ರ.custom, terms, true) : ""}`;
+      var _simple = terms => `Title like '%${terms}%' or Authors like '%${terms}%' or Tags like '%${terms}%'${ರ‿ರ.identifiers ? _builders.identifiers.search(ರ‿ರ.identifiers, terms) : ""}${ರ‿ರ.custom ? _builders.custom.search(ರ‿ರ.custom, terms, true) : ""}`;
+      if (terms.quoted) {
+        return _simple(_search.safe(terms.terms));
+      } else {
+        var _terms = terms.match(/\S+/g);
+        if (_terms.length === 1) {
+          return _simple(_search.safe(_terms[0]));
+        } else {
+          terms = _search.safe(terms);
+          var _titles = _.reduce(_terms, (memo, term) => `${memo}${memo.length > 0 ? " and " : ""}Title like '%${_search.safe(term)}%'`, "");
+          return `(${_titles}) or Authors like '%${terms}%' or Tags like '%${terms}%'${ರ‿ರ.identifiers ? _builders.identifiers.search(ರ‿ರ.identifiers, terms) : ""}${ರ‿ರ.custom ? _builders.custom.search(ರ‿ರ.custom, terms, true) : ""}`;
+        }
+      }
     },
     
     generic : terms => _.compact(_search.select().concat([
@@ -457,8 +468,9 @@
       
       books : terms => {
         terms = options.functions.lexer.parse(terms);
-        return _searcher(_.isString(terms) ? 
-          _search.generic(terms) : terms.length === 1 && _.isString(terms[0]) ? _search.generic(terms[0]) : _search.specific(terms));
+        return _searcher(_.isString(terms) || terms.quoted ? 
+          _search.generic(terms) : 
+          terms.length === 1 && (_.isString(terms[0]) || terms[0].quoted) ? _search.generic(terms[0]) : _search.specific(terms));
       },
       
       advanced : terms => _searcher(_search.specific(terms)),
