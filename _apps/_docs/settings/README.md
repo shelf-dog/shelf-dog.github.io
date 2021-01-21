@@ -13,4 +13,4 @@
 {% capture content %}{% include section.html content="_docs/settings/SETTINGS" class="m-2" %}{% endcapture %}
 {% include container.html content=content class="hide-settings-personal hide-settings-library hide-settings-all" %}
 
-{% include form.html class="settings" %}
+{% include page.html class="settings" %}

@@ -1,5 +1,5 @@
 {% raw %}
-<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library mb-2 mb-xl-3 pb-2" 
+<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library mb-2 mb-xl-3{{#unless loading}} pb-2{{/unless}}" 
      style="{{~#if min-height}}min-height: {{max-height}}px;{{/if~}}{{~#if max-height}}max-height: {{max-height}}px;{{/if~}}{{~#if min-width}}min-width: {{min-width}}px;{{/if~}}{{~#if max-width}}max-width: {{max-width}}px;{{/if~}}">
   
   {{~#if loading~}}
@@ -11,14 +11,14 @@
   
   {{~else~}}
   
-  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-body mb-1">
+  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-{{#if (any (is background 'dark'))}}light{{else}}body{{/if}} mb-1 border border-background">
     <div class="d-flex align-items-center">
       <a href="#" data-action="close" class="d-flex mr-1 text-{{#if (any (is background 'dark') (is background 'secondary'))}}light{{else}}dark{{/if}} text-decoration-none o-50">
         <span class="material-icons">close</span>
       </a>
       <span class="font-weight-bold">{{either title "Details"}}</span>
     </div>
-    <span class="material-icons">{{either icon 'check_circle'}}</span>
+    <span class="material-icons"{{#unless static}} data-title="loaded-time" style="cursor: pointer;"{{/unless}}>{{either icon 'check_circle'}}</span>
   </div>
   
   <div class="card-body py-0 px-1 overflow-auto">

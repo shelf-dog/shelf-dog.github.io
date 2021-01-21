@@ -189,7 +189,13 @@ App = function() {
             matches: /CLOSE/i,
             length: 0,
             fn: _close,
-          }
+          },
+          refresh: {
+            matches: /REFRESH/i,
+            state: FN.states.libraries.loaded,
+            length: 0,
+            fn: () => _all().then(_close)
+          },
         },
         route: () => false,
         /* <!-- PARAMETERS: handled, command --> */

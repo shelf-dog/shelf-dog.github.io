@@ -1,21 +1,29 @@
 {% raw %}
 
-<!-- DETAILS -->
-{{#present details}}{{> details}}{{/present}}
-
-<div id="library-details" class="bg-dark main p-2 p-xl-3 mb-2 rounded-lg">
+<!-- MANAGEMENT COMMANDS -->
+<div id="management-commands" class="bg-dark main p-2 mb-1 rounded-lg">
   
-  <!-- MANAGEMENT DESCRIPTION --> 
+  <!-- MANAGEMENT DESCRIPTION -->
   {{#if description}}{{{description}}}{{/if}}
 
   <div class="d-flex justify-content-between px-2 loaded-content{{#present description}} pt-1 pt-xl-2{{/present}}">
     
-    <!-- LEFT BUTTON -->
-    <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
-      href="/app/library/{{query}}{{#present index}}#library.{{index}}{{/present}}">
-      <span class="d-none d-md-block material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
-      <span>Close</span>
-    </a>
+    <!-- LEFT BUTTONS -->
+    <div class="d-flex flex-row">
+      
+      <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
+        href="/app/library/{{query}}{{#present index}}#library.{{index}}{{/present}}">
+        <span class="d-none d-md-block material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
+        <span>Close</span>
+      </a>
+
+      <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-action border border-highlight waves-effect"
+             data-route="show.contents" href="#">
+        <span class="d-none d-md-block material-icons mr-2" data-toggle="tooltip" data-html="true" title="Show Library Contents">library_books</span>
+        <span>Contents</span>
+      </a>
+      
+    </div>
     
     <!-- RIGHT BUTTONS -->
     <div class="d-none show-library-loanable">
@@ -26,7 +34,7 @@
           
           <div class="btn-group">
             
-            <a data-busy="engagement" href="#items.requests"
+            <a data-busy="requests" data-route="show.requests" href="#"
                class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-secondary border border-secondary waves-effect">
               <span class="loading float-left"><span class="d-block spinner"></span></span>
               <span class="d-none d-md-block material-icons mr-2" data-toggle="tooltip" data-html="true" title="View / Fulfill Book Requests">shopping_basket</span>
@@ -37,14 +45,33 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right bg-dark">
-              <a class="dropdown-item text-light" href="#contents">Contents</a>
-              <a class="dropdown-item text-light" href="#items.loans">Loans</a>
-              <a class="dropdown-item text-light" href="#statistics">Statistics</a>
+              <a class="dropdown-item text-light" data-route="show.requests" href="#">Info</a>
            </div>
           
           </div>
         
         </div>
+        
+        <div class="btn-group ml-2">
+            
+            <a data-busy="loans" data-route="show.loans.outstanding" href="#"
+               class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-dark border border-dark text-light waves-effect">
+              <span class="loading float-left"><span class="d-block spinner"></span></span>
+              <span class="d-none d-md-block material-icons mr-2" data-toggle="tooltip" data-html="true" title="View Outstanding Loans">check_circle</span>
+              <span>Loans</span>
+            </a>
+            <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    class="btn btn btn-outline-dark border border-dark waves-effect dropdown-toggle dropdown-toggle-split">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right bg-dark">
+              <a class="dropdown-item text-light" data-route="show.loans.all" href="#">All Loans</a>
+              <a class="dropdown-item text-light" data-route="show.loans.overdue" href="#">Overdue Loans</a>
+              <a class="dropdown-item text-light" data-route="show.loans.returned" href="#">Returned Loans</a>
+              <a class="dropdown-item text-light" data-route="show.statistics" href="#">Loan Statistics</a>
+           </div>
+          
+          </div>
         
         <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-light border border-light waves-effect"
            data-route="items.return" href="#">
@@ -65,4 +92,8 @@
   </div>
   
 </div>
+
+<!-- DETAILS -->
+{{#present details}}{{> details}}{{/present}}
+
 {% endraw %}

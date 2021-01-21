@@ -204,11 +204,15 @@ Display = function() {
   var _clean = () =>  $(".modal.show[role='dialog']").length === 0 ? $("div.modal-backdrop.show").last().remove() &&
     $("body.modal-open").removeClass("modal-open") : null; /* <!-- Weird Modal Not Hiding Bug --> */
 
-  var _tidy = () => {
+  var _tidy = everything => {
     var _remove = $("div.tooltip.show");
     if (_log) _log("Tidying Tooltips:", _remove.length);
     _remove.last().remove();
-  }; /* <!-- Tooltips Not Hiding --> */
+    
+    if (everything) {
+      $(".dropdown-toggle").dropdown("hide"); 
+    }
+  }; /* <!-- Tooltips / Dropdowns Not Hiding --> */
 
   var _toggle = (state, toggle, container, all) => {
 

@@ -112,6 +112,7 @@ templates:
   - library/value
   - library/availability
   - library/searches
+  - library/results_header
 docs:
   - shared/PUBLIC
   - shared/FEATURES

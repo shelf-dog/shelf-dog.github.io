@@ -73,7 +73,7 @@ css:
     	aria-live="polite" aria-atomic="true"
       id="{{page.app}}_Notify" class="notifications"><div class="holder"></div></div>{% endif %}
 		
-    <div id="{{ site.app.content }}" class="app {{ site.app.content }}{% unless page.full %} mt-2 mt-xl-3{% endunless %}{% if page.classes and page.classes.content %} {{ page.classes.content }}{% endif %}">{{ content }}</div>
+    <div id="{{ site.app.content }}" class="app {{ site.app.content }}{% unless page.full %} mt-2{% endunless %}{% if page.classes and page.classes.content %} {{ page.classes.content }}{% endif %}">{{ content }}</div>
 		
     {% include plumbing/footer.html type="app" %}
     {% include plumbing/breakpoints.html %}

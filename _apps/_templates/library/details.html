@@ -1,51 +1,18 @@
 {% raw %}
-<div class="bg-dark main p-2 p-xl-3 mb-2 rounded-lg">
+<div class="bg-dark main p-2 mb-2 rounded-lg">
   
-  <div id="library-details" class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
-
-    <div class="m-2 pb-1 details d-none d-md-block">{{{details}}}</div>
-    
-    <div class="mx-2 mb-{{#if searches}}2{{else}}3{{/if}} d-none d-md-block">
-      <form class="w-100 d-inline-flex flex-row align-items-center" data-role="search">
-        <div class="input-group">
-          <input type="text" class="form-control" role="search" placeholder="What would you like to find?" aria-label="Search">
-          <div class="input-group-append">
-            <a role="button" href="#search" class="btn btn-outline-light border border-dark waves-effect d-none d-lg-block" >Advanced</a>
-            <button class="btn btn-outline-primary border border-primary waves-effect" type="submit">Search</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    
-    <!-- SEARCHES (if available) -->
-    {{~#if searches~}}<div class="searches mx-2 mb-2">{{> searches searches}}</div>{{~/if~}}
-    
-    <!-- DETAILS -->
-    <h4 class="mt-1 ml-2 mb-2 pb-1">Recent</h4>
-    
-    <div class="results table-responsive">{{#if results}}{{> results results}}{{/if}}</div>
-    
-  </div>
-  
-  <div id="search-results" class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2 d-none">
-    
-    <!-- DETAILS -->
-    <h5 class="mt-0 mb-2 pb-1 border-bottom border-dark header">Results</h5>
-    
-    <div class="results table-responsive">
-      
-    </div>
-  
-  </div>
-
-  <div class="d-flex flex-row justify-content-between px-2 pt-1 loaded-content">
+  <!-- LIBRARY COMMANDS -->
+  <div class="d-flex flex-row justify-content-between align-items-center px-2 pt-1 mb-2 mb-xl-3 loaded-content">
     
     <!-- LEFT BUTTON -->
     <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
        href="/app/libraries">
       <span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
-      <span>Close</span>
+      <span class="label">Close</span>
     </a>
+    
+    <!-- DETAILS -->
+    <h4 class="mx-2 my-0 p-0 d-none header"></h4>
     
     <!-- RIGHT BUTTONS -->
     <div>
@@ -107,5 +74,41 @@
   
   </div>
   
+  <!-- LIBRARY DETAILS -->
+  <div id="library-details" class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2">
+
+    <div class="m-2 pb-1 details d-none d-md-block">{{{details}}}</div>
+    
+    <div class="mx-2 mb-{{#if searches}}2{{else}}3{{/if}} d-none d-md-block">
+      <form class="w-100 d-inline-flex flex-row align-items-center" data-role="search">
+        <div class="input-group">
+          <input type="text" class="form-control" role="search" placeholder="What would you like to find?" aria-label="Search">
+          <div class="input-group-append">
+            <a role="button" href="#search" class="btn btn-outline-light border border-dark waves-effect d-none d-lg-block" >Advanced</a>
+            <button class="btn btn-outline-primary border border-primary waves-effect" type="submit">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- SEARCHES (if available) -->
+    {{~#if searches~}}<div class="searches mx-2 mb-2">{{> searches searches}}</div>{{~/if~}}
+    
+    <!-- DETAILS -->
+    <h4 class="mt-1 ml-2 mb-2 pb-1">Recent</h4>
+    
+    <div class="results table-responsive">{{#if results}}{{> results results}}{{/if}}</div>
+    
+  </div>
+  
+  <!-- SEARCH RESULTS -->
+  <div id="search-results" class="border border-secondary rounded px-1 pt-1 px-xl-2 pt-xl-2 my-2 d-none">
+    
+    <div class="results table-responsive">
+      
+    </div>
+  
+  </div>
+
 </div>
 {% endraw %}

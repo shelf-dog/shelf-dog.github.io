@@ -62,7 +62,7 @@ imports:
     load: last
   - name: rsvp
     load: last
-  - name: uuid_new
+  - name: uuid
     load: last
   - name: screenfull
     load: last

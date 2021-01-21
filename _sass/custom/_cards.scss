@@ -1,5 +1,21 @@
 .card {
   
+  &.small-card {
+    min-width: 300px !important;
+  }
+  
+  &.medium-card {
+    min-width: 400px !important;
+  }
+  
+  &.large-card {
+    min-width: 600px !important;
+  }
+  
+  &.max-card {
+    min-width: 100% !important;
+  }
+  
   .card-header {
     
     a[data-action='close'] {

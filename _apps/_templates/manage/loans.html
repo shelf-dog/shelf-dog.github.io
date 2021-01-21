@@ -7,13 +7,13 @@
       <th scope="col" class="border-0">When</th>
       {{#if full}}<th scope="col" class="border-0">Returned?</th>
       <th scope="col" class="border-0">Duration</th>
-      <th scope="col" class="border-0">Last Logged By</th>{{/if}}
+      <th scope="col" class="border-0">Logged By</th>{{/if}}
       <th scope="col" class="border-0"></th>
     </tr>
   </thead>
   <tbody>
     {{#each loans}}<tr>
-      <th scope="row">
+      <th class="align-middle" scope="row">
         {{~#if command}}<div class="d-flex align-items-center flex-row">
           {{~#if overdue}}<span class="material-icons md-18 text-danger pr-2 o-80" data-toggle="tooltip"
                                 data-html="true" title="{{{overdue}}}">warning</span>{{/if~}}
@@ -24,7 +24,7 @@
           <a href="#search.{{encode item}}" class="text-decoration-none link-action ml-1">{{item}}</a>
         {{~#if command}}</div>{{/if~}}
       </th>
-      <td>
+      <td class="align-middle">
         <div class="d-flex align-items-center flex-row" data-who="{{who}}">
           <a href="#search.{{encode who}}" class="text-decoration-none link-action">{{who}}</a>
         </div>
@@ -40,7 +40,7 @@
       <td class="small align-middle">     
         <span class="o-50">{{last}}</span>
       </td>{{/if}}
-      <td class="d-flex align-items-center" data-item="{{item}}">
+      <td class="align-middle{{#if returned}} d-flex{{/if}}" data-item="{{item}}">
         {{#if returned}}{{> returned}}{{else}}{{> return}}{{/if}}
       </td>
     </tr>{{/each}}

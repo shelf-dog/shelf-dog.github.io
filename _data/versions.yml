@@ -1,4 +1,12 @@
 site :
+  0.0.7d :
+    name : Site v0.0.7d
+    desc : Initial Version
+    numeric : 0.0.7.4
+    type:
+      - alpha
+    changes :
+      - Updated Management Page
   0.0.7c :
     name : Site v0.0.7c
     desc : Initial Version

@@ -31,19 +31,24 @@ App = function() {
     var _element = _holder(),
         _button = _element.find(".forward-button:visible");
     _button.attr("href", _button.data("href") || _button.attr("href"));
-    if (header) _element.find(".back-button").attr("href", "#overview");
+    if (header) {
+       _element.find(".back-button").attr("href", "#overview").find(".label").text("Back");
+    }
     if (!FN.common.capabilities.touch) 
       $(`${header ? "header.navbar " : ""}form[data-role='search'] input[role='search']:visible`).focus();
   };
   
-  var _display = (element, results) => {
+  var _display = (element, results, terms) => {
     var _results_element = element.find("#search-results").removeClass("d-none"),
-        _header_element = _results_element.find(".header");
+        _header_element = element.find(".header");
     _results_element = _results_element.find(".results");
     element.find("#library-details")[results ? "addClass" : "removeClass"]("d-none");
     results && _.isArray(results.values) && results.values.length > 0 ?
-        _header_element.removeClass("d-none").text(`${results.values.length} Result${results.values.length > 1 ? "s" : ""}`) :
-        _header_element.addClass("d-none").text("Results");
+        _header_element.removeClass("d-none").append(ಠ_ಠ.Display.template.get({
+          template: "results_header",
+          count: results.values.length,
+          terms: terms
+        }, true)) : _header_element.addClass("d-none").text("");
     return _results_element;
   };
   
@@ -173,8 +178,8 @@ App = function() {
   
   var _search = {
     
-    action: (results, element) => {
-      var _results_element = _display(element, results);
+    action: (results, element, terms) => {
+      var _results_element = _display(element, results, terms);
       ಠ_ಠ.Flags.log("RESULTS:", results);
 
       /* <!-- Clear any selected Book states --> */
@@ -286,7 +291,7 @@ App = function() {
       terms = decodeURIComponent(ಱ.url.decode(terms));
       $("header.navbar form[data-role='search'] input[role='search']").val(terms);
       ಠ_ಠ.Flags.log("BASIC SEARCH:", terms);
-      _search.action(terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null, _holder());
+      _search.action(terms ? ರ‿ರ.db.search.books(terms == "*" ? "" : terms) : null, _holder(), terms && terms != "*" ? terms : null);
     },
     
     searcher: e => {
@@ -355,6 +360,7 @@ App = function() {
             
               $("input[role='search']:visible").focus();
  
+              ರ‿ರ.refresh = () => _library(index, book);
             }))
             .then(ಠ_ಠ.Main.busy("Opening Library", true));
 	/* <!-- Internal Functions --> */
@@ -660,6 +666,14 @@ App = function() {
               _overview(_holder(), ರ‿ರ.index);
               _reset();
             },
+          },
+          
+          refresh: {
+            matches: /REFRESH/i,
+            state: FN.states.library.loaded,
+            length: 0,
+            tidy: true,
+            fn: () => ರ‿ರ.refresh()
           },
           
         },

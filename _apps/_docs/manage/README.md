@@ -1,1 +1,1 @@
-{% include form.html class="manage" %}
+{% include page.html large=true class="manage" %}

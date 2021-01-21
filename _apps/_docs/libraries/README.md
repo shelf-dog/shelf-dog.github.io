@@ -4,7 +4,7 @@
 ## Select a __library__{:.font-weight-normal .text-primary}
 {:.titles .d-none .show-libraries-loaded .display-4 .bg-dark .mt-2 .mt-lg-3 .mx-1 .ml-md-2 .ml-lg-3 .ml-xl-4 .p-1 .px-lg-2 .rounded}
 
-{% include form.html class="library" %}
+{% include page.html class="library" %}
 
 {% capture content %}
 {% include section.html content="_docs/libraries/LIBRARIES" class="m-2" %}

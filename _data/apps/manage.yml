@@ -56,7 +56,7 @@ imports:
     load: last
   - name: spark-md5
     load: last
-  - name: uuid_new
+  - name: uuid
     load: last
   - name: google
     load: lazy
@@ -119,6 +119,8 @@ templates:
   - manage/entry
   - manage/user
   - manage/card
+  - manage/all
+  - manage/empty
 docs:
   - shared/PUBLIC
   - shared/FEATURES
