@@ -1,8 +1,10 @@
 .modal-content {
+  color: $colour-background !important;
   & > * {color: $colour-foreground;}
-  background-color: $colour-highlight-dark;
-  border: 1px solid $colour-highlight-dark;
+  background-color: $colour-background;
+  border: 3px solid $colour-background;
   .modal-title {
+    margin-top: 0;
     color: $colour-highlight;
   }
   .modal-header {

@@ -115,17 +115,30 @@ App = function() {
                         request.when = request.date ? ಠ_ಠ.Dates.parse(request.date) : "";
                       });
                   })).then(() => requests))
-                .then(requests => (ಠ_ಠ.Flags.log("Requests:", requests), {
-                    title: "Requests",
-                    icon: "shopping_basket",
-                    background: "secondary",
-                    requests: requests
-                  })),
+                .then(requests => (ಠ_ಠ.Flags.log("Requests:", requests), requests && requests.length > 0 ?
+                        {
+                          template: "requests",
+                          title: "Requests",
+                          icon: "shopping_basket",
+                          background: "secondary",
+                          movable: true,
+                          resizable: true,
+                          count: requests.length,
+                          requests: requests
+                        } : {
+                          template: "empty",
+                          title: "Requests",
+                          icon: "shopping_basket",
+                          background: "secondary",
+                          movable: true,
+                          message: "No Requests Found"
+                        })),
     
     statistics : () => FN.libraries.statistics(ರ‿ರ.library)
       .then(statistics => (ಠ_ಠ.Flags.log("STATISTICS:", statistics), {
         template: "statistics",
         title: "Statistics",
+        movable: true,
         background: "light",
         icon: "insights",
         values: (statistics.overdue ? [{
@@ -179,10 +192,12 @@ App = function() {
   /* <!-- Show Functions --> */
   FN.show = {
   
-    details : (id, value, template) => {
+    details : (id, value, template, movable, resizable) => {
       var _existing = $(`.details .detail[data-index=${id}]`);
       value.id = id;
       if (template) value.template = template;
+      if (movable) value.movable = movable;
+      if (resizable) value.resizable = resizable;
       value.target = _existing.length > 0 ? _existing : $(".details");
       value.replace = _existing.length > 0;
       return FN.hookup.closer(FN.hookup.since(ಠ_ಠ.Display.template.show(value)));
@@ -202,6 +217,7 @@ App = function() {
         background: "highlight",
         admin: ರ‿ರ.library.admin,
         static: true,
+        movable: true,
         values: _.filter(_.map(["Authors", "Books", "Comments", "Formats", "Publishers", "Ratings", "Series", "Tags"], property => ({
           name: property,
           count: ರ‿ರ.db.count[property.toLowerCase()](),
@@ -285,11 +301,15 @@ App = function() {
         title: details,
         background: background,
         icon: icon,
+        movable: true,
+        resizable: true,
+        count: loans.length,
         loans: _.map(_.tap(loans, loans => ಠ_ಠ.Flags.log(`LOANS for [${details}]:`, loans)), FN.loans.process)
       }, "all")) : FN.show.details(id, {
         title: details,
         background: background,
         icon: icon,
+        movable: true,
         message: "No Loans Found"
       }, "empty"),
 
@@ -864,7 +884,7 @@ App = function() {
                     FN.show.loading(uuid.v4(), FN.show.overview.requests()),
                     FN.get.requests()
                   ])
-                  .then(results => FN.show.details(results[0], results[1], "requests"))
+                  .then(results => FN.show.details(results[0], results[1]))
                   .catch(e => ಠ_ಠ.Flags.error("Book Requests Error", e)),
               },
 
@@ -922,6 +942,69 @@ App = function() {
 
           },
 
+          move: {
+            matches: /MOVE/i,
+            state: FN.states.manage.loaded,
+            
+            routes: {
+
+              left: {
+                matches: /LEFT/i,
+                length: 1,
+                fn: id => {
+                  var _target = $(`.details div.card[data-index='${id}']`),
+                      _prev = _target.prev();
+                  _target.detach().insertBefore(_prev);
+                }
+              },
+
+              right: {
+                matches: /RIGHT/i,
+                length: 1,
+                fn: id => {
+                  var _target = $(`.details div.card[data-index='${id}']`),
+                      _next = _target.next();
+                  _target.detach().insertAfter(_next);
+                }
+              },
+
+            }
+            
+          },
+          
+          resize: {
+            matches: /RESIZE/i,
+            state: FN.states.manage.loaded,
+            
+            routes: {
+
+              expand: {
+                matches: /EXPAND/i,
+                length: 1,
+                fn: id => {
+                  var _target = $(`.details div.card[data-index='${id}']`),
+                      _parent = _target.parent(),
+                      _position = _target.index();
+                  _target.addClass("expanded").data("position", _position).detach().prependTo(_parent);
+                }
+              },
+
+              contract: {
+                matches: /CONTRACT/i,
+                length: 1,
+                fn: id => {
+                  var _target = $(`.details div.card[data-index='${id}']`),
+                      _position = _target.data("position");
+                  _position ?
+                    _target.removeClass("expanded").detach().insertAfter($(`.details div.card:nth-child(${_position})`)) :
+                    _target.removeClass("expanded");
+                }
+              },
+
+            }
+            
+          },
+          
           refresh: {
             matches: /REFRESH/i,
             state: FN.states.library.loaded,

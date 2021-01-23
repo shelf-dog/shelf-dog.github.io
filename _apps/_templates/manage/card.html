@@ -1,5 +1,5 @@
 {% raw %}
-<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library mb-2 mb-xl-3{{#unless loading}} pb-2{{/unless}}" 
+<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library{{#unless (any loading movable resizable (exists count) (present commands))}} pb-2{{/unless}}" 
      style="{{~#if min-height}}min-height: {{max-height}}px;{{/if~}}{{~#if max-height}}max-height: {{max-height}}px;{{/if~}}{{~#if min-width}}min-width: {{min-width}}px;{{/if~}}{{~#if max-width}}max-width: {{max-width}}px;{{/if~}}">
   
   {{~#if loading~}}
@@ -25,9 +25,18 @@
     {{> @partial-block }}
   </div>
   
-  {{~#present commands~}}<div class="card-footer text-muted d-flex justify-content-between">
-    {{#each commands}}<a href="#{{command}}" class="btn btn-action mr-1 mt-1{{#is @index 'gt' 0}} pl-2{{/is}}">{{#if icon}}<span class="material-icons mr-1"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{desc}}"{{/if}}>{{icon}}</span>{{/if}}{{name}}</a>{{/each}}
-  </div>{{~/present~}}
+  {{~#if (any movable resizable (exists count) (present commands))~}}<div class="card-footer text-muted d-flex justify-content-between pt-1 pb-0 px-1 align-items-center">
+    {{#if (any movable resizable)}}<div class="d-flex">
+      {{#if movable}}<a href="#" data-route="move.left.{{id}}" class="move-left"><span class="material-icons">arrow_left</span></a>{{/if}}
+      {{#if resizable}}<a href="#" data-route="resize.expand.{{id}}" class="resize-expand"><span class="material-icons">fullscreen</span></a>
+      <a href="#" data-route="resize.contract.{{id}}" class="resize-contract"><span class="material-icons">fullscreen_exit</span></a>{{/if}}
+      {{#if movable}}<a href="#" data-route="move.right.{{id}}" class="move-right"><span class="material-icons">arrow_right</span></a>{{/if}}
+    </div>{{/if}}
+    {{~#exists count~}}<span>
+      <span class="text-light">{{count}}</span><span> item{{#is count 'gt' 1}}s{{/is}}</span>
+    </span>{{~/exists~}}
+    {{~#present commands~}}{{#each commands}}<a href="#{{command}}" class="btn btn-action mr-1 mt-1{{#is @index 'gt' 0}} pl-2{{/is}}">{{#if icon}}<span class="material-icons mr-1"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{desc}}"{{/if}}>{{icon}}</span>{{/if}}{{name}}</a>{{/each}}{{~/present~}}
+  </div>{{~/if~}}
   
   {{~/if~}}
   

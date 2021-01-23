@@ -1,12 +1,13 @@
 site :
-  0.0.7d :
-    name : Site v0.0.7d
+  0.0.7e :
+    name : Site v0.0.7e
     desc : Initial Version
-    numeric : 0.0.7.4
+    numeric : 0.0.7.5
     type:
       - alpha
     changes :
       - Updated Management Page
+      - Expandable and Movable Management Panels
   0.0.7c :
     name : Site v0.0.7c
     desc : Initial Version

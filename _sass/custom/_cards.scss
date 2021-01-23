@@ -1,4 +1,33 @@
+.card-holder {
+ 
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around !important;
+  align-content: center !important;
+  margin-left: -10px;
+  
+  .card {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 0%;
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+  
+}
+
 .card {
+  
+  .card-header {
+    margin-left: 1px;
+    margin-right: 1px;
+  }
+  
+  &.expanded {
+    order: 0 !important;
+    min-width: 90% !important;
+  }
   
   &.small-card {
     min-width: 300px !important;
@@ -23,5 +52,37 @@
     }
     
   }
+  
+  // -- Move and Resize Buttons -- //
+  &:first-of-type {
+    .move-left {
+      pointer-events: none; 
+      cursor: default; 
+      text-decoration: none; 
+      opacity: 0.5;
+    }
+  }
+  
+  &:last-of-type {
+    .move-right {
+      pointer-events: none; 
+      cursor: default; 
+      text-decoration: none; 
+      opacity: 0.5;
+    }
+  }
+  
+  &.expanded {
+    .resize-expand {
+      display: none;
+    }
+  }
+  
+  &:not(.expanded) {
+    .resize-contract {
+      display: none;
+    }
+  }
+  // -- Move and Resize Buttons -- //
   
 }
