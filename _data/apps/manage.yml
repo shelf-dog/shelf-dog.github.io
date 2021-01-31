@@ -121,6 +121,13 @@ templates:
   - manage/card
   - manage/all
   - manage/empty
+  - manage/list
+  - manage/confirmations/cancel
+  - manage/confirmations/remove-request
+  - manage/confirmations/change-request
+  - manage/confirmations/confirm-loan
+  - manage/confirmations/confirm-return
+  - manage/confirmations/choose-copy
 docs:
   - shared/PUBLIC
   - shared/FEATURES
@@ -130,6 +137,7 @@ docs:
   - manage/DETAILS
   - manage/RETURNS
   - manage/LOANS
+  - manage/NO_AVAILABLE_COPIES
   - manage/instructions/MANAGE_SEARCH_INSTRUCTIONS
   - manage/instructions/CREATE_LOANS_INSTRUCTIONS
   - dialogs/CONFIRM_RETURN

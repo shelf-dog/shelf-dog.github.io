@@ -1,0 +1,5 @@
+{% raw %}
+<a href="#item.remove.{{encode id}}.{{encode user}}.{{encode (md5 (concat id '_' user))}}" role="button"
+   class="btn btn-action btn-small" style="line-height: 0.7em;">Remove</a>
+{{> cancel type="request"}}
+{% endraw %}

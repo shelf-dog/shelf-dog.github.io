@@ -1,0 +1,7 @@
+{% raw %}
+<div class="d-flex align-items-center">
+  <a href="#item.{{#if unreturn}}un{{/if}}return.{{encode id}}.{{encode user}}{{#if since}}.{{encode since}}{{/if}}{{#if until}}.{{encode until}}{{/if}}.{{encode (md5 (concat id '_' user))}}" role="button"
+   class="btn btn-action btn-small text-nowrap" style="line-height: 0.7em;">{{#if unreturn}}Un-{{/if}}Return</a>
+  {{> cancel type="loan"}}
+</div>
+{% endraw %}

@@ -1,11 +1,13 @@
 site :
-  0.0.7e :
-    name : Site v0.0.7e
+  0.0.7f :
+    name : App v0.0.7f
     desc : Initial Version
-    numeric : 0.0.7.5
+    numeric : 0.0.7.6
     type:
       - alpha
     changes :
+      - Improved Search
+      - Improved Handling of Requests
       - Updated Management Page
       - Expandable and Movable Management Panels
   0.0.7c :

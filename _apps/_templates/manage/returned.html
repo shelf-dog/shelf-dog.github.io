@@ -1,3 +1,6 @@
 {% raw %}
 <span data-toggle="tooltip" title="Book has been Returned" class="material-icons md-1 o-50 text-success">check_circle</span>
+{{~#if unreturn~}}<a href="#item.unreturn.{{encode item}}.{{encode user}}.{{encode since}}.{{encode until}}" class="text-decoration-none link-action ml-1" data-toggle="tooltip" data-html="true" title="Undo <strong class='text-warning'>Returned</strong>" style="line-height: 1em;">
+  <span class="material-icons md-1 text-warning">undo</span>
+</a>{{~/if~}}
 {% endraw %}

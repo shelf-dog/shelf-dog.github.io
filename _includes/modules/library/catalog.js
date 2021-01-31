@@ -273,9 +273,9 @@
         return memo;
       }, []).join("\n"),
       
-      search : (identifiers, terms) => _.reduce(identifiers, (memo, type) => {
+      search : (identifiers, terms, exact) => _.reduce(identifiers, (memo, type) => {
         if (type && type.indexOf("isbn") >= 0) 
-          memo.push(` or ID = (SELECT identifiers.book from identifiers WHERE type = '${type}' and val like '%${terms}%')`);
+          memo.push(` or ID = (SELECT identifiers.book from identifiers WHERE type = '${type}' and val ${exact ? `= '${terms}'` : `like '%${terms}%'`})`);
         return memo;
       }, []).join(""),
       
@@ -305,7 +305,25 @@
     
   };
   /* <!-- Group Functions --> */
+    
+  /* <!-- Group Where Functions --> */
+  var _wheres = {
+    
+    authors : (term, comparator) => `id IN (SELECT book FROM books_authors_link JOIN authors ON(author ${comparator || "="} authors.id) WHERE authors.name = '${term}')`,
+    
+    formats : (term, comparator) => `id IN (SELECT book FROM data WHERE format ${comparator || "="} '${term}')`,
+    
+    publisher : (term, comparator) => `id IN (SELECT book FROM books_publishers_link JOIN publishers ON(publisher ${comparator || "="} publishers.id) WHERE publishers.name = '${term}')`,
+    
+    rating : (term, comparator) => `id IN (SELECT book FROM books_ratings_link JOIN ratings ON(books_ratings_link.rating ${comparator || "="} ratings.id) WHERE ratings.rating = ${term})`,
+    
+    series : (term, comparator) => `id IN (SELECT book FROM books_series_link JOIN series ON(series = series.id) WHERE series.name ${comparator || "="} '${term}')`,
+    
+    tags : (term, comparator) => `id IN (SELECT book FROM books_tags_link JOIN tags ON(tag = tags.id) WHERE tags.name ${comparator || "="} '${term}')`,
 
+  };
+  /* <!-- Group Where Functions --> */
+    
   /* <!-- Find Functions --> */
   var _find = where => _process(options.arrays.concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
         if (value.multiple) memo.push(_name(key, value));
@@ -338,10 +356,13 @@
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers, identifier_types) : "",
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom, null, true, custom_names) : "",
         _groups.series(true),
-        _groups.tags(!!extras)
+        _groups.tags(extras && extras.length > 0)
       ].concat(extras ? _.isString(extras) ? [extras] : extras : []).concat(["FROM books"]),
   
     condition : (field, comparator, value, type, array) => {
+      var _where = field && field.toLowerCase ? _wheres[field.toLowerCase()] : null,
+          _complex = _where && comparator == "==";
+      
       value = type == "text" ? _search.safe(value) : value;
       comparator = comparator == "!=" ? "<>" :
         comparator == "=>" ? ">=" :
@@ -349,7 +370,11 @@
         comparator == "=" && (type == "text" || array) ? "like" :
         comparator == "==" ? "=" :
         comparator;
-      return `${field.indexOf(" ") >= 0 ? `"${field}"` : field} ${comparator} ${type == "numeric" ? value : comparator == "like" ? `'%${value}%'` : `'${value}'`}`; 
+
+      return _complex ?
+        _where(value, comparator) :
+        `${field.indexOf(" ") >= 0 ? `"${field}"` : field} ${comparator} ${type == "numeric" ? value : comparator == "like" ? `'%${value}%'` : `'${value}'`}`;
+      
     },
   
     like : terms => {
@@ -379,22 +404,37 @@
           _type = value => ರ‿ರ.fields.date.indexOf(value) >= 0 ? "date" :
                             ರ‿ರ.fields.numeric.indexOf(value) >= 0 ? "numeric" : "text",
           _array = value => ರ‿ರ.fields.array.indexOf(value) >= 0,
+          _arrays = [],
           _extras = [];
       
       var _initial = "WHERE",
           _condition = (term, only) => {
             var _children = term.term ? term.term.children : term.children,
                 _extra = !only && _children && _children.length > 0 ? "(" : "",
-                _return = term.operator ?
-                  _.isString(term.term) ?
-                    `${term.operator} ${_extra}(${_search.like(term)})` :
-                    !(term.term.field = _valid(term.term.field)) ? null :
-                      (_extras.push(term.term.field), 
-                        `${term.operator} ${_extra}(${_search.condition(term.term.field, term.term.comparator, term.term.value, _type(term.term.field), _array(term.term.field))})`) :
-                  _.isString(term) ?
-                    `(${_search.like(term)})` :
-                    !(term.field = _valid(term.field)) ? null :
-                    (_extras.push(term.field), `${_extra}(${_search.condition(term.field, term.comparator, term.value, _type(term.field), _array(term.field))})`);
+                
+                _return = ((term, operator) => {
+                  
+                  if (_.isString(term)) {
+                    
+                    /* <!-- Simple String Term --> */
+                    return `${operator ? `${operator} ` : ""}${_extra}(${_search.like(term)})`;
+                    
+                  } else {
+                    
+                    /* <!-- Complex Field / Comparator Term --> */
+                    if (!(term.field = _valid(term.field))) return null;
+                    
+                    /* <!-- Additional Group Arrays --> */
+                    if (term.comparator !== "==" && term.field && term.field.toLowerCase && _groups[term.field.toLowerCase()]) 
+                      _arrays.push(term.field.toLowerCase());
+                    
+                    _extras.push(term.field);
+                    
+                    return `${operator ? `${operator} ` : ""}${_extra}(${_search.condition(term.field, term.comparator, term.value, _type(term.field), _array(term.field))})`;
+                    
+                  }
+                  
+                })(term.operator ? term.term : term, term.operator);
             
             return _children && _children.length > 0 ?
               `${_return} ${_.reduce(_children, 
@@ -407,11 +447,14 @@
       
       var invalid = _where == _initial,
           identifier_types = _.intersection(ರ‿ರ.fields.identifiers, _extras),
-          custom_names = _.intersection(_.union(ರ‿ರ.fields.scalar, ರ‿ರ.fields.array), _extras);
+          custom_names = _.intersection(_.union(ರ‿ರ.fields.scalar, ರ‿ರ.fields.array), _extras),
+          _extra_groups = _.chain(_arrays).uniq()
+                            .filter(field => field == "formats" || field == "rating" || field == "publisher")
+                            .map(field => _groups[field]()).value();
 
       return invalid && terms && terms.length === 1 ?
         _search.generic(terms[0].value) : 
-        _.compact(_search.select(identifier_types, custom_names).concat(_where && _where != "WHERE" ? [_where] : [])).join("\n");
+        _.compact(_search.select(identifier_types, custom_names, _extra_groups).concat(_where && _where != "WHERE" ? [_where] : [])).join("\n");
       
     },
     
@@ -458,6 +501,22 @@
       
     },
     
+    list : {
+      
+      authors: () => _data(_run("SELECT DISTINCT id ID, name Name, (SELECT COUNT(book) FROM books_authors_link WHERE author = authors.id) Books FROM authors ORDER BY sort;")),
+
+      formats: () => _data(_run("SELECT DISTINCT format Format, (SELECT COUNT(book) FROM data data_1 WHERE data_1.format = data.format) Books FROM data ORDER BY format;")),
+    
+      publishers: () => _data(_run("SELECT DISTINCT id ID, name Name, (SELECT COUNT(book) FROM books_publishers_link WHERE publisher = publishers.id) Books FROM publishers ORDER BY sort;")),
+
+      ratings: () => _data(_run("SELECT DISTINCT id, rating, (SELECT COUNT(books_ratings_link.book) FROM books_ratings_link WHERE rating = ratings.id) Books FROM ratings ORDER BY rating")),
+      
+      series: () => _data(_run("SELECT DISTINCT id ID, name Name, (SELECT COUNT(book) FROM books_series_link WHERE series = series.id) Books FROM series ORDER BY sort;")),
+
+      tags: () => _data(_run("SELECT DISTINCT id ID, name Name, (SELECT COUNT(book) FROM books_tags_link WHERE tag = tags.id) Books FROM tags ORDER BY name;")),
+      
+    },
+    
     custom : () => ರ‿ರ.custom,
     
     fields : () => ರ‿ರ.fields,
@@ -482,6 +541,10 @@
       book : id => _find(`WHERE ID = ${id}`),
       
       copy : (id, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.id = custom_column_1.id WHERE ${_custom(field).table}.value = '${id}')`),
+      
+      isbn : isbn => _find(`WHERE ${_.chain(ರ‿ರ.identifiers).filter(identifier => identifier && identifier.indexOf("isbn") >= 0).map(identifier => `ID IN (SELECT identifiers.book from identifiers WHERE type = '${identifier}' and val = '${isbn}')`).value().join(" or ")}`),
+      
+      identifier : (identifier, type) => _find(`WHERE ID IN (SELECT identifiers.book from identifiers WHERE type = '${type}' and val = '${identifier}')`),
       
     },
     

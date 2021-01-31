@@ -1,5 +1,5 @@
 {% raw %}
-{{#> card max-height="400" min-width="400"}}
+{{#> card max-height="400" min-width="600"}}
 <table class="table table-dark table-hover">
   <thead class="bg-dark">
     <tr>
@@ -12,32 +12,46 @@
   </thead>
   <tbody>
     {{#each requests}}<tr data-type="request" data-id="{{id}}" data-user="{{user.id}}">
-      <th scope="row">
+      <th class="align-middle" scope="row">
         <div class="d-flex align-items-center flex-row">
           <a href="{{command}}" class="text-decoration-none link-action pr-2 mr-1 border-right" style="line-height: 1em;"
              target="_blank"{{~#if isbn}} data-toggle="tooltip" data-html="true"
              title="<span class='font-weight-bold mr-1'>ISBN:</span>{{isbn}}"{{/if~}}>
             <span class="material-icons md-18">menu_book</span>
           </a>
-          <span class="ml-1">{{id}}</span>
+          <a href="#search.{{encode id}}" class="text-decoration-none link-action ml-1">{{id}}</a>
         </div>
       </th>
-      <td>
+      <td class="align-middle">
         <a href="#search.{{encode user.id}}" class="text-decoration-none link-action"
            data-toggle="tooltip" data-html="true" title="<span class='font-weight-bold mr-1'>USER:</span>{{user.id}}">{{user.name}}</a>
       </td>
       <td class="small align-middle">
-        <span class="o-75">{{details}}</span>
+        <span class="o-75 align-middle">{{details}}</span>
       </td>
       <td class="small align-middle">
-        <span class="o-75">{{#if ../full}}{{localeDate when}}{{else}}{{fromNow when}}{{/if}}</span>
+        <span class="o-75 align-middle">{{#if ../full}}{{localeDate when}}{{else}}{{fromNow when}}{{/if}}</span>
       </td>
-      <td class="d-flex align-items-center" data-item="{{id}}">
-        <a href="#item.loan.{{encode id}}.{{encode user.id}}" class="text-decoration-none link-action" data-toggle="tooltip" data-html="true" 
-           title="Log Book as <strong class='text-success'>Loaned</strong>" style="line-height: 1em;">
-          <span class="material-icons md-1">check_circle_outline</span>
-        </a>
+      <td class="align-middle commands data-commands" style="padding-top: 10px; padding-bottom: 8px;">
+        <div class="d-flex align-items-center">
+          <a href="#item.remove.{{encode id}}.{{encode user.id}}"
+           class="text-decoration-none link-action mr-1 text-danger" data-toggle="tooltip" data-html="true" 
+           title="<strong class='text-danger'>Remove</strong> and delete this request" style="line-height: 1em;">
+            <span class="material-icons md-1">cancel</span>
+          </a>
+          <a href="#item.change.{{encode id}}.{{encode user.id}}" 
+             class="text-decoration-none link-action mr-1 text-warning" data-toggle="tooltip" data-html="true" 
+             title="<strong class='text-warning'>Change</strong> this request and loan a different item" style="line-height: 1em;">
+            <span class="material-icons md-1">published_with_changes</span>
+          </a>
+          <a href="#item.loan.{{encode id}}.{{encode user.id}}" class="text-decoration-none link-action" data-toggle="tooltip" data-html="true" 
+             title="Log Book as <strong class='text-success'>Loaned</strong>" style="line-height: 1em;">
+            <span class="material-icons md-1">check_circle_outline</span>
+          </a>
+        </div>
       </td>
+      <td class="d-none data-confirm align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>
+      <td class="d-none data-result align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>
     </tr>{{/each}}
   </tbody>
 </table>

@@ -59,6 +59,7 @@ globals:
   SparkMD5: false
   uuidv4: false
   Stripe: false
+  CryptoJS: false
   screenfull: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false

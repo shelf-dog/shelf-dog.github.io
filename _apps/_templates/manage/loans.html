@@ -4,15 +4,14 @@
     <tr>
       <th scope="col" class="border-0">Item</th>
       <th scope="col" class="border-0">Who</th>
-      <th scope="col" class="border-0">When</th>
-      {{#if full}}<th scope="col" class="border-0">Returned?</th>
-      <th scope="col" class="border-0">Duration</th>
+      <th scope="col" class="border-0">Loaned</th>
+      {{#if full}}<th scope="col" class="border-0">Returned</th>
       <th scope="col" class="border-0">Logged By</th>{{/if}}
       <th scope="col" class="border-0"></th>
     </tr>
   </thead>
   <tbody>
-    {{#each loans}}<tr>
+    {{#each loans}}<tr data-type="loan" data-id="{{item}}" data-user="{{who}}">
       <th class="align-middle" scope="row">
         {{~#if command}}<div class="d-flex align-items-center flex-row">
           {{~#if overdue}}<span class="material-icons md-18 text-danger pr-2 o-80" data-toggle="tooltip"
@@ -30,19 +29,19 @@
         </div>
       </td>
       <td class="small align-middle">
-        <span class="o-75">{{#if ../full}}{{localeDate when}}{{else}}{{fromNow when}}{{/if}}</span>
+        <span class="o-75 align-middle">{{#if ../full}}{{localeDate when}}{{else}}{{fromNow when}}{{/if}}</span>
       </td>
-      {{#if ../full}}<td class="small align-middle">
-        <span class="o-75">{{localeDate returned}}</span>
-      </td><td class="small align-middle">
-        <span class="o-75">{{humanize duration}}</span>
+      {{~#if ../full}}<td class="small align-middle">
+        <span class="o-75 align-middle returned-date"{{#if duration}} data-toggle="tooltip" data-html="true" title="<strong>Duration: </strong>{{humanize duration}}"{{/if}}>{{localeDate returned}}</span>
       </td>
-      <td class="small align-middle">     
-        <span class="o-50">{{last}}</span>
-      </td>{{/if}}
-      <td class="align-middle{{#if returned}} d-flex{{/if}}" data-item="{{item}}">
-        {{#if returned}}{{> returned}}{{else}}{{> return}}{{/if}}
+      <td class="small align-middle">
+        <span class="o-50 align-middle">{{last}}</span>
+      </td>{{/if~}}
+      <td class="align-middle commands data-commands" style="padding-top: 11x; padding-bottom: 6px;">
+        {{#if returned}}{{> returned}}{{else}}{{> return user=who}}{{/if}}
       </td>
+      <td class="d-none data-confirm align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>
+      <td class="d-none data-result align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>
     </tr>{{/each}}
   </tbody>
 </table>

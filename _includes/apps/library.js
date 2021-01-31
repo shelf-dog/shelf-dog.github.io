@@ -40,7 +40,7 @@ App = function() {
   
   var _display = (element, results, terms) => {
     var _results_element = element.find("#search-results").removeClass("d-none"),
-        _header_element = element.find(".header");
+        _header_element = element.find(".header").empty();
     _results_element = _results_element.find(".results");
     element.find("#library-details")[results ? "addClass" : "removeClass"]("d-none");
     results && _.isArray(results.values) && results.values.length > 0 ?
@@ -48,7 +48,7 @@ App = function() {
           template: "results_header",
           count: results.values.length,
           terms: terms
-        }, true)) : _header_element.addClass("d-none").text("");
+        }, true)) : _header_element.addClass("d-none");
     return _results_element;
   };
   
@@ -519,7 +519,7 @@ App = function() {
                 command.length == 2 ? command[1].equals("me", true) ? 
                   _library(command[0]).then(_me) : _library(command[0], command[1]) : 
                   command.length == 3 ? _library(command[0]).then(() => command[1] && command[1].toLowerCase() == "search" ?
-                                                                  _search(command[2], _holder()) : null) : 
+                                                                  _search.basic(command[2], _holder()) : null) : 
                 _library(command) : _library(command),
           },
           

@@ -1,0 +1,7 @@
+{% raw %}
+<div class="d-flex align-items-center">
+  <a href="#item.loan.{{encode id}}.{{encode user}}.{{encode (md5 (concat id '_' user))}}{{#if copy}}.{{encode copy}}{{/if}}" role="button"
+   class="btn btn-action btn-small" style="line-height: 0.7em;">Loan</a>
+  {{> cancel type="request"}}
+</div>
+{% endraw %}

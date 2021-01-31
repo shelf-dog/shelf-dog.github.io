@@ -9,6 +9,17 @@ App = function() {
   /* <!-- Internal Constants --> */
   const FN = {},
     DEFAULT_ROUTE = "library";
+  
+  const KEY_ENTER = 13,
+        KEY_ESC = 27;
+  
+  const COLOUR_REMOVE = "#d7262675",
+        COLOUR_CHANGE = "#b8952dad",
+        COLOUR_RETURN = "#1d551da8",
+        COLOUR_FAILURE = "#6e0a0a8f",
+        COLOUR_SUCCESS = "#0a430d8f";
+  
+  const REGEX_ISBN = /^(97(8|9))?\d{9}(\d|X)$/;
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -68,40 +79,21 @@ App = function() {
   FN.book = {
     
     get : (id, force) => {
-      var book = ರ‿ರ.library.meta.capabilities.loan_field && !force ?
-        ರ‿ರ.db.find.copy(id, ರ‿ರ.library.meta.capabilities.loan_field) : /\d+/.test(id) ? ರ‿ರ.db.find.book(id) : null;
-      return book ? _.object(book.columns, book.values[0]) : book;
+      var book = REGEX_ISBN.test(id) ?
+        ರ‿ರ.db.find.isbn(id) :
+        ರ‿ರ.library.meta.capabilities.loan_field && !force ?
+          ರ‿ರ.db.find.copy(id, ರ‿ರ.library.meta.capabilities.loan_field) : /\d+/.test(id) ? ರ‿ರ.db.find.book(id) : null;
+      return book && book.values.length >= 0 ? _.object(book.columns, book.values[0]) : book;
     },
     
   };
   /* <!-- Book Functions --> */
       
-      
-  /* <!-- List Functions --> */
-  FN.list = {
-    
-    authors: () => ಠ_ಠ.Flags.log("LIST ALL AUTHORS"),
-
-    books: () => ಠ_ಠ.Flags.log("LIST ALL BOOKS"),
-
-    comments: () => ಠ_ಠ.Flags.log("LIST ALL COMMENTS"),
-
-    copies: () => ಠ_ಠ.Flags.log("LIST ALL COPIES"),
-    
-    publishers: () => ಠ_ಠ.Flags.log("LIST ALL PUBLISHERS"),
-
-    series: () => ಠ_ಠ.Flags.log("LIST ALL SERIES"),
-
-    tags: () => ಠ_ಠ.Flags.log("LIST ALL TAGS"),
-    
-  };
-  /* <!-- List Functions --> */
-  
   
   /* <!-- Get Functions --> */
   FN.get = {
     
-    requests : () => FN.libraries.requests.all(ರ‿ರ.library)
+    requests : filtered => FN.libraries.requests.all(ರ‿ರ.library)
                 .then(requests => FN.libraries.users(ರ‿ರ.library)
                   .then(users => _.each(users, user => {
                     _.chain(requests)
@@ -114,32 +106,67 @@ App = function() {
                         request.command = `/app/library/${window.location.search}#library.${ಱ.index}.${request.id}`;
                         request.when = request.date ? ಠ_ಠ.Dates.parse(request.date) : "";
                       });
-                  })).then(() => requests))
-                .then(requests => (ಠ_ಠ.Flags.log("Requests:", requests), requests && requests.length > 0 ?
-                        {
-                          template: "requests",
-                          title: "Requests",
-                          icon: "shopping_basket",
-                          background: "secondary",
-                          movable: true,
-                          resizable: true,
-                          count: requests.length,
-                          requests: requests
-                        } : {
-                          template: "empty",
-                          title: "Requests",
-                          icon: "shopping_basket",
-                          background: "secondary",
-                          movable: true,
-                          message: "No Requests Found"
-                        })),
+                  }))
+                  .then(() => {
+                    if (filtered) {
+                      
+                      /* <!-- Get Length --> */
+                      var _ln = (value, property) => value ? value[property] ? value.length || 1 : 1 : 0;
+                      
+                      /* <!-- Filter Requests --> */
+                      requests = _.chain(requests)
+                      
+                        /* <!-- Order by earliest requests first --> */
+                        .sortBy("when")
+                      
+                        /* <!-- Group by requested item --> */
+                        .groupBy("id")
+                        .reduce((memo, values, key) => {
+                          
+                          var _count = ರ‿ರ.library.meta.capabilities.loan_field ?
+                            _ln(FN.book.get(key, true), ರ‿ರ.library.meta.capabilities.loan_field) : 1;
+                            
+                          values = _.filter(values, value => value.user && memo.users.indexOf(value.user.id) < 0);
+                          _.times(_count, index => {
+                            if (values && values.length > index) {
+                              memo.requests.push(values[index]);
+                              memo.users.push(values[index].user.id);
+                            }  
+                          });
+                          
+                          return memo;
+                        }, {
+                          users: [],
+                          requests: []
+                        })
+                        .value()
+                        .requests;
+
+                    }
+                    return requests;
+                  }))
+                .then(requests => (ಠ_ಠ.Flags.log("Requests:", requests), _.extend({
+                      title: filtered ? "Filtered Requests" : "Requests",
+                      icon: "shopping_basket",
+                      background: "secondary",
+                      movable: true,
+                    }, requests && requests.length > 0 ?
+                      {
+                        template: "requests",
+                        resizable: true,
+                        count: requests.length,
+                        requests: requests
+                      } : {
+                        template: "empty",
+                        message: "No Requests Found"
+                      }))),
     
     statistics : () => FN.libraries.statistics(ರ‿ರ.library)
       .then(statistics => (ಠ_ಠ.Flags.log("STATISTICS:", statistics), {
         template: "statistics",
         title: "Statistics",
         movable: true,
-        background: "light",
+        background: "info",
         icon: "insights",
         values: (statistics.overdue ? [{
             name: "Overdue",
@@ -221,17 +248,18 @@ App = function() {
         values: _.filter(_.map(["Authors", "Books", "Comments", "Formats", "Publishers", "Ratings", "Series", "Tags"], property => ({
           name: property,
           count: ರ‿ರ.db.count[property.toLowerCase()](),
-          route: `list.${property.toLowerCase()}`,
+          route: property != "Books" && property != "Comments" ? `list.${property.toLowerCase()}` : null,
           background: property == "Books" ? "primary" : null,
           size: property == "Books" ? "h4" : null,
         })).concat(ರ‿ರ.library.meta.capabilities.loan_field ? [{
           name: "Physical Copies",
           count: ರ‿ರ.db.count.custom(ರ‿ರ.library.meta.capabilities.loan_field),
-          route: "list.copies",
           background: "success",
           size: "h4"
         }] : []), count => count.count > 0)
       }),
+      
+      generic: title => FN.show.overview.loading(title),
       
       loading: type => ({
         name: `Loading ${type} …`,
@@ -240,7 +268,7 @@ App = function() {
 
       loans: () => FN.show.overview.loading("Loans"),
       
-      requests: () => FN.show.overview.loading("Requests"),
+      requests: filtered => FN.show.overview.loading(filtered ? "Filtered Requests" : "Requests"),
       
       statistics: () => FN.show.overview.loading("Stats"),
 
@@ -251,6 +279,62 @@ App = function() {
     
   };
   /* <!-- Show Functions --> */
+  
+  
+  /* <!-- List Functions --> */
+  FN.list = {
+    
+    rows: (data, title) => (ಠ_ಠ.Flags.log("LIST DATA:", data), _.extend({
+        title: title,
+        icon: "list",
+        background: "dark",
+        movable: true,
+      }, data && data.values && data.values.length > 0 ?
+      {
+        template: "list",
+        resizable: true,
+        columns: data.columns,
+        rows: data.values,
+        count: data.values.length,
+      } : {
+        template: "empty",
+        message: "No Items Found"
+      })),
+
+    generic: (title, data, search, property, suffix) => {
+      var _loading = FN.show.loading(uuid.v4(), FN.show.overview.generic(title));
+      _.defer(() => {
+        var _results = FN.list.rows(_.tap(data(), data => {
+          if (data && data.values) _.each(data.values, row => {
+            if (row && row.length > search && row[search]) row[search] = {
+              action: `/app/library/${window.location.search}#library.${ಱ.index}.search.${property}==${ಠ_ಠ.url.encode(encodeURIComponent(row[search]))}${suffix ? suffix : ""}`,
+              text: row[search]
+            };
+          });
+        }), title);
+        FN.show.details(_loading, _results);
+      });
+    },
+    
+    authors: () => (ಠ_ಠ.Flags.log("LISTING ALL AUTHORS"), 
+                      FN.list.generic("Authors", ರ‿ರ.db.list.authors, 1, "authors")),
+
+    formats: () => (ಠ_ಠ.Flags.log("LISTING ALL FORMATS"), 
+                    FN.list.generic("Formats", ರ‿ರ.db.list.formats, 0, "formats")),
+    
+    publishers: () => (ಠ_ಠ.Flags.log("LISTING ALL PUBLISHERS"), 
+                        FN.list.generic("Publishers", ರ‿ರ.db.list.publishers, 1, "publisher")),
+
+    ratings: () => (ಠ_ಠ.Flags.log("LISTING ALL RATINGS"), 
+                    FN.list.generic("Ratings", ರ‿ರ.db.list.ratings, 1, "rating")),
+
+    series: () => (ಠ_ಠ.Flags.log("LISTING ALL SERIES"), 
+                    FN.list.generic("Series", ರ‿ರ.db.list.series, 1, "series")),
+
+    tags: () => (ಠ_ಠ.Flags.log("LISTING ALL TAGS"), FN.list.generic("Tags", ರ‿ರ.db.list.tags, 1, "tags")),
+    
+  };
+  /* <!-- List Functions --> */
   
   
   /* <!-- Loans Functions --> */
@@ -352,9 +436,13 @@ App = function() {
     run : terms => {
       if (!terms) return;
       ಠ_ಠ.Flags.log("SEARCHING:", terms);
-      var _type = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi.test(terms) ? "user" : "copy";
-      return FN.libraries.loans[_type](ರ‿ರ.library, terms)
-        .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()), `Loans for ${_type == "user" ? terms : FN.book.get(terms).Title || terms}`, "info"))
+      var _type = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi.test(terms) ? "user" : "copy",
+          _isbn = REGEX_ISBN.test(terms),
+          _book = _type == "copy" ? FN.book.get(terms) : null;
+      
+      return FN.libraries.loans[_type](ರ‿ರ.library, _isbn && _book ? _book.ID : terms)
+        .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()),
+                            `Loans for ${_type == "user" ? terms : _book ? _book.Title : terms}`, "light"))
         .catch(e => ಠ_ಠ.Flags.error("Searching Loans Error", e));
     },
 
@@ -518,87 +606,242 @@ App = function() {
   /* <!-- Item (Singular) Functions --> */
   FN.item = {
     
-    return : command => {
-      var book = FN.book.get(command);
-      ಠ_ಠ.Display.confirm({
-          id: "return_confirm",
-          target: $("body"),
-          title: ಠ_ಠ.Display.doc.get({
-            name: "TITLE_CONFIRM_RETURN",
-            trim: true
-          }),
-          message: ಠ_ಠ.Display.doc.get("CONFIRM_RETURN", book ? FN.common.format.book(book) : "UNKNOWN BOOK"),
-          action: "Return"
-        })
-        .then(confirmation => {
-          if (confirmation === true) {
-            var _element = $(`[data-item='${command}']`).empty();
-            FN.libraries.log.returned(ರ‿ರ.library, command)
-              .then(ಠ_ಠ.Main.busy_element(_element))
-              .then(availability => availability && availability.length === 1 && availability[0].available === true ? true : false)
-              .then(result => ಠ_ಠ.Display.template.show({
-                template: result === true ? "returned" : "return",
-                target: _element,
-                clear: true,
-                item: command
-              }));
-          }
-        })
-        .catch(e => e ? ಠ_ಠ.Flags.error("Return Book Error", e) : ಠ_ಠ.Flags.log("Return Book Cancelled"));
+    row : (id, user, type) => $(`[data-type='${type}'][data-id='${id}'][data-user='${user}']`),
+    
+    restore : (id, user, type) => {
+      var _target = FN.item.row(id, user, type);
+      _target.css("background-color","");
+      _target.find(".data-confirm").addClass("d-none").empty();
+      _target.find(".data-commands").removeClass("d-none");
     },
     
-    loan : commands => {
+    notify : (id, user, type, message, colour) => {
+      var _target = FN.item.row(id, user, "request");
+      _target.css("background-color", colour);
+      _target.find(".data-confirm").addClass("d-none").empty();
+      _target.find(".data-commands").addClass("d-none");
+      _target.find(".data-result").removeClass("d-none").html(message);
+      _.delay(() => {
+        _target.css("background-color", "");
+        _target.find(".data-result").addClass("d-none").empty();
+        _target.find(".data-commands").removeClass("d-none");
+      }, 5000);
+    },
+    
+    success : (id, user, type, message) => FN.item.notify(id, user, type, message, COLOUR_SUCCESS),
+    
+    failure : (id, user, type, message) => FN.item.notify(id, user, type, message, COLOUR_FAILURE),
+    
+    remove : (id, user, confirmation) => {
+      var _target = FN.item.row(id, user, "request");
+      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
+        return FN.libraries.log.concluded(ರ‿ರ.library, user, id)
+          .then(ಠ_ಠ.Main.busy("Removing Request", true))
+          .then(result => {
+            if (!result) return;
+            ಠ_ಠ.Flags.log("Removal Result", result);
+            _target.remove();
+          })
+          .catch(e => ಠ_ಠ.Flags.error("Removing Request Error", e));  
+      } else {
+        _target.css("background-color", COLOUR_REMOVE);
+        _target.find(".data-commands").addClass("d-none");
+        ಠ_ಠ.Display.template.show({
+          template: "remove-reservation",
+          user: user,
+          id: id,
+          target: _target.find(".data-confirm").removeClass("d-none"),
+          clear: true
+        });
+      }
+    },
+    
+    change : (id, user, confirmation, change) => {
+      var _target = FN.item.row(id, user, "request");
+      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
+        return Promise.resolve(FN.item.restore(id, user))
+          .then(() => FN.item.loan(change, user, SparkMD5.hash(`${change}_${user}`), id));
+      } else {
+        _target.css("background-color", COLOUR_CHANGE);
+        _target.find(".data-commands").addClass("d-none");
+        
+        var _change = ಠ_ಠ.Display.template.show({
+          template: "change-request",
+          user: user,
+          id: id,
+          target: _target.find(".data-confirm").removeClass("d-none"),
+          clear: true
+        }),
+        _loan = _change.find("a.data-loan"),
+        _cancel = _change.find("a.data-cancel"),
+        _input = _change.find("input");
+        
+        _input.on("keyup", e => {
+          if (e.keyCode == KEY_ENTER) {
+            e.preventDefault();
+            e.stopPropagation();
+            _input.val() ? _loan[0].click() : _cancel[0].click();
+          } else if (e.keyCode == KEY_ESC) {
+            _cancel[0].click();
+          } else {
+            var _val = _input.val();
+            if (_val) {
+              _loan.removeClass("disabled").attr("tabindex", "").attr("aria-disabled", false)
+                .attr("href", `#${_loan.data("command")}.${ಠ_ಠ.url.encode(encodeURIComponent(_val))}`);
+            } else {
+              _loan.addClass("disabled").attr("tabindex", "-1").attr("aria-disabled", true).attr("href", "#");
+            }
+          }
+        });
+        _input.focus();
+      }
+    },
+    
+    return : (id, user, confirmation, inverse, since, until) => {
+      
+      var _target = FN.item.row(id, user, "loan");
+      
+      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
+        FN.item.restore(id, user, "loan");
+        var _element = _target.find(".data-commands").empty().addClass("py-0"),
+            _since = ಠ_ಠ.Dates.now().toDate();
+        return (inverse ? 
+          FN.libraries.log.unreturned(ರ‿ರ.library, id, user, since, until) : 
+          FN.libraries.log.returned(ರ‿ರ.library, id))
+            .then(ಠ_ಠ.Main.busy_element(_element))
+            .then(availability => availability && availability.length === 1 && availability[0].available === true ? true : false)
+            .then(result => inverse ? !result : result)
+            .then(result => {
+              var _until = ಠ_ಠ.Dates.now().toDate();
+              if (result === true) inverse ? 
+                _target.find(".returned-date").empty() : _target.find(".returned-date").text(_until.toLocaleString());
+              _element.removeClass("py-0");
+              ಠ_ಠ.Display.template.show({
+                template: result === (inverse ? false : true) ? "returned" : "return",
+                unreturn: true,
+                target: _element,
+                since: _since.toISOString(),
+                until: _until.toISOString(),
+                user: user,
+                clear: true,
+                item: id
+              });
+            })
+            .catch(e => ಠ_ಠ.Flags.error("Return Book Error", e));
+      } else {
+        _target.css("background-color", COLOUR_RETURN);
+        _target.find(".data-commands").addClass("d-none");
+        ಠ_ಠ.Display.template.show({
+          template: "confirm-return",
+          user: user,
+          id: id,
+          unreturn: inverse,
+          since: since,
+          until: until,
+          target: _target.find(".data-confirm").removeClass("d-none"),
+          clear: true
+        });
+      }
+      
+    },
+    
+    unreturn : (id, user, since, until, confirmation) => FN.item.return(id, user, confirmation, true, since, until),
+    
+    loan : (id, user, confirmation, copy, target) => {
 
-      var _id = commands[0],
-        _user = decodeURIComponent(commands[1]);
-
-      ಠ_ಠ.Flags.log(`Loaning Item ${_id} to user ${_user}`);
-
-      var _book = FN.book.get(_id, true);
-
-      /* <!-- Get Availability --> */
-      return _book ? FN.libraries.available(ರ‿ರ.library, _book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
-
-        /* <!-- Get Available Copies --> */
+      var book = FN.book.get(id, true);
+      if (!book) return (ಠ_ಠ.Flags.log(`Unable to Find Book for ID=${id}`), null);
+      
+      var _target = FN.item.row(target || id, user, "request");
+      
+      /* <!-- First: Get Availability --> */
+      return (copy ? Promise.resolve(copy) : 
+        FN.libraries.available(ರ‿ರ.library, book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
+      
+        /* <!-- Then, Filter for Available Copies --> */
         .then(availability => _.tap(_.filter(availability, available => available.available === true),
           available => ಠ_ಠ.Flags.log("Item Availability:", available)))
 
         .then(ಠ_ಠ.Main.busy("Getting Availability", true))
-
+      
         .then(available => {
 
-          var _choose = () => ಠ_ಠ.Display.choose({
-            id: "loan_choose",
-            target: $("body"),
-            title: ಠ_ಠ.Display.doc.get({
-              name: "TITLE_CHOOSE_LOAN",
-              trim: true
-            }),
-            message: ಠ_ಠ.Display.doc.get("CHOOSE_LOAN"),
-            action: "Loan",
-            choices: _.map(available, loan => ({
-              desc: ರ‿ರ.book.Title,
-              name: loan.copy
-            }))
-          });
+          if (available.length === 0) {
+            
+            /* <!-- No Availability --> */
+            FN.item.failure(target || id, user, "request", ಠ_ಠ.Display.doc.get("NO_AVAILABLE_COPIES", book.Title, true));
+            
+          } else if (available.length === 1) {
+            
+            if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
+              
+              /* <!-- Single Copy Availability and Confirmation --> */
+              return available[0].copy;
+              
+            } else {
+              
+              /* <!-- Single Copy Availability, Needs Confirmation --> */
+              _target.find(".data-commands").addClass("d-none");
+              ಠ_ಠ.Display.template.show({
+                template: "confirm-loan",
+                user: user,
+                id: id,
+                copy: available[0].copy,
+                target: _target.find(".data-confirm").removeClass("d-none"),
+                clear: true
+              });
+              
+            }
+            
+          } else {
+            
+            /* <!-- Multiple Copy Availability, Needs Choice --> */
+            _target.find(".data-commands").addClass("d-none");
+            var _choose = ಠ_ಠ.Display.template.show({
+                template: "choose-copy",
+                user: user,
+                id: id,
+                copies: _.map(available, "copy"),
+                target: _target.find(".data-confirm").removeClass("d-none"),
+                clear: true
+              }),
+              _loan = _choose.find("a.data-loan"),
+              _input = _choose.find("select");
+        
+            _input.on("change", () => {
+               var _val = _input.val();
+               if (_val == "Select …") {
+                 _loan.addClass("disabled").attr("tabindex", "-1").attr("aria-disabled", true).attr("href", "#");
+               } else if (_val) {
+                 _loan.removeClass("disabled").attr("tabindex", "").attr("aria-disabled", false)
+                    .attr("href", `#${_loan.data("command")}.${ಠ_ಠ.url.encode(encodeURIComponent(_val))}`);
+               }
+            });
+            _input.focus();
+            
+          }
+        
+          return null;
 
-          return available.length === 1 ?
-            available[0].copy :
-            available.length > 1 ? _choose().then(loan => loan ? loan.name : false) : false;
+        }))
+
+        .then(copy => {
+        
+          if (!copy) return;
+          ಠ_ಠ.Flags.log(`Loaning Item ${id} to user ${user}${copy != id ? ` | Copy ${copy}` : ""}`);
+          return FN.libraries.log.concluded(ರ‿ರ.library, user, id, copy)
+            .then(ಠ_ಠ.Main.busy("Loaning Book", true));
 
         })
-
-        .then(copy => copy ? FN.libraries.log.concluded(ರ‿ರ.library, _user, _id, copy)
-          .then(ಠ_ಠ.Main.busy("Loaning Book", true)) : null)
 
         .then(result => {
           if (!result) return;
           ಠ_ಠ.Flags.log("Loan Result", result);
-          $(`[data-type='request'][data-id='${_id}'][data-user='${_user}']`).remove();
+          _target.remove();
         })
 
-        .catch(e => e ? ಠ_ಠ.Flags.error("Loan Book Error", e) : ಠ_ಠ.Flags.log("Loan Book Cancelled")) : null;
-
+        .catch(e => e ? ಠ_ಠ.Flags.error("Loan Book Error", e) : ಠ_ಠ.Flags.log("Loan Book Cancelled"));
+      
     },
     
   };
@@ -623,7 +866,7 @@ App = function() {
     
     show : (index, library) => {
       ಠ_ಠ.Display.state().enter([FN.states.library.loaded, FN.states.manage.loaded]);
-
+      
       FN.hookup.links(ಠ_ಠ.Display.template.show({
           template: "overview",
           target: FN.holder(),
@@ -732,6 +975,313 @@ App = function() {
   };
   /* <!-- Setup Functions --> */
 
+  /* <!-- Route Handlers --> */
+  FN.routes = () => ({
+
+    library: {
+      matches: /LIBRARY/i,
+      trigger: FN.states.manage.working,
+      length: {
+        min: 0,
+        max: 4
+      },
+      tidy: true,
+      fn: command => (command && _.isArray(command) && command.length >= 1 ?
+          FN.library.open(command[0]) : FN.library.open(command || ಱ.index))
+        .then(() => command && command.length >= 2 ? this.route(command.slice(command.length - 2)) :
+          $("header.navbar form[data-role='search'] input[role='search']").val("")),
+    },
+
+    list: {
+
+      matches: /LIST/i,
+      state: FN.states.manage.loaded,
+      tidy: true,
+
+      routes: {
+
+        authors: {
+          matches: /AUTHORS/i,
+          fn: FN.list.authors
+        },
+
+        formats: {
+          matches: /FORMATS/i,
+          fn: FN.list.formats
+        },
+        
+        publishers: {
+          matches: /PUBLISHERS/i,
+          fn: FN.list.publishers
+        },
+
+        ratings: {
+          matches: /RATINGS/i,
+          fn: FN.list.ratings
+        },
+        
+        series: {
+          matches: /SERIES/i,
+          fn: FN.list.series
+        },
+
+        tags: {
+          matches: /TAGS/i,
+          fn: FN.list.tags
+        },
+
+      }
+
+    },
+
+    show: {
+
+      matches: /SHOW/i,
+      state: FN.states.manage.loaded,
+      tidy: true,
+
+      routes: {
+
+        contents: {
+          matches: /CONTENTS/i,
+          fn: () => FN.show.details(uuid.v4(), FN.show.overview.contents(ರ‿ರ.library.name), "detail")
+        },
+
+        loans: {
+
+          matches: /LOANS/i,
+
+          routes: {
+
+            all: {
+              matches: /ALL/i,
+              length: 0,
+              fn: FN.loans.all
+            },
+
+            returned: {
+              matches: /RETURNED/i,
+              length: 0,
+              fn: FN.loans.returned
+            },
+
+            outstanding: {
+              matches: /OUTSTANDING/i,
+              length: 0,
+              fn: FN.loans.outstanding
+            },
+
+            overdue: {
+              matches: /OVERDUE/i,
+              fn: FN.loans.overdue
+            },
+
+          }
+
+        },
+
+        statistics: {
+          matches: /STATISTICS/i,
+          state: FN.states.manage.loaded,
+          fn: FN.show.statistics
+        },
+
+        requests: {
+          matches: /REQUESTS/i,
+          length: {
+            min: 0,
+            max: 1,
+          },
+          fn: filtered => Promise.all([
+              FN.show.loading(uuid.v4(), FN.show.overview.requests(!!filtered)),
+              FN.get.requests(!!filtered)
+            ])
+            .then(results => FN.show.details(results[0], results[1]))
+            .catch(e => ಠ_ಠ.Flags.error("Book Requests Error", e)),
+        },
+
+      }
+
+    },
+
+    items: {
+
+      matches: /ITEMS/i,
+      state: FN.states.manage.loaded,
+      tidy: true,
+
+      routes: {
+
+        return: {
+          matches: /RETURN/i,
+          length: 0,
+          fn: FN.items.return
+        },
+
+        loan: {
+          matches: /LOAN/i,
+          length: 0,
+          fn: FN.items.loan,
+        },
+
+      }
+
+    },
+
+    item: {
+
+      matches: /ITEM/i,
+      state: [FN.states.manage.loaded, FN.states.library.loanable],
+      all: true,
+      spread: true,
+      tidy: true,
+
+      routes: {
+
+        cancel: {
+          matches: /CANCEL/i,
+          length: {
+            min: 2,
+            max: 3
+          },
+          fn: FN.item.restore
+        },
+
+        remove: {
+          matches: /REMOVE/i,
+          length: {
+            min: 2,
+            max: 3
+          },
+          fn: FN.item.remove
+        },
+
+        change: {
+          matches: /CHANGE/i,
+          length: {
+            min: 2,
+            max: 4
+          },
+          fn: FN.item.change
+        },
+
+        loan: {
+          matches: /LOAN/i,
+          length: {
+            min: 2,
+            max: 4
+          },
+          fn: FN.item.loan
+        },
+
+        unreturn: {
+          matches: /UNRETURN/i,
+          length: {
+            min: 4,
+            max: 5
+          },
+          fn: FN.item.unreturn
+        },
+        
+        return: {
+          matches: /RETURN/i,
+          length: {
+            min: 2,
+            max: 3
+          },
+          fn: FN.item.return
+        },
+
+      }
+
+    },
+
+    move: {
+      matches: /MOVE/i,
+      state: FN.states.manage.loaded,
+
+      routes: {
+
+        left: {
+          matches: /LEFT/i,
+          length: 1,
+          fn: id => {
+            var _target = $(`.details div.card[data-index='${id}']`),
+                _prev = _target.prev();
+            _target.detach().insertBefore(_prev);
+          }
+        },
+
+        right: {
+          matches: /RIGHT/i,
+          length: 1,
+          fn: id => {
+            var _target = $(`.details div.card[data-index='${id}']`),
+                _next = _target.next();
+            _target.detach().insertAfter(_next);
+          }
+        },
+
+      }
+
+    },
+
+    resize: {
+      matches: /RESIZE/i,
+      state: FN.states.manage.loaded,
+
+      routes: {
+
+        expand: {
+          matches: /EXPAND/i,
+          length: 1,
+          fn: id => {
+            var _target = $(`.details div.card[data-index='${id}']`),
+                _parent = _target.parent(),
+                _position = _target.index();
+            _target.addClass("expanded").data("position", _position).detach().prependTo(_parent);
+          }
+        },
+
+        contract: {
+          matches: /CONTRACT/i,
+          length: 1,
+          fn: id => {
+            var _target = $(`.details div.card[data-index='${id}']`),
+                _position = _target.data("position");
+            _position ?
+              _target.removeClass("expanded").detach().insertAfter($(`.details div.card:nth-child(${_position})`)) :
+              _target.removeClass("expanded");
+          }
+        },
+
+      }
+
+    },
+
+    refresh: {
+      matches: /REFRESH/i,
+      state: FN.states.library.loaded,
+      length: 0,
+      tidy: true,
+      fn: () => ರ‿ರ.refresh()
+    },
+
+    search: {
+      matches: /SEARCH/i,
+      state: FN.states.library.loaded,
+      trigger: FN.states.library.working,
+      length: 1,
+      tidy: true,
+      fn: command => {
+        var _terms = decodeURIComponent(ಱ.url.decode(command));
+        $("header.navbar form[data-role='search'] input[role='search']").val(_terms);
+        FN.search.run(_terms, FN.holder());
+      },
+    },
+
+  });
+  /* <!-- Route Handlers --> */
   
   /* <!-- External Visibility --> */
   return {
@@ -762,271 +1312,7 @@ App = function() {
           show: "MANAGE_SEARCH_INSTRUCTIONS",
           title: "Searching a Library ..."
         }],
-        routes: {
-
-          library: {
-            matches: /LIBRARY/i,
-            trigger: FN.states.manage.working,
-            length: {
-              min: 0,
-              max: 4
-            },
-            tidy: true,
-            fn: command => (command && _.isArray(command) && command.length >= 1 ?
-                FN.library.open(command[0]) : FN.library.open(command || ಱ.index))
-              .then(() => command && command.length >= 2 ? this.route(command.slice(command.length - 2)) :
-                $("header.navbar form[data-role='search'] input[role='search']").val("")),
-          },
-
-          list: {
-
-            matches: /LIST/i,
-            state: FN.states.manage.loaded,
-            tidy: true,
-
-            routes: {
-
-              authors: {
-                matches: /AUTHORS/i,
-                fn: FN.list.authors
-              },
-
-              books: {
-                matches: /BOOKS/i,
-                fn: FN.list.books
-              },
-
-              comments: {
-                matches: /COMMENTS/i,
-                fn: FN.list.comments
-              },
-              
-              copies: {
-                matches: /COPIES/i,
-                fn: FN.list.copies
-              },
-
-              publishers: {
-                matches: /PUBLISHERS/i,
-                fn: FN.list.publishers
-              },
-
-              series: {
-                matches: /SERIES/i,
-                fn: FN.list.series
-              },
-
-              tags: {
-                matches: /TAGS/i,
-                fn: FN.list.tags
-              },
-
-            }
-            
-          },
-              
-          show: {
-            
-            matches: /SHOW/i,
-            state: FN.states.manage.loaded,
-            tidy: true,
-            
-            routes: {
-              
-              contents: {
-                matches: /CONTENTS/i,
-                fn: () => FN.show.details(uuid.v4(), FN.show.overview.contents(ರ‿ರ.library.name), "detail")
-              },
-              
-              loans: {
-
-                matches: /LOANS/i,
-
-                routes: {
-
-                  all: {
-                    matches: /ALL/i,
-                    length: 0,
-                    fn: FN.loans.all
-                  },
-
-                  returned: {
-                    matches: /RETURNED/i,
-                    length: 0,
-                    fn: FN.loans.returned
-                  },
-
-                  outstanding: {
-                    matches: /OUTSTANDING/i,
-                    length: 0,
-                    fn: FN.loans.outstanding
-                  },
-
-                  overdue: {
-                    matches: /OVERDUE/i,
-                    fn: FN.loans.overdue
-                  },
-
-                }
-
-              },
-              
-              statistics: {
-                matches: /STATISTICS/i,
-                state: FN.states.manage.loaded,
-                fn: FN.show.statistics
-              },
-              
-              requests: {
-                matches: /REQUESTS/i,
-                length: 0,
-                fn: () => Promise.all([
-                    FN.show.loading(uuid.v4(), FN.show.overview.requests()),
-                    FN.get.requests()
-                  ])
-                  .then(results => FN.show.details(results[0], results[1]))
-                  .catch(e => ಠ_ಠ.Flags.error("Book Requests Error", e)),
-              },
-
-            }
-            
-          },
-          
-          items: {
-
-            matches: /ITEMS/i,
-            state: FN.states.manage.loaded,
-            tidy: true,
-
-            routes: {
-
-              return: {
-                matches: /RETURN/i,
-                length: 0,
-                fn: FN.items.return
-              },
-
-              loan: {
-                matches: /LOAN/i,
-                length: 0,
-                fn: FN.items.loan,
-              },
-
-            }
-
-          },
-
-          item: {
-
-            matches: /ITEM/i,
-            state: FN.states.manage.loaded,
-            tidy: true,
-
-            routes: {
-
-              loan: {
-                matches: /LOAN/i,
-                length: 2,
-                state: FN.states.library.loanable,
-                fn: FN.item.loan
-              },
-
-              return: {
-                matches: /RETURN/i,
-                length: 1,
-                fn: FN.item.return
-
-              },
-
-            }
-
-          },
-
-          move: {
-            matches: /MOVE/i,
-            state: FN.states.manage.loaded,
-            
-            routes: {
-
-              left: {
-                matches: /LEFT/i,
-                length: 1,
-                fn: id => {
-                  var _target = $(`.details div.card[data-index='${id}']`),
-                      _prev = _target.prev();
-                  _target.detach().insertBefore(_prev);
-                }
-              },
-
-              right: {
-                matches: /RIGHT/i,
-                length: 1,
-                fn: id => {
-                  var _target = $(`.details div.card[data-index='${id}']`),
-                      _next = _target.next();
-                  _target.detach().insertAfter(_next);
-                }
-              },
-
-            }
-            
-          },
-          
-          resize: {
-            matches: /RESIZE/i,
-            state: FN.states.manage.loaded,
-            
-            routes: {
-
-              expand: {
-                matches: /EXPAND/i,
-                length: 1,
-                fn: id => {
-                  var _target = $(`.details div.card[data-index='${id}']`),
-                      _parent = _target.parent(),
-                      _position = _target.index();
-                  _target.addClass("expanded").data("position", _position).detach().prependTo(_parent);
-                }
-              },
-
-              contract: {
-                matches: /CONTRACT/i,
-                length: 1,
-                fn: id => {
-                  var _target = $(`.details div.card[data-index='${id}']`),
-                      _position = _target.data("position");
-                  _position ?
-                    _target.removeClass("expanded").detach().insertAfter($(`.details div.card:nth-child(${_position})`)) :
-                    _target.removeClass("expanded");
-                }
-              },
-
-            }
-            
-          },
-          
-          refresh: {
-            matches: /REFRESH/i,
-            state: FN.states.library.loaded,
-            length: 0,
-            tidy: true,
-            fn: () => ರ‿ರ.refresh()
-          },
-          
-          search: {
-            matches: /SEARCH/i,
-            state: FN.states.library.loaded,
-            trigger: FN.states.library.working,
-            length: 1,
-            tidy: true,
-            fn: command => {
-              var _terms = decodeURIComponent(ಱ.url.decode(command));
-              $("header.navbar form[data-role='search'] input[role='search']").val(_terms);
-              FN.search.run(_terms, FN.holder());
-            },
-          },
-
-        },
+        routes: FN.routes(),
         route: () => false,
         /* <!-- PARAMETERS: handled, command --> */
       });
@@ -1054,5 +1340,6 @@ App = function() {
     clean: () => FN.cache && FN.cache.clear ? FN.cache.clear() : false,
 
   };
-
+  /* <!-- External Visibility --> */
+  
 };

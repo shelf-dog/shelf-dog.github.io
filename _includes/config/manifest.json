@@ -58,6 +58,12 @@
    "sizes": "960x720",
    "type": "image/png",
    "density": "4.0"
+  },
+  {
+   "src": "/ico/maskable-icon-600x600.png",
+    "sizes": "600x600",
+    "type": "image/png",
+    "purpose": "maskable"
   }
  ]
 }

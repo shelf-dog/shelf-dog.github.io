@@ -1,0 +1,8 @@
+{% raw %}
+<div class="d-flex align-items-center">
+  <input type="text" class="form-control form-control-sm" style="min-width: 100px;" placeholder="Alternative" aria-label="Alternative">
+  <a data-command="item.change.{{encode id}}.{{encode user}}.{{encode (md5 (concat id '_' user))}}" href="#" role="button"
+     class="btn btn-action btn-small my-0 ml-1 data-loan disabled" tabindex="-1" aria-disabled="true" style="line-height: 0.7em;">Loan</a>
+  {{> cancel type="request"}}
+</div>
+{% endraw %}

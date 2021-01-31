@@ -197,6 +197,13 @@ Libraries = (options, factory) => {
       copy : copy
     })),
     
+    unreturned : (value, copy, user, since, until) => FN.select(value).then(library => library.api("LOG_UNRETURNED", {
+      copy : copy,
+      user : user,
+      since : since,
+      until : until,
+    })),
+    
     concluded : (value, user, id, copy) => FN.select(value).then(library => {
       var _data = {
         user : user,
