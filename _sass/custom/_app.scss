@@ -88,6 +88,10 @@
 		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
     box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
 	}
+  &.disabled, &:disabled {
+    background-image: none;
+    background-color: rgba($colour-highlight, 0.8) !important;
+  }
 }
 
 .btn-action {
@@ -102,6 +106,10 @@
 		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
     box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
 	}
+  &.disabled, &:disabled {
+    background-image: none;
+    background-color: rgba($colour-highlight, 0.8) !important;
+  }
 }
 
 .btn-action-dark {
@@ -116,6 +124,10 @@
 		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
     box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
 	}
+  &.disabled, &:disabled {
+    background-image: none;
+    background-color: rgba($colour-background, 0.8) !important;
+  }
 }
 // -- Action Buttons -- //
 
@@ -166,4 +178,8 @@ td.commands {
     margin-top: 2px;
     margin-bottom: 2px;
   }
+}
+
+tr.results-row, tr.results-row input {
+  @include transition(background-color 0.5s ease-in-out);
 }

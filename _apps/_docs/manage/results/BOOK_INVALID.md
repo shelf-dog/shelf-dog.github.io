@@ -1,0 +1,1 @@
+__Invalid__{:.border-right .pr-2 .mr-1}__No Book Found__{:.font-weight-light .ml-1}

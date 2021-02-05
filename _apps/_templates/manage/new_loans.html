@@ -1,0 +1,16 @@
+{% raw %}
+{{#> card size="medium" min-width="200" max-height="400"}}
+<table class="table table-dark table-hover returns">
+  <thead class="bg-dark">
+    <tr>
+      <th scope="col" class="border-0">Book</th>
+      <th scope="col" class="border-0">User</th>
+      <th scope="col" class="border-0">Loaned</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{> new_loan_line}}
+  </tbody>
+</table>
+{{/card}}
+{% endraw %}

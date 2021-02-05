@@ -4,8 +4,12 @@
     <option selected>Select …</option>
     {{#each copies}}<option>{{this}}</option>{{/each}}
   </select>
+  {{~#if simple~}}
+  <button data-action="loan" class="btn btn-action btn-small my-0 ml-1" tabindex="-1" aria-disabled="true" style="line-height: 0.7em;" disabled>Loan</button>
+  {{~else~}}
   <a data-command="item.loan.{{encode id}}.{{encode user}}.{{encode (md5 (concat id '_' user))}}" href="#" role="button"
      class="btn btn-action btn-small my-0 ml-1 data-loan disabled" tabindex="-1" aria-disabled="true" style="line-height: 0.7em;">Loan</a>
   {{> cancel type="request"}}
+  {{~/if~}}
 </div>
 {% endraw %}

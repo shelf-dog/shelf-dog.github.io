@@ -92,6 +92,7 @@ modules:
   - shared/cache
   - shared/libraries
   - library/catalog
+  - library/lexer
 scripts: 
   - extends/string
   - extends/regex
@@ -122,6 +123,13 @@ templates:
   - manage/all
   - manage/empty
   - manage/list
+  - manage/returns
+  - manage/returns_line
+  - manage/new_loans
+  - manage/new_loan_line
+  - manage/buttons/left-overview
+  - manage/buttons/right-sm-overview
+  - manage/buttons/right-overview
   - manage/confirmations/cancel
   - manage/confirmations/remove-request
   - manage/confirmations/change-request
@@ -138,6 +146,11 @@ docs:
   - manage/RETURNS
   - manage/LOANS
   - manage/NO_AVAILABLE_COPIES
+  - manage/BOOK
+  - manage/results/BOOK_ALREADY_LOANED
+  - manage/results/BOOK_INVALID
+  - manage/results/GENERIC_ERROR
+  - manage/results/LOAN_FAILED
   - manage/instructions/MANAGE_SEARCH_INSTRUCTIONS
   - manage/instructions/CREATE_LOANS_INSTRUCTIONS
   - dialogs/CONFIRM_RETURN

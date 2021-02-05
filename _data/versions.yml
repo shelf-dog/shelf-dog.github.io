@@ -1,11 +1,13 @@
 site :
-  0.0.7f :
-    name : App v0.0.7f
+  0.0.7g :
+    name : App v0.0.7g
     desc : Initial Version
-    numeric : 0.0.7.6
+    numeric : 0.0.7.7
     type:
       - alpha
     changes :
+      - Improved Bulk Loans and Returns
+      - Better Mobile Management Page Layout
       - Improved Search
       - Improved Handling of Requests
       - Updated Management Page

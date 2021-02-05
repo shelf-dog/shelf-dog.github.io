@@ -1,0 +1,10 @@
+{% raw %}
+<tr class="results-row">
+  <td class="align-middle" style="padding-top: {{#if book}}10{{else}}5{{/if}}px; padding-bottom: {{#if book}}10{{else}}5{{/if}}px;">
+    {{~#if book~}}{{{book}}}{{~else~}}<input type="text" class="form-control form-control-sm" style="min-width: 150px;" placeholder="What" aria-label="What">{{~/if~}}
+  </td>
+  <td class="align-middle{{#if returned}} o-75{{/if}}" style="padding-top: 5px; padding-bottom: 5px;">
+    {{~#if returned~}}{{localeDate returned}}{{~else~}}<div class="d-flex align-items-center"><button data-action="return" class="btn btn-action btn-small my-0 mr-2" tabindex="-1" aria-disabled="true" style="line-height: 0.7em;" disabled>Return</button><span class="busy-holder mx-auto"></span></div>{{~/if~}}
+  </td>
+</tr>
+{% endraw %}

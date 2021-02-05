@@ -505,6 +505,15 @@
       
       authors: () => _data(_run("SELECT DISTINCT id ID, name Name, (SELECT COUNT(book) FROM books_authors_link WHERE author = authors.id) Books FROM authors ORDER BY sort;")),
 
+      books: () => _data(_run(`SELECT id ID, title Title, ${_groups.authors()} FROM books ORDER BY Title, Authors;`)),
+      
+      custom: (name, threshold) => {
+        var custom = _custom(name);
+        return custom ? 
+          _data(_run(`SELECT id ID, title Title, ${_groups.authors()}, ${_builders.custom.select([custom])}(SELECT COUNT(id) FROM ${custom.link_table} WHERE book = books.id) Count FROM books WHERE Count > ${threshold || 1} ORDER BY Title, Authors;`)) : 
+          null;
+      },
+      
       formats: () => _data(_run("SELECT DISTINCT format Format, (SELECT COUNT(book) FROM data data_1 WHERE data_1.format = data.format) Books FROM data ORDER BY format;")),
     
       publishers: () => _data(_run("SELECT DISTINCT id ID, name Name, (SELECT COUNT(book) FROM books_publishers_link WHERE publisher = publishers.id) Books FROM publishers ORDER BY sort;")),

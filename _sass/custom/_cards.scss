@@ -31,15 +31,30 @@
   }
   
   &.small-card {
-    min-width: 300px !important;
+    @media (min-width: 312px) {
+      min-width: 300px !important;
+    }
   }
   
   &.medium-card {
-    min-width: 400px !important;
+    @media (min-width: 312px) and (max-width: 575.98px) {
+      min-width: 300px !important;
+    }
+    @media (min-width: 576px) {
+      min-width: 400px !important;  
+    }
   }
   
   &.large-card {
-    min-width: 600px !important;
+    @media (min-width: 312px) and (max-width: 575.98px) {
+      min-width: 300px !important;
+    }
+    @media (min-width: 576px) and (max-width: 767.98px) {
+      min-width: 400px !important;  
+    }
+    @media (min-width: 768px) {
+      min-width: 600px !important;  
+    }
   }
   
   &.max-card {

@@ -1,0 +1,82 @@
+{% raw %}
+ <div class="d-none show-library-loanable">
+       
+  <div class="d-flex flex-row">
+
+    <div class="btn-group">
+
+        <a data-busy="loans" data-route="show.loans.outstanding" href="#"
+           class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-dark border border-dark text-light waves-effect">
+          <span class="loading float-left"><span class="d-block spinner"></span></span>
+          <span class="d-none d-md-block material-icons mr-2" data-toggle="tooltip" data-html="true" title="View Outstanding Loans">check_circle</span>
+          <span>Loans</span>
+        </a>
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn btn-outline-dark border border-dark waves-effect dropdown-toggle dropdown-toggle-split">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right bg-dark">
+          <a class="dropdown-item text-light" data-route="show.loans.all" href="#">All Loans</a>
+          <a class="dropdown-item text-light" data-route="show.loans.overdue" href="#">Overdue Loans</a>
+          <a class="dropdown-item text-light" data-route="show.loans.returned" href="#">Returned Loans</a>
+          <a class="dropdown-item text-light" data-route="show.statistics" href="#">Loan Statistics</a>
+       </div>
+
+    </div>
+    
+    <div class="d-none show-library-requestable ml-2">
+
+      <div class="btn-group">
+
+        <a data-busy="requests" data-route="show.requests" href="#"
+           class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-secondary border border-secondary waves-effect">
+          <span class="loading float-left"><span class="d-block spinner"></span></span>
+          <span class="d-none d-md-block material-icons mr-2" data-toggle="tooltip" data-html="true" title="View / Fulfill Book Requests">shopping_basket</span>
+          <span>Requests</span>
+        </a>
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn btn-outline-secondary border border-secondary waves-effect dropdown-toggle dropdown-toggle-split">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right bg-dark">
+          <a class="dropdown-item text-light" data-route="show.requests.filtered" href="#">Filtered</a>
+       </div>
+
+      </div>
+
+    </div>
+
+    <div class="btn-group ml-2">
+        <a data-route="items.return.interactive" href="#"
+           class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-light border border-light waves-effect">
+          <span class="d-none d-md-block material-icons mr-2" data-toggle="tooltip" data-html="true" title="Log Book/s as Returned">school</span>
+      <span>Return</span>
+        </a>
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn btn-outline-light border border-light waves-effect dropdown-toggle dropdown-toggle-split">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right bg-dark">
+          <a class="dropdown-item text-light" data-route="items.return.batch" href="#">Batch</a>
+       </div>
+    </div>
+
+    <div class="btn-group ml-2">
+        <a data-route="items.loan.interactive" href="#"
+           class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-success border border-success waves-effect">
+          <span class="d-none d-md-block material-icons mr-2" data-toggle="tooltip" data-html="true" title="Log Book/s as Loaned">local_library</span>
+          <span>Loan</span>
+        </a>
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn btn-outline-success border border-success waves-effect dropdown-toggle dropdown-toggle-split">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right bg-dark">
+          <a class="dropdown-item text-light" data-route="items.loan.batch" href="#">Batch</a>
+       </div>
+    </div>
+
+  </div>
+
+</div>
+{% endraw %}

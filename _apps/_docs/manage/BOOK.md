@@ -1,0 +1,1 @@
+__{% raw %}{{title}}{% endraw %}__{:.font-weight-light .border-right .pr-2 .mr-1}__{% raw %}{{copy}}{% endraw %}__{:.text-nowrap .ml-1}

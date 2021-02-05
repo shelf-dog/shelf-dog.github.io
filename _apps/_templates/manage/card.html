@@ -1,5 +1,5 @@
 {% raw %}
-<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library{{#unless (any loading movable resizable (exists count) (present commands))}} pb-2{{/unless}}" 
+<div data-index="{{id}}" class="card detail bg-dark border border-background overflow-hidden library{{#unless (any loading movable resizable (exists count) (present commands))}} pb-2{{/unless}}{{#if size}} {{size}}-card{{/if}}" 
      style="{{~#if min-height}}min-height: {{max-height}}px;{{/if~}}{{~#if max-height}}max-height: {{max-height}}px;{{/if~}}{{~#if min-width}}min-width: {{min-width}}px;{{/if~}}{{~#if max-width}}max-width: {{max-width}}px;{{/if~}}">
   
   {{~#if loading~}}
@@ -11,9 +11,9 @@
   
   {{~else~}}
   
-  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-{{#if (any (is background 'dark'))}}light{{else}}body{{/if}} mb-1 border border-background">
+  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-{{#if (any (is background 'dark') (is background 'primary'))}}light{{else}}body{{/if}} mb-1 border border-background">
     <div class="d-flex align-items-center">
-      <a href="#" data-action="close" class="d-flex mr-1 text-{{#if (any (is background 'dark') (is background 'secondary'))}}light{{else}}dark{{/if}} text-decoration-none o-50">
+      <a href="#" data-action="close" class="d-flex mr-1 text-{{#if (any (is background 'dark') (is background 'primary'))}}light{{else}}dark{{/if}} text-decoration-none o-50">
         <span class="material-icons">close</span>
       </a>
       <span class="font-weight-bold">{{either title "Details"}}</span>

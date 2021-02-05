@@ -1,5 +1,5 @@
 {% raw %}
-{{#> card max-height="400" min-width="400"}}
+{{#> card size="medium" min-width="200" max-height="400"}}
 <table class="table table-dark table-hover">
   <thead class="bg-dark">
     <tr>
@@ -8,7 +8,7 @@
   </thead>
   <tbody>
     {{#each rows}}<tr>
-      {{#each this}}<td class="small align-middle{{#unless (present action)}} o-75{{/unless}}" style="padding-top: 5px; padding-bottom: 5px;">{{#present action}}<a class="text-reset" href="{{action}}" target="_blank">{{text}}</a>{{else}}{{this}}{{/present}}</td>{{/each}}
+      {{#each this}}<td class="small align-middle{{#unless (present action)}} o-75{{/unless}}" style="padding-top: 5px; padding-bottom: 5px;">{{#if (any (present action) (present route))}}<a class="text-reset" href="{{#present action}}{{action}}{{/present}}{{#present route}}#{{route}}{{/present}}"{{#present action}}{{action}}  target="_blank"{{/present}}>{{text}}</a>{{else}}{{this}}{{/if}}</td>{{/each}}
     </tr>{{/each}}
   </tbody>
 </table>

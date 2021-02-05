@@ -11,7 +11,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each loans}}<tr data-type="loan" data-id="{{item}}" data-user="{{who}}">
+    {{#each loans}}<tr data-type="loan" data-state="{{#if returned}}returned{{else}}outstanding{{/if}}" data-id="{{item}}" data-user="{{who}}">
       <th class="align-middle" scope="row">
         {{~#if command}}<div class="d-flex align-items-center flex-row">
           {{~#if overdue}}<span class="material-icons md-18 text-danger pr-2 o-80" data-toggle="tooltip"

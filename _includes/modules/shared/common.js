@@ -27,6 +27,8 @@ Common = () => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
+  FN.delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+  
   FN.capabilities = {
     
     touch : _touch,

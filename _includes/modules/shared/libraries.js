@@ -127,7 +127,9 @@ Libraries = (options, factory) => {
           blob ? new Blob([_bytes(downloaded.data)]) : 
           URL.createObjectURL(new Blob([_bytes(downloaded.data)]), {"type": downloaded.type}) : null),
   
-  FN.available = (value, copies) =>  FN.select(value).then(library => library.api("AVAILABLE", {copies: copies}, null, true));
+  FN.available = (value, copies) =>  FN.select(value).then(library => library.api("AVAILABLE", {
+    copies: _.isArray(copies) ? copies.join(",") : copies
+  }, null, true));
   
   FN.settings = (value, settings) => FN.select(value).then(library => library.api("SETTINGS", settings));
   
@@ -145,6 +147,10 @@ Libraries = (options, factory) => {
     
     overdue: value => FN.select(value).then(library => library.api("LOANS", {
       overdue: true
+    }, null, true)),
+    
+    copies: (value, copies) => FN.select(value).then(library => library.api("LOANS", {
+      copies: _.isArray(copies) ? copies.join(",") : copies
     }, null, true)),
     
     copy: (value, copy) => FN.select(value).then(library => library.api("LOANS", {

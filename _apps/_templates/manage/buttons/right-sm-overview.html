@@ -1,0 +1,46 @@
+{% raw %}
+ <div class="d-none show-library-loanable">
+       
+  <div class="d-flex flex-row">
+
+    <!-- SHOW COMMANDS -->
+    <div class="btn-group">
+
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn btn-outline-dark border border-dark waves-effect dropdown-toggle text-light">Show</button>
+        <div class="dropdown-menu dropdown-menu-right bg-dark">
+          <a class="d-sm-none dropdown-item text-light" data-route="show.contents" href="#">Contents</a>
+          <div class="d-sm-none dropdown-divider"></div>
+          <a class="dropdown-item text-light" data-route="show.loans.outstanding" href="#">Outstanding Loans</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item text-light" data-route="show.loans.all" href="#">All Loans</a>
+          <a class="dropdown-item text-light" data-route="show.loans.overdue" href="#">Overdue Loans</a>
+          <a class="dropdown-item text-light" data-route="show.loans.returned" href="#">Returned Loans</a>
+          <a class="dropdown-item text-light" data-route="show.statistics" href="#">Loan Statistics</a>
+       </div>
+
+    </div>
+    
+    <!-- ACTION COMMANDS -->
+    <div class="btn-group ml-2">
+
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn btn-outline-light border border-light waves-effect dropdown-toggle text-light">Actions</button>
+        <div class="dropdown-menu dropdown-menu-right bg-dark">
+          <a class="d-none show-library-requestable dropdown-item text-light" data-route="show.requests" href="#">Requests</a>
+          <a class="d-none show-library-requestable dropdown-item text-light" data-route="show.requests.filtered" href="#">Filtered Requests</a>
+          <div class="d-none show-library-requestable dropdown-divider"></div>
+          
+          <a class="dropdown-item text-light" data-route="items.return.interactive" href="#">Return</a>
+          <a class="dropdown-item text-light" data-route="items.return.batch" href="#">Return Batch</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item text-light" data-route="items.loan.interactive" href="#">Loan</a>
+          <a class="dropdown-item text-light" data-route="items.loan.batch" href="#">Loan Batch</a>
+       </div>
+
+    </div>
+   
+  </div>
+
+</div>
+{% endraw %}
