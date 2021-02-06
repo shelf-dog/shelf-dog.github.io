@@ -1,8 +1,8 @@
 site :
-  0.0.7i :
-    name : App v0.0.7i
+  0.0.7j :
+    name : App v0.0.7j
     desc : Initial Version
-    numeric : 0.0.7.9
+    numeric : 0.0.7.10
     type:
       - alpha
     changes :

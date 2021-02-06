@@ -27,6 +27,8 @@ imports:
     load: first
   - name: day
     load: first
+  - name: screenfull
+    load: last
   - name: handlebars
     load: last
   - name: hello

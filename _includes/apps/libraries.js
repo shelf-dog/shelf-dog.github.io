@@ -64,6 +64,10 @@ App = function() {
     /* <!-- Start App after fully loaded (but BEFORE routing or authentication) --> */
     initial: () => {
       
+      /* <!-- Go Full Screen if PWA available --> */
+      if ((navigator.standalone || (window.matchMedia("(display-mode: standalone)").matches)) && screenfull.isEnabled && !screenfull.isFullscreen)
+        screenfull.request();
+      
       /* <!-- Set Random Background --> */
       FN.backgrounds.set();
       
