@@ -16,8 +16,7 @@
         {{~#if command}}<div class="d-flex align-items-center flex-row">
           {{~#if overdue}}<span class="material-icons md-18 text-danger pr-2 o-80" data-toggle="tooltip"
                                 data-html="true" title="{{{overdue}}}">warning</span>{{/if~}}
-          <a href="{{command}}" class="text-decoration-none link-action pr-2 mr-1 border-right" style="line-height: 1em;"
-             target="_blank"{{#if description}} data-toggle="tooltip" data-html="true" title="{{{description}}}"{{/if}}>
+          <a href="{{command}}"{{#if decorate}} data-decorate{{/if}} class="text-decoration-none link-action pr-2 mr-1 border-right" style="line-height: 1em;"{{#if external}} target="_blank"{{/if}}{{#if description}} data-toggle="tooltip" data-html="true" title="{{{description}}}"{{/if}}>
             <span class="material-icons md-18">menu_book</span>
           </a>{{/if~}}
           <a href="#search.{{encode item}}" class="text-decoration-none link-action ml-1">{{item}}</a>

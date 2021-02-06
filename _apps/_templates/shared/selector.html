@@ -7,8 +7,14 @@
     {{#each libraries}}<option value="library.{{@index}}">{{name}}</option>{{/each}}
   </select>
   <div class="input-group-append">
-    {{~#if cancel}}<a class="btn btn-warning" href="{{cancel}}/{{query}}" role="button">Cancel</a>{{/if~}}
-    <a class="btn btn-dark disabled" href="{{select_url}}" data-href="{{select_url}}" role="button" data-role="select">{{select_text}}</a>
+    {{~#if cancel}}<a class="btn btn-warning d-flex waves-effect align-items-center" href="{{cancel}}"{{#if external}} data-decorate{{/if}} role="button">
+      <span class="d-none d-md-inline">Cancel</span>
+      <span class="d-md-none material-icons md-18">close</span>
+    </a>{{/if~}}
+    <a class="btn btn-dark disabled d-flex waves-effect align-items-center" href="{{url}}" data-href="{{url}}"{{#if external}} data-decorate{{/if}} role="button" data-role="select">
+      <span class="d-none d-md-inline">{{text}}</span>
+      <span class="d-md-none material-icons md-18">arrow_forward</span>
+    </a>
   </div>
 </div>
 {{~#if container}}</div>{{/if~}}

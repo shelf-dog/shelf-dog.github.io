@@ -142,7 +142,8 @@
         if (/^HTTPS?:\/\/.+/i.test(_match[1])) {
           return value => ({
             text: value,
-            url: _match[1].replace(/\{\{value\}\}/i, value)
+            url: _match[1].replace(/\{\{value\}\}/i, value),
+            external: true
           });
         } else {
           return value => _match[1].replace(/\{\{value\}\}/i, value);

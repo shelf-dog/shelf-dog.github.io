@@ -105,7 +105,8 @@ App = function() {
                 id: request.user,
                 name: user.name
               };
-              request.command = `/app/library/${window.location.search}#library.${ಱ.index}.${request.id}`;
+              request.decorate = true;
+              request.command = `/app/library/#library.${ಱ.index}.${request.id}`;
               request.when = request.date ? ಠ_ಠ.Dates.parse(request.date) : "";
             });
         }))
@@ -310,7 +311,8 @@ App = function() {
           if (data && data.values && property) _.each(data.values, row => {
             if (row && row.length > search && row[search]) row[search] = {
               text: row[search],
-              action: `/app/library/${window.location.search}#library.${ಱ.index}.search.${property}==${ಠ_ಠ.url.encode(encodeURIComponent(row[search]))}${suffix ? suffix : ""}`
+              decorate: true,
+              action: `/app/library/#library.${ಱ.index}.search.${property}==${ಠ_ಠ.url.encode(encodeURIComponent(row[search]))}${suffix ? suffix : ""}`
             };
           });
         }), title);
@@ -383,7 +385,8 @@ App = function() {
         ಠ_ಠ.Dates.duration(returned - loaned) :
         ಠ_ಠ.Dates.duration(ಠ_ಠ.Dates.now() - loaned) : null;
       return {
-        command: loan.copy || loan.id ? `/app/library/${window.location.search}#library.${ಱ.index}.${loan.id ? loan.id : `search.${loan.copy}`}` : "",
+        decorate: true,
+        command: loan.copy || loan.id ? `/app/library/#library.${ಱ.index}.${loan.id ? loan.id : `search.${loan.copy}`}` : "",
         item: loan.copy || loan.id,
         description: book ? `<strong>${book.Title}</strong>${book.Authors && book.Authors.length ? `<br/>${_.isString(book.Authors) ? book.Authors : book.Authors.join(" | ")}` : ""}` : "",
         who: loan.user,
@@ -1185,14 +1188,19 @@ App = function() {
         FN.libraries.first(library => library && library.meta && library.meta.claims && library.meta.claims.manage)
         .then(library => _.tap(library, library => ಱ.index = library.code)) :
         FN.libraries.one(ಱ.index = index))
-      .then(library => ರ‿ರ.library = library)
+    
+      /* <!-- Process Links and Set Current Library --> */
+      .then(library => ($("[data-append='library'][href]").each(
+        (i, el) => el.href = !el.href || el.href.indexOf("#") >= 0 ? el.href : `${el.href}#library.${library.code}`
+       ), ರ‿ರ.library = library))
+    
       .then(library => FN.libraries.db(library)
         .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities)))
         .then(db => ರ‿ರ.db = db)
         .then(() => library.meta.claims && library.meta.claims.manage ? FN.library.show(ಱ.index, library) : FN.library.redirect(index)))
       .then(ಠ_ಠ.Main.busy("Opening Library", true)),
 
-    redirect: index => window.location.href = ಠ_ಠ.Flags.full(`/app/library/${window.location.search}#library.${index}`),
+    redirect: index => window.location.href = ಠ_ಠ.Flags.decorate(ಠ_ಠ.Flags.full(`/app/library/#library.${index}`)),
 
     show: (index, library) => {
       ಠ_ಠ.Display.state().enter([FN.states.library.loaded, FN.states.manage.loaded]);
@@ -1201,7 +1209,6 @@ App = function() {
           template: "overview",
           target: FN.holder(),
           clear: true,
-          query: window.location.search,
           index: index,
           description: ಠ_ಠ.Display.doc.get("DETAILS", null, true),
           details: [
@@ -1226,13 +1233,20 @@ App = function() {
       }
 
       /* <!-- Set Manageable and Loanable States --> */
-      ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable]);
+      ಠ_ಠ.Display.state().exit([
+        FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable,
+        FN.states.libraries.single, FN.states.libraries.multiple, FN.states.libraries.selecting
+      ]);
       ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
       ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
       ಠ_ಠ.Display.state().set(FN.states.library.requestable,
         ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && ರ‿ರ.library.meta.capabilities.loan_requests);
 
       ರ‿ರ.refresh = () => FN.library.show(index, library);
+      
+      /* <!-- Prepare Selector (if multiple libraries) --> */
+      FN.select.all($(".libraries-selection"), true, "Select", "swap.cancel", "library");
+      
     },
 
   };
@@ -1275,7 +1289,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Libraries", "Catalog", "Lexer"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -1299,7 +1313,7 @@ App = function() {
 
       /* <!-- Default Route used in case we arrived here directly (instead of from another page) --> */
       if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Display.state().in(FN.states.manage.working)) window.location.hash = `#${DEFAULT_ROUTE}`;
-
+      
     },
 
   };
@@ -1648,6 +1662,30 @@ App = function() {
         $("header.navbar form[data-role='search'] input[role='search']").val(_terms);
         FN.search.run(_terms, FN.holder());
       },
+    },
+    
+    swap: {
+      matches: /SWAP/i,
+      state: [FN.states.library.loaded, FN.states.libraries.multiple],
+      all: true,
+      tidy: true,
+      
+      routes: {
+
+        cancel: {
+          matches: /CANCEL/i,
+          length: 0,
+          fn: () => ಠ_ಠ.Display.state().exit(FN.states.libraries.selecting)
+        },
+        
+        show: {
+          matches: /SHOW/i,
+          length: 0,
+          fn: () => ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting),
+        },
+        
+      },
+      
     },
 
   });

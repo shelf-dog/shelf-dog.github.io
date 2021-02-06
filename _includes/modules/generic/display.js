@@ -70,6 +70,13 @@ Display = function() {
     }
   };
   
+  var _decorate = targets => targets.filter("[href]").each(
+    (i, el) => {
+      el.href = !el.href || el.href.indexOf("#") === 0 ? el.href : ಠ_ಠ.Flags.decorate(el.href);
+      if (el.dataset && el.dataset.href && el.dataset.href.indexOf("#") < 0)
+        el.dataset.href = ಠ_ಠ.Flags.decorate(el.dataset.href);
+    });
+  
   var _hover = (e, toggle) => {
     var _this = $(e.currentTarget),
       _targets = _this.data("targets"),
@@ -169,6 +176,7 @@ Display = function() {
     _tooltips(value.find("[data-toggle='tooltip'], [data-tooltip='true']").add(value.filter("[data-toggle='tooltip'], [data-tooltip='true']")));
     _expands(value.find("[data-toggle='expand'], [data-expand='true']").add(value.filter("[data-toggle='expand'], [data-expand='true']")));
     _hovers(value.find("[data-toggle='hover'], [data-hover='true']").add(value.filter("[data-toggle='hover'], [data-hover='true']")));
+    _decorate(value.find("[data-decorate]"));
     return value;
   };
 
@@ -332,6 +340,7 @@ Display = function() {
         trigger: "hover"
       });
       _tooltips($("[data-toggle='tooltip']"));
+      _decorate($("[data-decorate]"));
 
       /* <!-- Enable Closing Bootstrap Menu after Action --> */
       var navMain = $(".navbar-collapse");
@@ -345,6 +354,8 @@ Display = function() {
     popovers: (targets, options) => _popovers(targets, options),
 
     tooltips: (targets, options) => _tooltips(targets, options),
+    
+    decorate: targets => _decorate(targets),
 
     commarise: value => _commarise(value),
 

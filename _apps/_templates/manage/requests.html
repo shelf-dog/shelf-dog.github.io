@@ -14,8 +14,7 @@
     {{#each requests}}<tr data-type="request" data-id="{{id}}" data-user="{{user.id}}">
       <th class="align-middle" scope="row">
         <div class="d-flex align-items-center flex-row">
-          <a href="{{command}}" class="text-decoration-none link-action pr-2 mr-1 border-right" style="line-height: 1em;"
-             target="_blank"{{~#if isbn}} data-toggle="tooltip" data-html="true"
+          <a href="{{command}}"{{#if decorate}} data-decorate{{/if}} class="text-decoration-none link-action pr-2 mr-1 border-right" style="line-height: 1em;"{{~#if external}} target="_blank"{{/if~}}{{~#if isbn}} data-toggle="tooltip" data-html="true"
              title="<span class='font-weight-bold mr-1'>ISBN:</span>{{isbn}}"{{/if~}}>
             <span class="material-icons md-18">menu_book</span>
           </a>

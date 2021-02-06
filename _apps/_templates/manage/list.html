@@ -8,7 +8,7 @@
   </thead>
   <tbody>
     {{#each rows}}<tr>
-      {{#each this}}<td class="small align-middle{{#unless (present action)}} o-75{{/unless}}" style="padding-top: 5px; padding-bottom: 5px;">{{#if (any (present action) (present route))}}<a class="text-reset" href="{{#present action}}{{action}}{{/present}}{{#present route}}#{{route}}{{/present}}"{{#present action}}{{action}}  target="_blank"{{/present}}>{{text}}</a>{{else}}{{this}}{{/if}}</td>{{/each}}
+      {{#each this}}<td class="small align-middle{{#unless (present action)}} o-75{{/unless}}" style="padding-top: 5px; padding-bottom: 5px;">{{#if (any (present action) (present route))}}<a class="text-reset" href="{{#present action}}{{action}}{{/present}}{{#present route}}#{{route}}{{/present}}"{{#if decorate}} data-decorate{{/if}}{{#if (all action external)}} target="_blank"{{/if}}>{{text}}</a>{{else}}{{this}}{{/if}}</td>{{/each}}
     </tr>{{/each}}
   </tbody>
 </table>

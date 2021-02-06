@@ -1,11 +1,12 @@
 site :
-  0.0.7h :
-    name : App v0.0.7h
+  0.0.7i :
+    name : App v0.0.7i
     desc : Initial Version
-    numeric : 0.0.7.8
+    numeric : 0.0.7.9
     type:
       - alpha
     changes :
+      - Library Selectors
       - Improved Bulk Loans and Returns
       - Better Mobile Management Page Layout
       - Improved Search

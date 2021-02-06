@@ -11,16 +11,13 @@
 ################################################################################################################
 
 name: Libraries
-link: /app/libraries/
+link: /app/
 css:
   primary:
   secondary:
-    - material/menu
-    - material/general
-    - custom/mixins/transitions
-    - custom/mixins/gradients
-    - custom/variables
-    - custom/fonts
+    - custom/library
+    - custom/ribbons
+    - custom/cards
 imports:
   - name: underscore
     load: first
@@ -34,7 +31,7 @@ imports:
     load: last
   - name: hello
     load: last
-  - name: urlparser
+  - name: uri-js
     load: last
   - name: bootstrap-js
     load: last
@@ -47,10 +44,6 @@ imports:
   - name: localforage
     load: last
   - name: fetchjsonp
-    load: last
-  - name: sql-js
-    load: last
-  - name: spark-md5
     load: last
   - name: google
     load: lazy
@@ -66,7 +59,6 @@ helpers:
   - handlebars
   - backgrounds
   - network
-  - url
 modules:
   - generic/dates
   - generic/flags
@@ -81,11 +73,7 @@ modules:
   - shared/cache
   - shared/demo
   - shared/libraries
-  - library/catalog
-  - library/lexer
-  - library/semiotics
-  - library/semantics
-scripts: 
+scripts:
   - extends/string
   - extends/regex
   - extends/array
@@ -93,15 +81,14 @@ scripts:
 templates:
   - loader
   - generic/alert
-  - shared/selector
-  - libraries/overview
+  - libraries/libraries
+  - libraries/library
 docs:
   - shared/PUBLIC
   - shared/FEATURES
   - shared/INSTRUCTIONS
   - shared/TUTORIALS
   - libraries/README
-  - libraries/LIBRARIES
 scopes:
   google:
     - scope: email
@@ -113,6 +100,6 @@ scopes:
       reason: In order to display your name on the navigation menu, once you have signed in.
       request: login
 keys:
-  google: 
+  google:
       oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com
 published: true

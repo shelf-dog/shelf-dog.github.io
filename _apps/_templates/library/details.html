@@ -1,77 +1,29 @@
 {% raw %}
 <div class="bg-dark main p-2 mb-2 rounded-lg">
   
-  <!-- LIBRARY COMMANDS -->
-  <div class="d-flex flex-row justify-content-between align-items-center px-2 pt-1 mb-2 mb-xl-3 loaded-content">
+  <!-- LIBRARY COMMANDS / SMALL SCREEN SIZE -->
+  <div class="d-flex d-md-none justify-content-between align-items-center loaded-content px-2 pt-1 mb-2 mb-xl-3}">
     
-    <!-- LEFT BUTTON -->
-    <a class="d-flex flex-column flex-lg-row pl-2 btn btn-outline-warning border border-warning waves-effect back-button" 
-       href="/app/libraries">
-      <span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Close Search / Library">arrow_back</span>
-      <span class="label">Close</span>
-    </a>
-    
-    <!-- DETAILS -->
-    <h4 class="mx-2 my-0 p-0 d-none header"></h4>
+    <!-- LEFT BUTTONS -->
+    {{> left-overview}}
     
     <!-- RIGHT BUTTONS -->
-    <div>
-      
-      <div class="d-none show-library-manageable show-library-requestable">
-        
-        <div class="d-flex flex-row">
-
-          <div class="d-none show-library-returnable">
-
-            <span class="d-none show-library-manageable">
-              <a class="d-flex flex-column flex-lg-row pr-2 btn btn-outline-light border border-light waves-effect" href="#item.return">
-                <span>Return</span>
-                <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book as Returned">school</span>
-              </a>
-            </span>
-
-          </div>
-
-          <div class="d-none show-library-available">
-
-            <span class="d-none show-library-manageable">
-              <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-success border border-success waves-effect" href="#item.loan">
-                <span>Loan</span>
-                <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Log Book as Loaned">local_library</span>
-              </a>
-            </span>
-
-          </div>
-
-          <div class="d-none show-library-requestable">
-
-            <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-secondary border border-secondary waves-effect"
-               href="#item.request" data-action="request">
-              <span>Request</span>
-              <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Request to Borrow this Book">shopping_basket</span>
-              <i class="material-icons ml-2 float-right result result-success text-light font-weight-bold d-none" data-toggle="tooltip">check</i>
-              <i class="material-icons ml-2 float-right result result-failure text-warning d-none" data-toggle="tooltip">error</i>
-            </a>
-
-          </div>
-
-          <div class="hide-library-item">
-
-            <span class="d-none show-library-manageable">
-              <a class="d-flex flex-column flex-lg-row pr-2 ml-2 btn btn-outline-primary border border-primary waves-effect forward-button" href="/app/manage/{{query}}#google,library.{{this.index}}">
-                <span>Manage</span>
-                <span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Manage Libraries">arrow_forward</span>
-              </a>
-            </span>
-
-          </div>
-
-        </div>
-      
-      </div>
-      
-    </div>
+    {{> right-overview}}
+    
+  </div>
   
+  <!-- LIBRARY COMMANDS / MEDIUM SIZE AND UPWARDS -->
+  <div class="d-none d-md-flex justify-content-between align-items-center loaded-content px-2 pt-1 mb-2 mb-xl-3">
+    
+    <!-- LEFT BUTTONS -->
+    {{> left-overview}}
+    
+    <!-- DETAILS -->
+    <span class="font-larger-150 mx-2 my-0 p-0 d-none header"></span>
+    
+    <!-- RIGHT BUTTONS -->
+    {{> right-overview}}
+    
   </div>
   
   <!-- LIBRARY DETAILS -->

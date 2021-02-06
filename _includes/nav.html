@@ -12,25 +12,22 @@
           <span class="bg-highlight text-dark p-1 rounded">SD</span>
           <span class="sr-only css-sensitive">Return to Home Page</span></a>
       </li>
-      <li class="nav-item{% if page.app == 'landing' %} active{% endif %}">
-        <a class="nav-link" href="/app/">{% if page.app and page.layout == "app" %}Home{% else %}App{% endif %}{% if page.app == 'landing' %}<span class="sr-only">(current)</span>{% endif %}</a>
+      <li class="nav-item{% if page.app == 'libraries' %} active{% endif %}">
+        <a class="nav-link" data-decorate="true" href="/app/">{% if page.app and page.layout == "app" %}Libraries{% else %}App{% endif %}{% if page.app == 'libraries' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
-      {% if page.app and page.layout == "app" %}{% unless page.app == "reader" %}<li class="nav-item{% if page.app == 'libraries' %} active{% endif %}">
-        <a class="nav-link disabled state-authenticated" href="/app/libraries/">Libraries{% if page.app == 'libraries' %}<span class="sr-only">(current)</span>{% endif %}</a>
-      </li>{% endunless %}
-      {% if page.app == "reader" %}<li class="nav-item">
+      {% if page.app and page.layout == "app" %}{% if page.app == "reader" %}<li class="nav-item">
         <a class="nav-link disabled state-reader-loaded" href="#navigate">Navigate</a>
       </li>
       <li class="nav-item">
         <a class="nav-link disabled state-reader-loaded" href="#expand">Expand</a>
       </li>{% endif %}
-      {% if page.app == "landing" or page.app == "library" or page.app == "libraries" or page.app == "manage" %}<li class="nav-item">
+      {% if page.app == "libraries" or page.app == "library" or page.app == "manage" %}<li class="nav-item">
         <a class="nav-link" href="#refresh">Refresh</a>
       </li>{% endif %}
       {% if page.app == "library" %}<li class="nav-item">
         <a class="nav-link disabled state-library-loaded" href="#search">Search</a>
       </li>{% else %}<li class="nav-item{% if page.app == 'settings' %} active{% endif %}">
-        <a class="nav-link disabled state-authenticated" href="{% if page.app == 'reader' %}#settings{% else %}/app/settings/{% endif %}">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
+        <a class="nav-link disabled state-authenticated" data-decorate="true" data-append="library" href="{% if page.app == 'reader' %}#settings{% else %}/app/settings/{% endif %}">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>{% endif %}{% else %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'subscriptions' %} active{% endif %}">
         <a class="nav-link" href="/subscriptions/">Subscriptions{% if page.layout == 'page' and page.permalink contains 'subscriptions' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>

@@ -61,6 +61,7 @@ globals:
   Stripe: false
   CryptoJS: false
   screenfull: false
+  URI: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -171,5 +172,6 @@ globals:
   Semiotics: true
   Common: true
   Subscribe: true
+  Select: true
   EPUB: true
   PDF: true

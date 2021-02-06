@@ -2358,3 +2358,24 @@ pdf-js-viewer-css:
       integrity: sha512-CWsS97AlgjAjjwqi38kjboS8Kz0aU84/iahk4FUfjxFCeSGuyoDaQkIZvgjKZrVUDVA8Hx2Kl7JrS6rlH19z3A==
       crossorigin: anonymous
       id: __pdfjs-viewer-css
+
+uri-js:
+  name: URI.js
+  desc: PDF Reader in JavaScript
+  url: https://cdnjs.com/libraries/URI.js
+  project: https://github.com/medialize/URI.js
+  version: 1.19.5
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.5/URI.min.js
+      integrity: sha512-6p4caXxYnieyuPkA5A7GFO8n5S6yN8HdAqJyetnm8RuNQoUKbeRtAMC/F7dK7CWfJeB3RS9OAR4ssWy7/Y9Uag==
+      crossorigin: anonymous
+      bulk: 47.2
+      id: __urijs
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.5/URI.js
+      integrity: sha512-asenNzfSVcYOapyTLifbVFX4zVZoyCgKR4BVkW/9Tj/oU7CwGjBrrpBt+tKYSNwkSHOBJBB9PUc2zHBq5rsOhA==
+      crossorigin: anonymous
+      bulk: 66.4
+      id: __urijs

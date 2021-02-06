@@ -56,7 +56,8 @@ App = function() {
     desc: `Read this Book${size ? ` (<strong>${ಠ_ಠ.handlebars.bytes(size, 2)}</strong>)` : ""}!`,
     text: format,
     icon: "help_outline",
-    url: `/app/reader/${window.location.search}#google,library.${library}.${id}.${format}.${FN.encode(path)}.${FN.encode(name)}.${size}`,
+    decorate: true,
+    url: `/app/reader/#google,library.${library}.${id}.${format}.${FN.encode(path)}.${FN.encode(name)}.${size}`,
   });
   
   var _formats = (library, book) => book.Formats = book.Formats && book.Format_Files ? 
@@ -325,7 +326,6 @@ App = function() {
                           }),
                 searches: ರ‿ರ.library.meta && ರ‿ರ.library.meta.details ? ರ‿ರ.library.meta.details.search : null,
                 clear: true,
-                query: window.location.search,
                 index: index,
                 results: _.tap(ರ‿ರ.db.recent.all(!ರ‿ರ.library.meta || ರ‿ರ.library.meta.recent === undefined ? 
                                                  5 : ರ‿ರ.library.meta.recent),
@@ -335,13 +335,14 @@ App = function() {
                 .off("click.search").on("click.search", _search.searcher))
     .then(() => {
       /* <!-- Set Manageable and Loanable States --> */
-      ಠ_ಠ.Display.state().exit([FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable]);
+      ಠ_ಠ.Display.state().exit([
+        FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable,
+        FN.states.libraries.single, FN.states.libraries.multiple, FN.states.libraries.selecting
+      ]);
       ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
       ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
     })
     .then(_clear);
-  
-  var _me = () => ಠ_ಠ.Flags.log("ME");
   
   var _library = (index, book) => (index === null || index === undefined ? 
       FN.libraries.first().then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : FN.libraries.one(ರ‿ರ.index = index))
@@ -361,6 +362,10 @@ App = function() {
               $("input[role='search']:visible").focus();
  
               ರ‿ರ.refresh = () => _library(index, book);
+            
+              /* <!-- Prepare Selector (if multiple libraries) --> */
+              FN.select.all($(".libraries-selection"), true, "Select", "swap.cancel", "library");
+            
             }))
             .then(ಠ_ಠ.Main.busy("Opening Library", true));
 	/* <!-- Internal Functions --> */
@@ -403,7 +408,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Demo", "Libraries", "Catalog", "Lexer"], 
+      _.each(["Common", "Cache", "Client", "Demo", "Libraries", "Select", "Catalog", "Lexer"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
@@ -516,8 +521,7 @@ App = function() {
             },
             tidy : true,
             fn : command => command && _.isArray(command) ? 
-                command.length == 2 ? command[1].equals("me", true) ? 
-                  _library(command[0]).then(_me) : _library(command[0], command[1]) : 
+                command.length == 2 ? _library(command[0], command[1]) : 
                   command.length == 3 ? _library(command[0]).then(() => command[1] && command[1].toLowerCase() == "search" ?
                                                                   _search.basic(command[2], _holder()) : null) : 
                 _library(command) : _library(command),
@@ -674,6 +678,30 @@ App = function() {
             length: 0,
             tidy: true,
             fn: () => ರ‿ರ.refresh()
+          },
+          
+          swap: {
+            matches: /SWAP/i,
+            state: [FN.states.library.loaded, FN.states.libraries.multiple],
+            all: true,
+            tidy: true,
+
+            routes: {
+
+              cancel: {
+                matches: /CANCEL/i,
+                length: 0,
+                fn: () => ಠ_ಠ.Display.state().exit(FN.states.libraries.selecting)
+              },
+
+              show: {
+                matches: /SHOW/i,
+                length: 0,
+                fn: () => ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting),
+              },
+
+            },
+
           },
           
         },

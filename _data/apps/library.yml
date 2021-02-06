@@ -37,7 +37,7 @@ imports:
     load: last
   - name: hello
     load: last
-  - name: urlparser
+  - name: uri-js
     load: last
   - name: bootstrap-js
     load: last
@@ -85,6 +85,7 @@ modules:
   - shared/cache
   - shared/demo
   - shared/libraries
+  - shared/select
   - library/catalog
   - library/lexer
   - library/semiotics
@@ -113,6 +114,8 @@ templates:
   - library/availability
   - library/searches
   - library/results_header
+  - library/buttons/left-overview
+  - library/buttons/right-overview
 docs:
   - shared/PUBLIC
   - shared/FEATURES

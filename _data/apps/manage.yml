@@ -38,7 +38,7 @@ imports:
     load: last
   - name: hello
     load: last
-  - name: urlparser
+  - name: uri-js
     load: last
   - name: bootstrap-js
     load: last
@@ -91,6 +91,7 @@ modules:
   - shared/client
   - shared/cache
   - shared/libraries
+  - shared/select
   - library/catalog
   - library/lexer
 scripts: 
@@ -106,6 +107,7 @@ templates:
   - generic/text
   - generic/inform
   - shared/dialog
+  - shared/selector
   - manage/overview
   - manage/details
   - manage/detail

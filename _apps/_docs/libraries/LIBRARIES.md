@@ -1,1 +1,0 @@
-You can choose from the list of accessible __libraries__ above. These libraries have been __shared__ with you, and you can explore their contents by clicking the __explore__ button after selection!

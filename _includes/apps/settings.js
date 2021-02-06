@@ -150,8 +150,7 @@ App = function() {
                   var _selector = ಠ_ಠ.Display.template.show({
                         template: "selector",
                         libraries: libraries,
-                        cancel: "/app/settings",
-                        query: window.location.search,
+                        cancel: "/app/settings/",
                         select_text: "Select",
                         select_url: "#google,library",
                         target: _holder(),
