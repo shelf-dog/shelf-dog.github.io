@@ -71,10 +71,12 @@ modules:
   - generic/router
   - shared/states
   - shared/events
+  - shared/common
   - shared/client
   - shared/cache
   - shared/demo
   - shared/libraries
+  - shared/pwa
 scripts:
   - extends/string
   - extends/regex

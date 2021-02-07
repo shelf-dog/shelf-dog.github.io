@@ -44,7 +44,9 @@ States = () => {
         STATE_READER = "reader",
         STATE_READER_LOADED = "reader-loaded",
         
-        STATE_FULLSCREEN = "fullscreen",
+        STATE_FULLSCREEN_AVAILABLE = "fullscreen-available",
+        STATE_FULLSCREEN_CONTENT = "fullscreen-content",
+        STATE_FULLSCREEN_ENABLED = "fullscreen-enabled",
         
         STATE_SEARCHED = "searched",
         
@@ -56,7 +58,7 @@ States = () => {
           STATE_SETTINGS, STATE_SETTINGS_PERSONAL, STATE_SETTINGS_ALL, STATE_SETTINGS_LIBRARY,
           STATE_SUBSCRIBED,
           STATE_READER, STATE_READER_LOADED,
-          STATE_FULLSCREEN,
+          STATE_FULLSCREEN_AVAILABLE, STATE_FULLSCREEN_CONTENT, STATE_FULLSCREEN_ENABLED,
           STATE_SEARCHED
         ];
   /* <!-- Internal Constants --> */
@@ -143,7 +145,11 @@ States = () => {
       working : STATE_SUBSCRIBED_WORKING,
     },
     
-    fullscreen: STATE_FULLSCREEN,
+    fullscreen: {
+      available : STATE_FULLSCREEN_AVAILABLE,
+      content : STATE_FULLSCREEN_CONTENT,
+      enabled : STATE_FULLSCREEN_ENABLED,
+    },
     
     searched: STATE_SEARCHED,
     

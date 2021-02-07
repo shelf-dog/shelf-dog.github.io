@@ -40,6 +40,12 @@
     </ul>
   </div>
   
+  {% if page.app and page.layout == "app" %}<div class="d-none show-fullscreen-available ml-xl-3" data-fullscreen>
+    <a class="text-decoration-none text-highlight font-weight-bold d-none d-md-flex align-items-center" href="#">
+      <span class="material-icons">fullscreen</span>
+    </a>
+  </div>{% endif %}
+  
   {% if page.app and page.layout == "app" %}<div class="ml-md-auto d-flex flex-column flex-sm-row align-items-center">
     
     <ul class="navbar-nav flex-row d-none d-md-flex">

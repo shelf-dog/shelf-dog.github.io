@@ -175,3 +175,4 @@ globals:
   Select: true
   EPUB: true
   PDF: true
+  PWA: true

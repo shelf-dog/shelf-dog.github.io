@@ -84,7 +84,8 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Cache", "Client", "Demo", "Libraries"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Common", "Cache", "Client", "Demo", "Libraries", "PWA"], 
+             module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;

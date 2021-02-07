@@ -349,8 +349,8 @@ App = function() {
             keys: ["f", "F"],
             fn : () => screenfull && screenfull.isEnabled ? 
               screenfull.isFullscreen ? 
-                screenfull.exit().then(() => ಠ_ಠ.Display.state().exit(FN.states.fullscreen)) :
-                screenfull.request(document.getElementById("content")).then(() => ಠ_ಠ.Display.state().enter(FN.states.fullscreen)) : false,
+                screenfull.exit().then(() => ಠ_ಠ.Display.state().exit(FN.states.fullscreen.content)) :
+                screenfull.request(document.getElementById("content")).then(() => ಠ_ಠ.Display.state().enter(FN.states.fullscreen.content)) : false,
           },
           
           settings : {

@@ -1289,7 +1289,8 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer"], 
+             module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
