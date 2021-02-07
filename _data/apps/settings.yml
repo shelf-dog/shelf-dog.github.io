@@ -81,6 +81,7 @@ modules:
   - generic/router
   - shared/states
   - shared/events
+  - shared/select
   - shared/client
   - shared/cache
   - shared/configuration
@@ -97,16 +98,17 @@ scripts:
 templates:
   - loader
   - generic/alert
+  - buttons/left-overview
   - shared/selector
   - settings/personal
   - settings/settings
+  - settings/buttons/right-overview
 docs:
   - shared/PUBLIC
   - shared/FEATURES
   - shared/INSTRUCTIONS
   - shared/TUTORIALS
   - settings/README
-  - settings/SETTINGS
 scopes:
   google:
     - scope: email

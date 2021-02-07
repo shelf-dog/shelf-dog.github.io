@@ -7,15 +7,18 @@ App = function() {
 	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
 	/* <!-- Internal Constants --> */
-  const FN = {};
+  const FN = {},
+    DEFAULT_ROUTE = "personal";
 	/* <!-- Internal Constants --> */
 
+  
 	/* <!-- Internal Variables --> */
 	var ಠ_ಠ, /* <!-- Context --> */
       ರ‿ರ = {}, /* <!-- Session State --> */
       ಱ = {}; /* <!-- Persistant State --> */
 	/* <!-- Internal Variables --> */
 
+  
 	/* <!-- Internal Functions --> */
   var _holder = () => $(".settings");
   
@@ -31,8 +34,13 @@ App = function() {
       }
       
     });
+  /* <!-- Internal Functions --> */
   
-  var _personal = () => FN.configuration.get()
+  
+  /* <!-- Show Functions --> */
+  FN.show = {
+    
+    personal : () => FN.configuration.get()
     .then(settings => {
       
       ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.personal);
@@ -80,104 +88,86 @@ App = function() {
           .then(ಠ_ಠ.Main.busy("Saving Settings", true));
 
       });
-    }).then(ಠ_ಠ.Main.busy("Loading Settings", true));
- 
-  var _library = index => FN.libraries.one(index)
-              .then(library => Promise.all(
-                [Promise.resolve(library), FN.libraries.settings(library), 
-                  FN.libraries.db(library).then(result => FN.catalog.load(result.data, library.meta.capabilities))]
-              ))
-              .then(results => {
+    }).then(ಠ_ಠ.Main.busy("Loading Settings", true)),
+    
+    library : index => FN.libraries.one(index)
+      .then(library => library.admin ? Promise.all(
+        [Promise.resolve(library), FN.libraries.settings(library), 
+          FN.libraries.db(library).then(result => FN.catalog.load(result.data, library.meta.capabilities))]
+      ) : null)
+      .then(results => {
 
-                var library = results[0], settings = results[1], db = results[2];
+        if (!results) return;
 
-                ಠ_ಠ.Flags.log("LIBRARY:", library);
-                ಠ_ಠ.Flags.log("SETTINGS:", settings);
-                ಠ_ಠ.Flags.log("CUSTOM FIELDS:", db.fields().custom);
+        var library = results[0], settings = results[1], db = results[2];
 
-                ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.library);
-                $("#settings-for-library .library-name").text(library.name);
+        ಠ_ಠ.Flags.log("LIBRARY:", library);
+        ಠ_ಠ.Flags.log("SETTINGS:", settings);
+        ಠ_ಠ.Flags.log("CUSTOM FIELDS:", db.fields().custom);
 
-                /* <!-- Split/Join Managers into Array --> */
-                if (settings.managers && settings.managers.split) 
-                  settings.managers = settings.managers.split(",").join("\n");
+        $("#settings-for-library .library-name").text(library.name);
 
-                var _form = ಠ_ಠ.Display.template.show(_.extend({
-                      template: "settings",
-                      target: _holder(),
-                      fields: db.fields().custom,
-                      clear: true
-                    }, settings));
+        /* <!-- Split/Join Managers into Array --> */
+        if (settings.managers && settings.managers.split) 
+          settings.managers = settings.managers.split(",").join("\n");
 
-                /* <!-- Handle Database Link Changes --> */
-                _link(_form, "input[data-type='file']", id => `https://drive.google.com/file/d/${id}/view`);
+        var _form = ಠ_ಠ.Display.template.show(_.extend({
+              template: "settings",
+              index: index,
+              target: _holder(),
+              fields: db.fields().custom,
+              clear: true
+            }, settings));
 
-                /* <!-- Handle Library Folder Changes --> */
-                _link(_form, "input[data-type='folder']", id => `https://drive.google.com/drive/folders/${id}`);
+        /* <!-- Handle Database Link Changes --> */
+        _link(_form, "input[data-type='file']", id => `https://drive.google.com/file/d/${id}/view`);
 
-                /* <!-- Handle Settings Save --> */
-                _form.find("button[type='submit'").on("click.submit", e => {
+        /* <!-- Handle Library Folder Changes --> */
+        _link(_form, "input[data-type='folder']", id => `https://drive.google.com/drive/folders/${id}`);
 
-                    e.preventDefault();
-                    e.stopPropagation();
+        /* <!-- Handle Settings Save --> */
+        _form.find("button[type='submit'").on("click.submit", e => {
 
-                    var _values = ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form);
-                    ಠ_ಠ.Flags.log("Library Settings Form Values", _values);
+            e.preventDefault();
+            e.stopPropagation();
 
-                    var _settings = _.reduce(_values, (memo, value, key) => {
-                      memo[key] = key == "managers" ? value.Value ? value.Value.split("\n") : [] : value.Value;
-                      return memo;
-                    }, {});
+            var _values = ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form);
+            ಠ_ಠ.Flags.log("Library Settings Form Values", _values);
 
-                    ಠ_ಠ.Flags.log("Library Settings to Save", _settings);
+            var _settings = _.reduce(_values, (memo, value, key) => {
+              memo[key] = key == "managers" ? value.Value ? value.Value.split("\n") : [] : value.Value;
+              return memo;
+            }, {});
 
-                    FN.libraries.settings(library, _settings)
-                      .then(value => value ? FN.libraries.refresh(library) : value)
-                      .then(FN.common.result($(e.currentTarget)))
-                      .then(ಠ_ಠ.Main.busy("Saving Settings", true));
+            ಠ_ಠ.Flags.log("Library Settings to Save", _settings);
 
-                  });
+            FN.libraries.settings(library, _settings)
+              .then(value => value ? FN.libraries.refresh(library) : value)
+              .then(FN.common.result($(e.currentTarget)))
+              .then(ಠ_ಠ.Main.busy("Saving Settings", true));
 
-              })
-              .catch(e => ಠ_ಠ.Flags.error("Loading Settings", e))
-              .then(ಠ_ಠ.Main.busy("Loading Settings", true));
+          });
+
+        /* <!-- Prepare Selector (if multiple libraries) --> */
+        FN.select.all($(".libraries-selection"), false, true, "Select", "swap.cancel", "library");
+        
+        ಠ_ಠ.Display.state().exit([
+          FN.states.library.manageable, FN.states.libraries.single, 
+          FN.states.libraries.multiple, FN.states.libraries.selecting
+        ]);
+        ಠ_ಠ.Display.state().set(FN.states.library.manageable, library.meta.claims && library.meta.claims.manage);
+        ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.library);
+
+      })
+      .catch(e => ಠ_ಠ.Flags.error("Loading Settings", e))
+      .then(ಠ_ಠ.Main.busy("Loading Settings", true)),
+    
+  };
+  /* <!-- Show Functions --> */
   
-  var _all = () => FN.libraries.all()
-              .then(libraries => _.filter(libraries, "admin"))
-              .then(libraries => {
-                ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.all);
-                if (libraries.length > 0) {
-                  var _selector = ಠ_ಠ.Display.template.show({
-                        template: "selector",
-                        libraries: libraries,
-                        cancel: "/app/settings/",
-                        select_text: "Select",
-                        select_url: "#google,library",
-                        target: _holder(),
-                        clear: true
-                      });
-                  _selector.find("select").on("change.option", e => {
-                        var _selected = $(e.target).find("option:selected"),
-                            _value = _selected.val(),
-                            _valid = _value && _value.startsWith("library"),
-                            _button = _selector.find("a[data-role='select']");
-                        _button.toggleClass("disabled", !_valid);
-                        if (_valid) {
-                          var _href = _button.attr("href").split(",");
-                          if (_href.length == 2) {
-                            _href[1] = _value;
-                            _button.attr("href", _href.join(","));
-                          }
-                        } else {
-                          _button.attr("href", _button.data("href"));           
-                        }
-                      });
-                }
-              })
-              .catch(e => ಠ_ಠ.Flags.error("Loading Libraries", e))
-              .then(ಠ_ಠ.Main.busy("Loading Libraries", true));
   
-  var _select = {
+  /* <!-- Selector Functions --> */
+  FN.selector = {
     
     logo : () => ಠ_ಠ.Router.pick.single({
                       title: "Select a Logo Image for Emails",
@@ -238,7 +228,8 @@ App = function() {
                     }),
     
   };
-	/* <!-- Internal Functions --> */
+  /* <!-- Selector Functions --> */
+  
   
   /* <!-- Setup Functions --> */
   FN.setup = {
@@ -272,7 +263,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Configuration", "Libraries", "Catalog"], 
+      _.each(["Common", "Cache", "Client", "Configuration", "Select", "Libraries", "Catalog"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Create Schema Reference --> */
@@ -298,11 +289,95 @@ App = function() {
         window.Mousetrap.bind("esc", () => $(".collapse.show").removeClass("show"));
       }
       
+      /* <!-- Default Route used in case we arrived here directly (instead of from another page) --> */
+      if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Display.state().in(FN.states.settings.working)) 
+        window.location.hash = `#${DEFAULT_ROUTE}`;
+      
     },
 
   };
   /* <!-- Setup Functions --> */
 
+  
+  /* <!-- Route Handlers --> */
+  FN.routes = () => ({
+    
+    select: {
+      matches: /SELECT/i,
+      routes: {
+        logo: {
+          matches: /LOGO/i,
+          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          requires: ["google"],
+          length: 0,
+          fn: FN.selector.logo,
+        },
+        database: {
+          matches: /DATABASE/i,
+          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          requires: ["google"],
+          length: 0,
+          fn: FN.selector.database,
+        },
+        folder: {
+          matches: /FOLDER/i,
+          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          requires: ["google"],
+          length: 0,
+          fn: FN.selector.folder,
+        },
+        log: {
+          matches: /LOG/i,
+          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          requires: ["google"],
+          length: 0,
+          fn: FN.selector.log,
+        },
+      }
+    },
+    
+    library: {
+      matches: /LIBRARY/i,
+      length: 1,
+      trigger: FN.states.settings.working,
+      fn: FN.show.library,
+    },
+
+    personal: {
+      matches: /PERSONAL/i,
+      length: 0,
+      trigger: FN.states.settings.working,
+      fn: FN.show.personal,
+    },
+    
+    swap: {
+      matches: /SWAP/i,
+      state: [FN.states.settings.library, FN.states.libraries.multiple],
+      all: true,
+      tidy: true,
+      
+      routes: {
+
+        cancel: {
+          matches: /CANCEL/i,
+          length: 0,
+          fn: () => ಠ_ಠ.Display.state().exit(FN.states.libraries.selecting)
+        },
+        
+        show: {
+          matches: /SHOW/i,
+          length: 0,
+          fn: () => ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting),
+        },
+        
+      },
+      
+    },
+    
+  });
+  /* <!-- Route Handlers --> */
+  
+  
 	/* <!-- External Visibility --> */
 	return {
 
@@ -324,56 +399,7 @@ App = function() {
         state: ರ‿ರ,
         states: FN.states.all,
         start: FN.setup.routed,
-        routes: {
-          select: {
-            matches: /SELECT/i,
-            routes: {
-              logo: {
-                matches: /LOGO/i,
-                scopes: ["https://www.googleapis.com/auth/drive.file"],
-                requires: ["google"],
-                length: 0,
-                fn: _select.logo,
-              },
-              database: {
-                matches: /DATABASE/i,
-                scopes: ["https://www.googleapis.com/auth/drive.file"],
-                requires: ["google"],
-                length: 0,
-                fn: _select.database,
-              },
-              folder: {
-                matches: /FOLDER/i,
-                scopes: ["https://www.googleapis.com/auth/drive.file"],
-                requires: ["google"],
-                length: 0,
-                fn: _select.folder,
-              },
-              log: {
-                matches: /LOG/i,
-                scopes: ["https://www.googleapis.com/auth/drive.file"],
-                requires: ["google"],
-                length: 0,
-                fn: _select.log,
-              },
-            }
-          },
-          library: {
-            matches: /LIBRARY/i,
-            length: 1,
-            fn: _library,
-          },
-          all: {
-            matches: /ALL/i,
-            length: 0,
-            fn: _all,
-          },
-          personal: {
-            matches: /PERSONAL/i,
-            length: 0,
-            fn: _personal,
-          },
-        },
+        routes: FN.routes(),
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });
 

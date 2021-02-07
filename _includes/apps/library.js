@@ -364,7 +364,7 @@ App = function() {
               ರ‿ರ.refresh = () => _library(index, book);
             
               /* <!-- Prepare Selector (if multiple libraries) --> */
-              FN.select.all($(".libraries-selection"), true, "Select", "swap.cancel", "library");
+              FN.select.all($(".libraries-selection"), true, false, "Select", "swap.cancel", "library");
             
             }))
             .then(ಠ_ಠ.Main.busy("Opening Library", true));

@@ -1,6 +1,28 @@
 {% raw %}
 <form class="bg-dark main p-2 p-xl-3 mb-2 rounded-lg">
   
+  <!-- SETTING COMMANDS / SMALL SCREEN SIZE -->
+  <div class="d-flex d-md-none justify-content-between loaded-content mb-2">
+    
+    <!-- LEFT BUTTONS -->
+    {{> left-overview back="Close Library Settings"}}
+    
+    <!-- RIGHT BUTTONS -->
+    {{> right-overview}}
+    
+  </div>
+  
+  <!-- SETTING COMMANDS / MEDIUM SIZE AND UPWARDS -->
+  <div class="d-none d-md-flex justify-content-between loaded-content mb-2">
+    
+    <!-- LEFT BUTTONS -->
+    {{> left-overview back="Close Library Settings"}}
+    
+    <!-- RIGHT BUTTONS -->
+    {{> right-overview}}
+    
+  </div>
+  
   <!-- LIBRARY DESCRIPTION -->
   <div class="form-group" data-output-field="description">
     <label for="settings_description">Description</label>
@@ -255,7 +277,7 @@
   </button>
   
   <!-- CANCEL BUTTON -->
-  <a class="btn btn-outline-warning ml-2 waves-effect" href="#all" role="button">Cancel</a>
+  <a class="btn btn-outline-warning ml-2 waves-effect" href="/app/" role="button">Cancel</a>
   
 </form>
 {% endraw %}

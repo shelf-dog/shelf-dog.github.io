@@ -26,11 +26,12 @@ Select = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.all = (target, manage, select, cancel, command) => options.functions.libraries.all()
+  FN.all = (target, manage, admin, select, cancel, command) => options.functions.libraries.all()
   
     .then(libraries => _.filter(libraries, 
       library => library && library.state == "READY" && 
-                  (!manage || (library.meta && library.meta.claims && library.meta.claims.manage))
+                  (!manage || (library.meta && library.meta.claims && library.meta.claims.manage)) &&
+                  (!admin || library.admin)
     ))
   
     .then(libraries => (

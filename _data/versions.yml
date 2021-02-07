@@ -1,11 +1,13 @@
 site :
-  0.0.7j :
-    name : App v0.0.7j
+  0.0.7l :
+    name : App v0.0.7l
     desc : Initial Version
-    numeric : 0.0.7.10
+    numeric : 0.0.7.12
     type:
       - alpha
     changes :
+      - Settings Update
+      - Full Screen PWA
       - Library Selectors
       - Improved Bulk Loans and Returns
       - Better Mobile Management Page Layout

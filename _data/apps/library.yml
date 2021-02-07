@@ -104,6 +104,7 @@ templates:
   - shared/dialog
   - shared/selector
   - dialogs/search
+  - buttons/left-overview
   - library/details
   - library/results
   - library/empty
@@ -114,7 +115,6 @@ templates:
   - library/availability
   - library/searches
   - library/results_header
-  - library/buttons/left-overview
   - library/buttons/right-overview
 docs:
   - shared/PUBLIC

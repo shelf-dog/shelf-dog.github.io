@@ -21,7 +21,7 @@ monthly:
   desc:
     - __All__ users in your domain
     - __Unlimited__ Technical Support
-  cost: 10
+  cost: 20
   unit: month
   colour: info
   data: Organisation Domain
@@ -33,13 +33,13 @@ monthly:
 yearly:
   name: Yearly __Domain__ Plan
   type: Organisation
-  condition: Equivalent of £8/month
+  condition: Equivalent of £16/month
   desc:
     - __All__ users in your domain
     - __Extra__ users as required
     - __Unlimited__ Technical Support
     - __Priority__ Feature Requests
-  cost: 96
+  cost: 192
   unit: year
   colour: warning
   data: Organisation Domain

@@ -1245,7 +1245,7 @@ App = function() {
       ರ‿ರ.refresh = () => FN.library.show(index, library);
       
       /* <!-- Prepare Selector (if multiple libraries) --> */
-      FN.select.all($(".libraries-selection"), true, "Select", "swap.cancel", "library");
+      FN.select.all($(".libraries-selection"), true, false, "Select", "swap.cancel", "library");
       
     },
 
