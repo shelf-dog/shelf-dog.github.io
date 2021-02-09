@@ -697,7 +697,7 @@ App = function() {
               show: {
                 matches: /SHOW/i,
                 length: 0,
-                fn: () => ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting),
+                fn: () => (ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting), $(".swap-selector:visible").focus()),
               },
 
             },

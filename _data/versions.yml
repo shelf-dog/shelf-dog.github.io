@@ -1,8 +1,8 @@
 site :
-  0.0.8a :
-    name : Site v0.0.8a
+  0.0.8b :
+    name : Site v0.0.8b
     desc : Initial Version
-    numeric : 0.0.8.1
+    numeric : 0.0.8.2
     type:
       - alpha
     changes :
