@@ -1289,7 +1289,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer"], 
+      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer", "PWA"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
@@ -1682,7 +1682,7 @@ App = function() {
         show: {
           matches: /SHOW/i,
           length: 0,
-          fn: () => ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting),
+          fn: () => (ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting), $(".swap-selector:visible").focus()),
         },
         
       },

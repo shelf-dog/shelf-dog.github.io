@@ -2,7 +2,7 @@
 {{~#if container}}<div class="bg-dark p-2 p-xl-3 mb-2 rounded-lg">{{/if~}}
 {{~#if content~}}{{{content}}}{{~/if~}}
 <div class="input-group">
-  <select class="custom-select" id="choose_Library" aria-label="Choose Library for Settings">
+  <select class="custom-select swap-selector" id="choose_Library" aria-label="Choose Library for Settings">
     <option selected>Choose Library...</option>
     {{#each libraries}}<option value="library.{{@index}}">{{name}}</option>{{/each}}
   </select>

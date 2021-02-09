@@ -27,13 +27,13 @@ imports:
     load: first
   - name: day
     load: first
-  - name: screenfull
-    load: last
   - name: handlebars
     load: last
   - name: hello
     load: last
   - name: uri-js
+    load: last
+  - name: screenfull
     load: last
   - name: bootstrap-js
     load: last

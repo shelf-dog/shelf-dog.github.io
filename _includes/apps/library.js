@@ -408,7 +408,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Demo", "Libraries", "Select", "Catalog", "Lexer"], 
+      _.each(["Common", "Cache", "Client", "Demo", "Libraries", "Select", "Catalog", "Lexer", "PWA"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
