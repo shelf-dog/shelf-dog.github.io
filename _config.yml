@@ -42,6 +42,10 @@ author:
 collections:
   apps:
     output: true
+  questions:
+    output: false
+  tutorials:
+    output: true
 
 # Collection Defaults
 defaults:

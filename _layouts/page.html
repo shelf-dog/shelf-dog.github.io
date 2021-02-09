@@ -82,7 +82,7 @@ css:
 	
 	{% include plumbing/head.html %}
 
-	<body class="bg-transparent">
+	<body class="bg-dark">
     
     {% unless page.simple %}<a class="skippy sr-only sr-only-focusable" href="#{{ site.app.content }}">
       <span class="skippy-text">Skip to main content</span>
@@ -92,8 +92,8 @@ css:
     
     {% unless page.simple %}<h1 class="titles display-4 bg-dark text-white mt-2 mt-lg-3 mt-xl-4 mx-1 ml-md-2 ml-lg-3 ml-xl-4 px-2 py-1 rounded-lg">{{ page.title }}</h1>{% endunless %}
     
-		<div id="{{ site.app.content }}" class="container">
-      <div{% unless page.simple %} class="bg-page rounded-sm p-2"{% endunless %}>
+		<div id="{{ site.app.content }}" class="mx-2 mx-xl-4">
+      <div{% unless page.simple %} class="bg-page main p-2 p-xl-3 mb-2 rounded-lg"{% endunless %}>
         {{ content }}
       </div>
     </div>

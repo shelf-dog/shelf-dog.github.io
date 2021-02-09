@@ -1,5 +1,5 @@
-Your digital literary __companion__, a loyal __guide__ to your book collection. Finally, a barkingly good system to manage your library.
+__Shelf dog__{:.text-white .font-weight-normal} is your digital literary __companion__{:.text-white .font-weight-normal}, a loyal __guide__{:.text-white .font-weight-normal} to your book collection. Quite simply, a __barkingly__{:.text-white .font-weight-normal} good system to manage any library.
 
-* * *
+We provide a __lightweight__{:.text-white .font-weight-normal}, __secure__{:.text-white .font-weight-normal} and __simple__{:.text-white .font-weight-normal} approach to keeping track of your books. Working in conjunction with your G-Suite or Google login, we provide a fully __web-based__{:.text-white .font-weight-normal} system which allows users to browse your __Calibre library__{:.text-white .font-weight-normal} from anywhere.
 
-We provide a __lightweight__, __secure__ and __simple__ approach to keeping track of your books. Working in conjunction with your G-Suite or Google login, we provide a fully __web-based__ system which allows users to browse the library from anywhere.
+__Shelf dog__{:.text-white .font-weight-normal} is available for both personal users (e.g your own library collection) or organisations (e.g. school libraries). To find out more, read about how to [subscribe](/subscriptions){:.text-highlight-mid .link-jump} or view our pricing [here](/pricing/){:.text-highlight-mid .link-jump}. We have also put together a list of [frequently asked questions](/questions){:.text-highlight-mid .link-jump} to get you off to __flying start__{:.text-white .font-weight-normal}!

@@ -7,7 +7,7 @@ personal:
     - __Unlimited__ Technical Support
   cost: 12
   unit: year
-  colour: warning
+  colour: success
   data: 
   details: 
   product:
@@ -21,9 +21,9 @@ monthly:
   desc:
     - __All__ users in your domain
     - __Unlimited__ Technical Support
-  cost: 20
+  cost: 18
   unit: month
-  colour: info
+  colour: warning
   data: Organisation Domain
   details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
   product:
@@ -41,7 +41,7 @@ yearly:
     - __Priority__ Feature Requests
   cost: 192
   unit: year
-  colour: warning
+  colour: info
   data: Organisation Domain
   details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
   product:

@@ -1,8 +1,17 @@
 site :
+  0.0.8 :
+    name : Site v0.0.8
+    desc : Initial Version
+    numeric : 0.0.8.0
+    type:
+      - alpha
+    changes :
+      - Documentation Improvements prior to beta release
   0.0.7l :
     name : App v0.0.7l
     desc : Initial Version
     numeric : 0.0.7.12
+    api : 1.7.1
     type:
       - alpha
     changes :

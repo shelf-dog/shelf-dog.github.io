@@ -11,10 +11,6 @@ html, body {
   height: 100%;
 }
 
-html { 
-  background-colour: $black;
-}
-
 body {
   margin: 0;
 	&:-webkit-full-screen {
@@ -31,8 +27,17 @@ a {
 }
 // -- Regular Elements -- //
 
-// -- Alerts -- //
-.alert {
+// -- Action / Jump Links -- //
+a.link-action, a.link-jump {
+	&:hover {
+    color: $colour-highlight !important;
+    opacity: 1 !important;
+	}
+}
+// -- Action Links -- //
+
+// -- Top Alerts -- //
+body > .alert {
   border: none !important;
   border-radius: 0 !important;
 }
@@ -40,12 +45,39 @@ a {
 
 // -- Highlight Elements -- //
 .bg-highlight {
-  background-color: $colour-highlight;
+  background-color: $colour-highlight !important;
 }
 
 .text-highlight {
   color: $colour-highlight !important;
 }
+
+.text-highlight-mid {
+  color: $colour-highlight-mid !important;
+}
+
+.text-highlight-dark {
+  color: $colour-highlight-dark !important;
+}
+
+.text-highlight-darkest {
+  color: $colour-highlight-darkest !important;
+}
+
+.border-highlight {
+  border-color: $colour-highlight !important;
+}
+
+.badge-highlight {
+  color: $colour-background !important;
+	background-color: $colour-highlight;
+}
+
+.badge-black {
+  color: $colour-highlight !important;
+	background-color: $colour-background;
+}
+
 // -- Highlight Elements -- //
 
 // -- Scrollbars -- //

@@ -33,6 +33,7 @@ $colour-page:                 transparentize($colour-background, 0.25);
 $colour-dark:                 transparentize($colour-background, 0.2);
 $colour-shadow:               transparentize($colour-background, 0.6);
 $colour-highlight: 						#fef513;
+$colour-highlight-mid:        darken($colour-highlight, 10%);
 $colour-highlight-dark:       darken($colour-highlight, 20%);
 $colour-highlight-darkest:    darken($colour-highlight, 40%);
 $colour-debug: 								#888888;

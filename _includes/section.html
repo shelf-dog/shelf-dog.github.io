@@ -1,12 +1,12 @@
 <div class="{% if include.class %}{{ include.class }}{% endif %}">
   {%- if include.title -%}{%- capture title -%}
-## __{{ include.title }}__{:.font-larger-120 .bg-dark .py-1 .px-2 .border .font-weight-light}
+## __{{ include.title }}__{:.font-larger-120 .bg-dark .text-white .py-1 .px-2 .rounded-lg .font-weight-light .titles}
 {:.mx-0 .my-2 .my-lg-3}
   {%- endcapture -%}
   {{ title | markdownify | strip }}
   {%- endif -%}
   {%- if include.title -%}<div class="mx-1 mx-lg-2">{%- endif -%}
-  {%- capture content -%}{% include_relative {{ include.content }}.md %}{%- endcapture -%}
+  {%- capture content -%}{% if include.markdown %}{{ include.markdown }}{% else %}{% include_relative {{ include.content }}.md %}{% endif %}{%- endcapture -%}
   {{ content | markdownify | strip }}
   {%- if include.title -%}</div>{%- endif -%}
 </div>

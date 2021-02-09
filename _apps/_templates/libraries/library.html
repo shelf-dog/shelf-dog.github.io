@@ -26,7 +26,9 @@
   <div class="card-footer text-muted d-flex justify-content-between">
     {{~#present meta~}}{{~#if meta.capabilities~}}
       <div class="library_capabilities text-light">
-        {{~#if meta.capabilities.loan~}}<span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="You can <strong>borrow</strong> from this library">local_library</span>{{~/if~}}  
+        {{~#if meta.capabilities.loan~}}<span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="You can <strong>borrow</strong> from this library{{#if meta.capabilities.loan_length}} for {{meta.capabilities.loan_length}} day{{#is meta.capabilities.loan_length 'gt' 1}}s{{/is}}{{/if}}">local_library</span>{{~/if~}}
+        {{~#if meta.capabilities.loan_requests~}}<span class="material-icons mr-1 text-secondary bg-dark rounded p-1" data-toggle="tooltip" data-html="true" title="You can <strong>request</strong> from this library">shopping_basket</span>{{~/if~}}
+        {{~#if meta.capabilities.online_items~}}<span class="material-icons mr-1 text-success" data-toggle="tooltip" data-html="true" title="You can <strong>read online</strong> with this library">language</span>{{~/if~}}
       </div>
       <div class="library_contents">
         {{~#if meta.contents~}}{{~#if meta.contents.books.audio~}}<span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Library contains <strong>Audio</strong> Books">hearing</span>{{~/if~}}

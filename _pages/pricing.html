@@ -64,24 +64,31 @@ nav: true
 ---
 <div class="container-fluid my-3">
   <div class="row">
-    <div class="col-12">
+    <div class="col-12 font-larger-110">
       {% include section.html content="_content/SUBSCRIPTION" %}
     </div>
   </div>
+  <hr class="border-highlight o-50">
   <div class="row no-gutters my-2">
-    <div class="col-12">
-      <div class="card-deck tiers">
+    <div class="col-12 my-2">
+      <div class="card-deck justify-content-around tiers my-xl-2">
         {%- for value in site.data.tiers -%}
           {%- assign id = value[0] -%}
           {%- assign tier = value[1] -%}
-          {%- include tier.html id=id tier=tier class="border border-light mb-3 mb-lg-0" -%}
+          {%- include tier.html id=id tier=tier class="border border-light mb-3 mb-lg-0" max-width="25em" -%}
         {%- endfor -%}
       </div>
     </div>
   </div>
+  <hr class="border-highlight o-50">
   <div class="row">
     <div class="col-12">
       {% include section.html content="_content/CANCELLATION" title="Data Ownership &amp; Cancellations" %}
+    </div>
+  </div>
+  <hr class="border-highlight o-50">
+  <div class="row">
+    <div class="col-12">
       {% include section.html content="_content/HARDSHIP" title="Hardship" %}
     </div>
   </div>
