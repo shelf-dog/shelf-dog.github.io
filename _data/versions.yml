@@ -1,11 +1,12 @@
 site :
-  0.0.8b :
-    name : Site v0.0.8b
+  0.0.8c :
+    name : Site v0.0.8c
     desc : Initial Version
-    numeric : 0.0.8.2
+    numeric : 0.0.8.3
     type:
       - alpha
     changes :
+      - Handle yet to configured Library
       - Library Swap Focus
       - Full Screen PWA Options in Library and Manage
   0.0.8 :
@@ -37,6 +38,7 @@ site :
     name : Site v0.0.7c
     desc : Initial Version
     numeric : 0.0.7.3
+    api : 1.7.0
     type:
       - alpha
     changes :

@@ -348,9 +348,10 @@ App = function() {
       FN.libraries.first().then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : FN.libraries.one(ರ‿ರ.index = index))
           .then(library => ರ‿ರ.library = library)
           .then(library => FN.libraries.db(library)
-            .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities)))
+            .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), result && result.data ? FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities) : null))
             .then(db => ರ‿ರ.db = db)
-            .then(() => {
+            .then(db => {
+              if (!db) return;
               ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
               $("#explore-library .library-name").text(library.name);
             

@@ -1195,9 +1195,9 @@ App = function() {
        ), ರ‿ರ.library = library))
     
       .then(library => FN.libraries.db(library)
-        .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities)))
+        .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), result && result.data ? FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities) : null))
         .then(db => ರ‿ರ.db = db)
-        .then(() => library.meta.claims && library.meta.claims.manage ? FN.library.show(ಱ.index, library) : FN.library.redirect(index)))
+        .then(db => db ? library.meta.claims && library.meta.claims.manage ? FN.library.show(ಱ.index, library) : FN.library.redirect(index) : null))
       .then(ಠ_ಠ.Main.busy("Opening Library", true)),
 
     redirect: index => window.location.href = ಠ_ಠ.Flags.decorate(ಠ_ಠ.Flags.full(`/app/library/#library.${index}`)),
