@@ -1,11 +1,12 @@
 site :
-  0.0.8c :
-    name : Site v0.0.8c
+  0.0.8d :
+    name : Site v0.0.8d
     desc : Initial Version
-    numeric : 0.0.8.3
+    numeric : 0.0.8.4
     type:
       - alpha
     changes :
+      - BUG FIXED - Searching for Physical Copy in Manage
       - Handle yet to configured Library
       - Library Swap Focus
       - Full Screen PWA Options in Library and Manage

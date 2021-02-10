@@ -550,7 +550,7 @@
       
       book : id => _find(`WHERE ID = ${id}`),
       
-      copy : (id, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.id = custom_column_1.id WHERE ${_custom(field).table}.value = '${id}')`),
+      copy : (id, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.value = custom_column_1.id WHERE ${_custom(field).table}.value = '${id}')`),
       
       isbn : isbn => _find(`WHERE ${_.chain(ರ‿ರ.identifiers).filter(identifier => identifier && identifier.indexOf("isbn") >= 0).map(identifier => `ID IN (SELECT identifiers.book from identifiers WHERE type = '${identifier}' and val = '${isbn}')`).value().join(" or ")}`),
       
