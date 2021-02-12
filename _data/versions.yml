@@ -1,11 +1,12 @@
 site :
-  0.0.8d :
-    name : Site v0.0.8d
+  0.0.8e :
+    name : Site v0.0.8e
     desc : Initial Version
-    numeric : 0.0.8.4
+    numeric : 0.0.8.5
     type:
       - alpha
     changes :
+      - BUG FIXED - Recently Updated Books in Libraries without Tags
       - BUG FIXED - Searching for Physical Copy in Manage
       - Handle yet to configured Library
       - Library Swap Focus

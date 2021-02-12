@@ -568,7 +568,7 @@
         .concat(_search.select(null, null, `last_modified AS '${options.updated}'`))
         .concat(["UNION ALL"])
         .concat(_search.select(null, null, `timestamp AS '${options.updated}'`))
-        .concat([")", "WHERE Tags <> 'UNKNOWN_BOOK'", "GROUP BY ID"]), options.updated),
+        .concat([")", "WHERE Tags IS NULL OR Tags <> 'UNKNOWN_BOOK'", "GROUP BY ID"]), options.updated),
 
     },
     
