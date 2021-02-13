@@ -21,7 +21,10 @@ App = function() {
     COLOUR_FAILURE_INPUT_FORE = "#ffffff",
     COLOUR_SUCCESS = "#0a430d8f";
 
-  const REGEX_ISBN = /^(97(8|9))?\d{9}(\d|X)$/;
+  const DELAYS = {
+    ui : 50,
+    message : 5000
+  };
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -77,21 +80,6 @@ App = function() {
   /* <!-- Hookup Functions --> */
 
 
-  /* <!-- Book Functions --> */
-  FN.book = {
-
-    get: (id, force) => {
-      var book = REGEX_ISBN.test(id) ?
-        ರ‿ರ.db.find.isbn(id) :
-        ರ‿ರ.library.meta.capabilities.loan_field && !force ?
-        ರ‿ರ.db.find.copy(id, ರ‿ರ.library.meta.capabilities.loan_field) : /\d+/.test(id) ? ರ‿ರ.db.find.book(id) : null;
-      return book && book.values.length >= 0 ? _.object(book.columns, book.values[0]) : book;
-    },
-
-  };
-  /* <!-- Book Functions --> */
-
-
   /* <!-- Get Functions --> */
   FN.get = {
 
@@ -127,7 +115,7 @@ App = function() {
               .reduce((memo, values, key) => {
 
                 var _count = ರ‿ರ.library.meta.capabilities.loan_field ?
-                  _ln(FN.book.get(key, true), ರ‿ರ.library.meta.capabilities.loan_field) : 1;
+                  _ln(FN.books.get(key, true), ರ‿ರ.library.meta.capabilities.loan_field) : 1;
 
                 values = _.filter(values, value => value.user && memo.users.indexOf(value.user.id) < 0);
                 _.times(_count, index => {
@@ -148,71 +136,88 @@ App = function() {
           }
           return requests;
         }))
-      .then(requests => (ಠ_ಠ.Flags.log("Requests:", requests), _.extend({
-        title: filtered ? "Filtered Requests" : "Requests",
-        icon: "shopping_basket",
-        background: "secondary",
-        movable: true,
-      }, requests && requests.length > 0 ? {
-        template: "requests",
-        resizable: true,
-        count: requests.length,
-        requests: requests
-      } : {
-        template: "empty",
-        message: "No Requests Found"
-      }))),
+      .catch(e => (ಠ_ಠ.Flags.error("Fetching Requests Error", e), false))
+      .then(requests => {
+        var _title = filtered ? "Filtered Requests" : "Requests";
+        if (requests === false) {
+          return FN.show.error(_title, "ERROR_REQUESTS");
+        } else {
+          ಠ_ಠ.Flags.log("Requests:", requests);
+          return _.extend({
+            title: _title,
+            icon: "shopping_basket",
+            background: "secondary",
+            movable: true,
+          }, requests && requests.length > 0 ? {
+            template: "requests",
+            resizable: true,
+            count: requests.length,
+            requests: requests
+          } : {
+            template: "empty",
+            message: "No Requests Found"
+          });
+        }
+      }),
 
     statistics: () => FN.libraries.statistics(ರ‿ರ.library)
-      .then(statistics => (ಠ_ಠ.Flags.log("STATISTICS:", statistics), {
-        template: "statistics",
-        title: "Statistics",
-        movable: true,
-        background: "info",
-        icon: "insights",
-        values: (statistics.overdue ? [{
-            name: "Overdue",
-            count: statistics.overdue,
-            route: "show.loans.overdue",
-            size: "h4",
-            background: "danger"
-          }] : []).concat(statistics.requests ? [{
-            name: "Requests",
-            count: statistics.requests,
-            route: "show.requests",
-            size: "h4",
-            background: "secondary"
-          }] : []).concat([{
-            name: "Outstanding",
-            count: statistics.outstanding,
-            route: "show.loans.outstanding",
-            size: "h4",
-            background: "warning"
-          }, {
-            name: "Returned",
-            count: statistics.returned,
-            route: "show.loans.returned",
-            background: "success"
-          }, {
-            name: "Loaned",
-            count: statistics.loaned,
-            route: "show.loans.all",
-            background: "light"
-          }, {
-            name: "Avg. Loan Length",
-            count: statistics.durations ? ಠ_ಠ.Dates.duration(statistics.durations * 60 * 60 * 1000).humanize() : statistics.durations,
-          }, ])
-          .concat(_.chain(statistics.weeks).map((count, week) => ({
-            prefix: "Loans",
-            name: `Week: ${week}`,
-            week: week,
-            class: "small py-1",
-            size: "h6",
-            colour: "info",
+      .catch(e => (ಠ_ಠ.Flags.error("Fetching Requests Error", e), false))
+      .then(statistics => {
+        if (statistics === false) {
+          return FN.show.error("Statistics", "ERROR_STATISTICS");
+        } else {
+          ಠ_ಠ.Flags.log("STATISTICS:", statistics);
+          return {
+            template: "statistics",
+            title: "Statistics",
+            movable: true,
             background: "info",
-            count: count
-          })).sortBy("week").reverse().value())
-      })),
+            icon: "insights",
+            values: (statistics.overdue ? [{
+                name: "Overdue",
+                count: statistics.overdue,
+                route: "show.loans.overdue",
+                size: "h4",
+                background: "danger"
+              }] : []).concat(statistics.requests ? [{
+                name: "Requests",
+                count: statistics.requests,
+                route: "show.requests",
+                size: "h4",
+                background: "secondary"
+              }] : []).concat([{
+                name: "Outstanding",
+                count: statistics.outstanding,
+                route: "show.loans.outstanding",
+                size: "h4",
+                background: "warning"
+              }, {
+                name: "Returned",
+                count: statistics.returned,
+                route: "show.loans.returned",
+                background: "success"
+              }, {
+                name: "Loaned",
+                count: statistics.loaned,
+                route: "show.loans.all",
+                background: "light"
+              }, {
+                name: "Avg. Loan Length",
+                count: statistics.durations ? ಠ_ಠ.Dates.duration(statistics.durations * 60 * 60 * 1000).humanize() : statistics.durations,
+              }, ])
+              .concat(_.chain(statistics.weeks).map((count, week) => ({
+                prefix: "Loans",
+                name: `Week: ${week}`,
+                week: week,
+                class: "small py-1",
+                size: "h6",
+                colour: "info",
+                background: "info",
+                count: count
+              })).sortBy("week").reverse().value())
+          };
+        }
+      }),
 
   };
   /* <!-- Get Functions --> */
@@ -221,6 +226,15 @@ App = function() {
   /* <!-- Show Functions --> */
   FN.show = {
 
+    error: (title, message) => ({
+            template: "empty",
+            title: title,
+            background: "danger",
+            icon: "error_outline",
+            movable: true,
+            message: ಠ_ಠ.Display.doc.get(message)
+          }),
+            
     details: (id, value, template, movable, resizable, fixed) => {
       var _existing = $(`.details .detail[data-index=${id}]`);
       value.id = id;
@@ -306,7 +320,7 @@ App = function() {
 
     generic: (title, data, search, property, suffix) => {
       var _loading = FN.show.loading(uuid.v4(), FN.show.overview.generic(title));
-      return FN.common.delay(100).then(() => {
+      return FN.common.delay(DELAYS.ui).then(() => {
         var _results = FN.list.rows(_.tap(data(), data => {
           if (data && data.values && property) _.each(data.values, row => {
             if (row && row.length > search && row[search]) row[search] = {
@@ -375,20 +389,23 @@ App = function() {
         }
       })),
 
-    process: loan => {
+    process: books => loan => {
 
-      var book = FN.book.get(loan.copy || loan.id),
-        loaned = loan.date ? ಠ_ಠ.Dates.parse(loan.date) : "",
-        returned = loan.returned && _.isString(loan.returned) ? ಠ_ಠ.Dates.parse(loan.returned) : loan.returned,
-        duration = loaned && _.isObject(loaned) ?
-        returned && _.isObject(returned) ?
-        ಠ_ಠ.Dates.duration(returned - loaned) :
-        ಠ_ಠ.Dates.duration(ಠ_ಠ.Dates.now() - loaned) : null;
+      var id = loan.copy || loan.id,
+          book = books ? _.find(books, book => ರ‿ರ.library.meta.capabilities.loan_field ? 
+                                book[ರ‿ರ.library.meta.capabilities.loan_field].indexOf(id) >= 0 : book.ID == id) : FN.books.get(id),
+          loaned = loan.date ? ಠ_ಠ.Dates.parse(loan.date) : "",
+          returned = loan.returned && _.isString(loan.returned) ? ಠ_ಠ.Dates.parse(loan.returned) : loan.returned,
+          duration = loaned && _.isObject(loaned) ?
+            returned && _.isObject(returned) ?
+              ಠ_ಠ.Dates.duration(returned - loaned) :
+              ಠ_ಠ.Dates.duration(ಠ_ಠ.Dates.now() - loaned) : null;
       return {
         decorate: true,
         command: loan.copy || loan.id ? `/app/library/#library.${ಱ.index}.${loan.id ? loan.id : `search.${loan.copy}`}` : "",
         item: loan.copy || loan.id,
         description: book ? `<strong>${book.Title}</strong>${book.Authors && book.Authors.length ? `<br/>${_.isString(book.Authors) ? book.Authors : book.Authors.join(" | ")}` : ""}` : "",
+        missing : !book,
         who: loan.user,
         when: loaned,
         returned: returned,
@@ -401,26 +418,34 @@ App = function() {
 
     },
 
-    show: (id, details, background, icon) => loans => loans && loans.length > 0 ?
-      FN.loans.augment(FN.show.details(id, {
-        title: details,
-        background: background,
-        icon: icon,
-        movable: true,
-        resizable: true,
-        count: loans.length,
-        loans: _.map(_.tap(loans, loans => ಠ_ಠ.Flags.log(`LOANS for [${details}]:`, loans)), FN.loans.process)
-      }, "all")) : FN.show.details(id, {
-        title: details,
-        background: background,
-        icon: icon,
-        movable: true,
-        message: "No Loans Found"
-      }, "empty"),
+    show: (id, details, background, icon) => loans => {
+      if (loans && loans.length > 0) {
+        return FN.loans.augment(FN.show.details(id, {
+          title: details,
+          background: background,
+          icon: icon,
+          movable: true,
+          resizable: true,
+          count: loans.length,
+          loans: _.map(_.tap(loans, loans => ಠ_ಠ.Flags.log(`LOANS for [${details}]:`, loans)),
+                       FN.loans.process(FN.books.get(_.map(loans, loan => loan.copy || loan.id))))
+        }, "all"));
+      } else if (loans === false) {
+        return FN.show.details(id, FN.show.error(details, "ERROR_LOANS"));
+      } else {
+        return FN.show.details(id, {
+          title: details,
+          background: background,
+          icon: icon,
+          movable: true,
+          message: "No Loans Found"
+        }, "empty");
+      }
+    },
 
     generic: (fn, title, background, icon) => fn(ರ‿ರ.library)
-      .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()), title, background, icon))
-      .catch(e => ಠ_ಠ.Flags.error("Fetching Loans Error", e)),
+      .catch(e => (ಠ_ಠ.Flags.error("Fetching Loans Error", e), false))
+      .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()), title, background, icon)),
 
     all: () => FN.loans.generic(FN.libraries.loans.all, "All Loans", "light"),
 
@@ -461,17 +486,17 @@ App = function() {
       ಠ_ಠ.Flags.log("SEARCHING:", terms);
       if (!terms || terms.length != 1) return;
       
-      var _type = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi.test(terms) ? "user" : "copy",
-        _isbn = _.isString(terms[0]) ? REGEX_ISBN.test(terms) : false,
-        _book = _type == "copy" ? _.isString(terms[0]) ? FN.book.get(terms[0]) : FN.book.get(terms[0].value, true) : null;
+      var _type = FN.common.check.user(terms) ? "user" : "copy",
+        _isbn = _.isString(terms[0]) ? FN.common.check.isbn(terms) : false,
+        _book = _type == "copy" ? _.isString(terms[0]) ? FN.books.get(terms[0]) : FN.books.get(terms[0].value, true) : null;
       
       var _loans = (_isbn || _.isObject(terms[0])) && _book ? 
           ರ‿ರ.library.meta.capabilities.loan_field ? (_type = "copies", _book[ರ‿ರ.library.meta.capabilities.loan_field]) : _book.ID : terms;
       
       return FN.libraries.loans[_type](ರ‿ರ.library, _loans)
+        .catch(e => (ಠ_ಠ.Flags.error("Searching Loans Error", e), false))
         .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()),
-          `Loans for ${_type == "user" ? terms : _book ? _type == "copy" && ರ‿ರ.library.meta.capabilities.loan_field ? `${_book.Title} | ${terms}`: _book.Title : terms}`, "light"))
-        .catch(e => ಠ_ಠ.Flags.error("Searching Loans Error", e));
+          `Loans for ${_type == "user" ? terms : _book ? _type == "copy" && ರ‿ರ.library.meta.capabilities.loan_field ? `${_book.Title} | ${terms}`: _book.Title : terms}`, "light"));
     },
 
   };
@@ -482,7 +507,7 @@ App = function() {
   FN.items = {
 
     return: () => Promise.resolve(FN.show.loading(uuid.v4(), FN.show.overview.generic("Loans for Return")))
-      .then(loading => FN.common.delay(200).then(() => FN.show.details(loading, {
+      .then(loading => FN.common.delay(DELAYS.ui).then(() => FN.show.details(loading, {
           title: "Returns",
           template: "returns",
           icon: "playlist_add_check",
@@ -512,12 +537,12 @@ App = function() {
                     busy.text("Invalid | No Loan Found").parents("tr").css("background-color", COLOUR_FAILURE)
                       .find("input").css("background-color", COLOUR_FAILURE_INPUT_BACK).css("color", COLOUR_FAILURE_INPUT_FORE);
                     _.delay(() => busy.text("").parents("tr").css("background-color", "")
-                      .find("input").css("background-color", "").css("color", ""), 5000);
+                      .find("input").css("background-color", "").css("color", ""), DELAYS.message);
                     enable(true);
 
                   } else {
 
-                    var item = FN.book.get(availability[0].copy);
+                    var item = FN.books.get(availability[0].copy);
                     ಠ_ಠ.Flags.log("RETURNED ITEM", item);
                     ಠ_ಠ.Flags.log("ITEM AVAILABILITY", availability);
 
@@ -541,14 +566,14 @@ App = function() {
                         });
                       } else {
                         busy.text("Returned | No Book Found").parent("tr").css("background-color", COLOUR_SUCCESS);
-                        _.delay(() => busy.parents("tr").remove(), 5000);
+                        _.delay(() => busy.parents("tr").remove(), DELAYS.message);
                       }
 
                     } else {
 
                       /* <!-- Not available | Perhaps duplicate loan? --> */
                       busy.text("Unavailable | Duplicate Loan?").parent().css("background-color", COLOUR_SUCCESS);
-                      _.delay(() => busy.text("").parent().css("background-color", ""), 5000);
+                      _.delay(() => busy.text("").parent().css("background-color", ""), DELAYS.message);
                       enable(true);
 
                     }
@@ -600,10 +625,7 @@ App = function() {
     return_batch: () => ಠ_ಠ.Display.text({
         id: "returns_create",
         target: $("body"),
-        title: ಠ_ಠ.Display.doc.get({
-          name: "TITLE_CONFIRM_RETURNS",
-          trim: true
-        }),
+        title: ಠ_ಠ.Display.doc.get("TITLE_CONFIRM_RETURNS", null, true),
         rows: 8,
         control_class: "o-80",
         message: ಠ_ಠ.Display.doc.get("CONFIRM_RETURNS"),
@@ -646,7 +668,7 @@ App = function() {
       .catch(e => e ? ಠ_ಠ.Flags.error("Return Book/s Error", e) : ಠ_ಠ.Flags.log("Return Book/s Cancelled")),
 
     loan: () => Promise.resolve(FN.show.loading(uuid.v4(), FN.show.overview.generic("Loans for Entry")))
-      .then(loading => FN.common.delay(200).then(() => FN.show.details(loading, {
+      .then(loading => FN.common.delay(DELAYS.ui).then(() => FN.show.details(loading, {
           title: "Enter Loans",
           template: "new_loans",
           icon: "playlist_add",
@@ -669,12 +691,12 @@ App = function() {
                 target: busy.parents("tbody")
               }));
 
-              var item = FN.book.get(copy),
+              var item = FN.books.get(copy),
                 failure = message => {
                   busy.html(message).parents("tr").css("background-color", COLOUR_FAILURE)
                     .find("input").css("background-color", COLOUR_FAILURE_INPUT_BACK).css("color", COLOUR_FAILURE_INPUT_FORE);
                   _.delay(() => busy.html("").parents("tr").css("background-color", "")
-                    .find("input").css("background-color", "").css("color", ""), 5000);
+                    .find("input").css("background-color", "").css("color", ""), DELAYS.message);
                   enable(true);
                 };
 
@@ -893,7 +915,7 @@ App = function() {
           _count = 0,
           _unknown = [],
           _loan = loan => {
-            var item = FN.book.get(loan.Item),
+            var item = FN.books.get(loan.Item),
               action = (id, isbn, copy, item) => FN.libraries.log.loan(ರ‿ರ.library, loan.Who, id, isbn, copy,
                 FN.common.format.details(item))
               .then(availability => {
@@ -958,7 +980,7 @@ App = function() {
         _target.css("background-color", "");
         _target.find(".data-result").addClass("d-none").empty();
         _target.find(".data-commands").removeClass("d-none");
-      }, 5000);
+      }, DELAYS.message);
     },
 
     success: (id, user, type, message) => FN.item.notify(id, user, type, message, COLOUR_SUCCESS),
@@ -1082,7 +1104,7 @@ App = function() {
 
     loan: (id, user, confirmation, copy, target) => {
 
-      var book = FN.book.get(id, true);
+      var book = FN.books.get(id, true);
       if (!book) return (ಠ_ಠ.Flags.log(`Unable to Find Book for ID=${id}`), null);
 
       var _target = FN.item.row(target || id, user, "request");
@@ -1289,7 +1311,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer", "PWA"], 
+      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer", "PWA", "Books"], 
              module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
@@ -1313,7 +1335,8 @@ App = function() {
       }
 
       /* <!-- Default Route used in case we arrived here directly (instead of from another page) --> */
-      if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Display.state().in(FN.states.manage.working)) window.location.hash = `#${DEFAULT_ROUTE}`;
+      if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Flags.initial() && !ಠ_ಠ.Display.state().in(FN.states.manage.working)) 
+        window.location.hash = `#${DEFAULT_ROUTE}`;
       
     },
 
@@ -1322,7 +1345,7 @@ App = function() {
 
 
   /* <!-- Route Handlers --> */
-  FN.routes = () => ({
+  FN.routes = router => ({
 
     library: {
       matches: /LIBRARY/i,
@@ -1334,7 +1357,7 @@ App = function() {
       tidy: true,
       fn: command => (command && _.isArray(command) && command.length >= 1 ?
           FN.library.open(command[0]) : FN.library.open(command || ಱ.index))
-        .then(() => command && command.length >= 2 ? this.route(command.slice(command.length - 2)) :
+        .then(() => command && command.length > 2 ? router.route(command.slice(command.length - 2)) :
           $("header.navbar form[data-role='search'] input[role='search']").val("")),
     },
 
@@ -1722,7 +1745,7 @@ App = function() {
           show: "MANAGE_SEARCH_INSTRUCTIONS",
           title: "Searching a Library ..."
         }],
-        routes: FN.routes(),
+        routes: FN.routes(this),
         route: () => false,
         /* <!-- PARAMETERS: handled, command --> */
       });

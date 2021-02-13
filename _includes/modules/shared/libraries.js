@@ -7,13 +7,14 @@ Libraries = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-    cache: factory.Dates.duration("45", "minutes"),
-    db_cache: factory.Dates.duration("30", "minutes"),
+    cache: factory.Dates.duration("2", "hours"),
+    long_cache: factory.Dates.duration("30", "days"),
+    db_cache: factory.Dates.duration("4", "hours"),
     cover_cache: factory.Dates.duration("2", "days"),
     statistics_cache: factory.Dates.duration("5", "minutes"),
-    users_cache: factory.Dates.duration("60", "minutes"),
+    users_cache: factory.Dates.duration("8", "hours"),
     download_cache: factory.Dates.duration("7", "days"),
-    folder_cache: factory.Dates.duration("120", "minutes"),
+    folder_cache: factory.Dates.duration("1", "day"),
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -65,7 +66,8 @@ Libraries = (options, factory) => {
   var _prepare = (endpoints, force) => Promise.all(_.chain(endpoints)
                                         .map(_endpoint).map(endpoint => _meta(endpoint, force)).value());
   
-  var _all = force => options.functions.cache.get("endpoints", options.cache, options.functions.client.endpoints, force)
+  var _all = (force, stale) => options.functions.cache.get("endpoints", 
+                                stale ? options.long_cache : options.cache, options.functions.client.endpoints, force)
       .then(value => {
         if (options.functions.events) factory.Main.event(options.functions.events.endpoints.loaded, 
                             value && value.endpoints ? Math.max(value.endpoints.length, 1) : 1);
@@ -82,9 +84,9 @@ Libraries = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.all = force => !force && ರ‿ರ.all ? Promise.resolve(ರ‿ರ.all) : _all(force);
+  FN.all = (force, stale)  => !force && ರ‿ರ.all ? Promise.resolve(ರ‿ರ.all) : _all(force, stale);
   
-  FN.one = index => FN.all().then(libraries => _.isNumber(index) ? libraries[index] : /\d+/.test(index) ? 
+  FN.one = index => FN.all(false, true).then(libraries => _.isNumber(index) ? libraries[index] : /\d+/.test(index) ? 
                                     libraries[parseInt(index)] : _.find(libraries, library => String.equal(library.code, index, true))),
   
   FN.first = fn => FN.all().then(libraries => libraries ? fn ? _.find(libraries, fn) :  libraries.length > 0 ? 
@@ -99,7 +101,7 @@ Libraries = (options, factory) => {
   FN.db = value => FN.select(value)
     .then(library => options.functions.cache.get(library.cache("DB"), {
       age: options.db_cache,
-      fn: (stored, data) => library.api("HASH").then(hash => hash == data.hash),
+      fn: (stored, data) => library.api("HASH").then(hash => hash == data.hash).catch(() => null),
     }, () => library.api("DB", {base64: true}, 60000, true).then(result => {
       if (!result) return false;
       result.data = _bytes(result.data);
@@ -186,8 +188,8 @@ Libraries = (options, factory) => {
     
   };
   
-  FN.statistics = value => FN.select(value).then(library => options.functions.cache.get(library.cache("STATISTICS"), options.statistics_cache,
-                                                  () => library.api("STATISTICS", null, null, true)));
+  FN.statistics = value => FN.select(value).then(library => options.functions.cache.get(library.cache("STATISTICS"), 
+                                                  options.statistics_cache, () => library.api("STATISTICS", null, null, true)));
   
   FN.log = {
     

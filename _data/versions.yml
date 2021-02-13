@@ -1,4 +1,13 @@
 site :
+  0.0.8f :
+    name : Site v0.0.8f
+    desc : Performance Improvements
+    numeric : 0.0.8.6
+    type:
+      - alpha
+    changes :
+      - Performance Improvements
+      - Better handling of Loans & Requests Timeouts
   0.0.8e :
     name : Site v0.0.8e
     desc : Initial Version

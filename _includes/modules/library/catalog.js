@@ -548,9 +548,13 @@
     
     find : {
       
-      book : id => _find(`WHERE ID = ${id}`),
+      books : ids => _find(`WHERE ${_.map(ids, id => `ID = ${id}`).join(" OR ")}`),
       
-      copy : (id, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.value = custom_column_1.id WHERE ${_custom(field).table}.value = '${id}')`),
+      book : id => _queries.find.books([id]),
+      
+      copies : (ids, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.value = custom_column_1.id WHERE ${_.map(ids, id =>`${_custom(field).table}.value = '${id}'`).join(" OR ")})`),
+      
+      copy : (id, field) => _queries.find.copies([id], field),
       
       isbn : isbn => _find(`WHERE ${_.chain(ರ‿ರ.identifiers).filter(identifier => identifier && identifier.indexOf("isbn") >= 0).map(identifier => `ID IN (SELECT identifiers.book from identifiers WHERE type = '${identifier}' and val = '${isbn}')`).value().join(" or ")}`),
       

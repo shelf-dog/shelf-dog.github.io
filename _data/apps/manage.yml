@@ -95,6 +95,7 @@ modules:
   - shared/libraries
   - shared/select
   - shared/pwa
+  - shared/books
   - library/catalog
   - library/lexer
 scripts: 
@@ -158,6 +159,9 @@ docs:
   - manage/results/LOAN_FAILED
   - manage/instructions/MANAGE_SEARCH_INSTRUCTIONS
   - manage/instructions/CREATE_LOANS_INSTRUCTIONS
+  - manage/errors/ERROR_LOANS
+  - manage/errors/ERROR_REQUESTS
+  - manage/errors/ERROR_STATISTICS
   - dialogs/CONFIRM_RETURN
   - dialogs/CONFIRM_RETURNS
   - dialogs/CONFIRM_LOANS

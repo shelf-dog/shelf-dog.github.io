@@ -11,7 +11,7 @@
   
   {{~else~}}
   
-  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-{{#if (any (is background 'dark') (is background 'primary'))}}light{{else}}body{{/if}} mb-1 border border-background">
+  <div class="card-header d-flex align-items-center justify-content-between bg-{{either background 'success'}} text-{{#if (any (is background 'dark') (is background 'primary') (all (is background 'danger') (is icon 'error_outline')))}}light{{else}}body{{/if}} mb-1 border border-background">
     <div class="d-flex align-items-center">
       <a href="#" data-action="close" class="d-flex mr-1 text-{{#if (any (is background 'dark') (is background 'primary'))}}light{{else}}dark{{/if}} text-decoration-none o-50">
         <span class="material-icons">close</span>

@@ -27,7 +27,19 @@ Cache = (options, factory) => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
-  var _valid = (value, age) => {
+  var _update = (key, value) => ರ‿ರ.db.setItem(key, {
+      accessed: value.accessed,
+      stored: value.stored = factory.Dates.now().toISOString(),
+      data: value.data
+    }).catch(e => (factory.Flags.error("CACHE Update Error:", e), key));
+  
+  var _touch = (key, value) => ರ‿ರ.db.setItem(key, {
+      accessed: value.accessed = factory.Dates.now().toISOString(),
+      stored: value.stored,
+      data: value.data
+    }).catch(e => (factory.Flags.error("CACHE Touch Error:", e), key));
+  
+  var _valid = (value, age, key) => {
     var _stored = factory.Dates.parse(value.stored);
     if (_.isFunction(age)) {
       return Promise.resolve(age(_stored, value.data));
@@ -35,18 +47,16 @@ Cache = (options, factory) => {
       var _age = factory.Dates.duration(factory.Dates.now().diff(_stored));
       if (age.age && age.fn && _.isFunction(age.fn)) {
         return _age.asMilliseconds() <= age.age.asMilliseconds() ? 
-          Promise.resolve(true) : Promise.resolve(age.fn(_stored, value.data));
+          Promise.resolve(true) : Promise.resolve(age.fn(_stored, value.data)).then(result => {
+            /* <!-- TRUE = Check Function has returned Good, null consider it a pass but don't update the Cache --> */
+            if (result) _update(key, value);
+            return result || result === null;
+          });
       } else {
         return _age.asMilliseconds() <= age.asMilliseconds() ? Promise.resolve(true) : Promise.resolve(false);
       }
     }
   };
-  
-  var _touch = (key, value) => ರ‿ರ.db.setItem(key, {
-      accessed: factory.Dates.now().toISOString(),
-      stored: value.stored,
-      data: value.data
-    }).catch(e => (factory.Flags.error("CACHE Touch Error:", e), key));
   
   var _get = (key, age, force, hit) => force ? 
       (factory.Flags.log("CACHE Forced Override for:", key), Promise.resolve(undefined)) : 
@@ -58,7 +68,7 @@ Cache = (options, factory) => {
               _touch(key, value);
               return value.data;
             } else {
-              return _valid(value, age).then(valid => {
+              return _valid(value, age, key).then(valid => {
                 if (valid) {
                   /* <!-- Cache Hit / Not Stale --> */
                   factory.Flags.log("CACHE Hit for:", key);

@@ -8,6 +8,10 @@ Common = () => {
   /* <!-- Internal Constants --> */
   const FN = {},
         EMAIL_CHANGE = /([a-zA-Z0-9._-]+)"([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i;
+  
+  const REGEX_ISBN = /^(97(8|9))?\d{9}(\d|X)$/,
+        REGEX_ID =  /\d+/,
+        REGEX_EMAIL = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -73,6 +77,18 @@ Common = () => {
       if (details) _result.attr("title", _title);
     }, 5000);
     return _result;
+  };
+  
+  FN.check = {
+    
+    email : value => REGEX_EMAIL.test(value),
+    
+    id : value => REGEX_ID.test(value),
+    
+    isbn : value => REGEX_ISBN.test(value),
+    
+    user : value => REGEX_EMAIL.test(value),
+  
   };
   /* <!-- Public Functions --> */
 

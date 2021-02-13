@@ -35,10 +35,11 @@ Client = (options, factory) => {
     var _retry = times => (action, params, timeout) => {
       var _caller = timeout => _action(action, params, timeout)
         .catch(e => {
-          factory.Flags.error("Action Error", e);
+          factory.Flags.error("API | Library [Action Error]", e);
           if (/timed out\s*^/i.test(e)) {
             if (times > 0) {
               times -= 1;
+              factory.Flags.log("API | Library [Retry]", action);
               return _caller(timeout * 2);
             } else {
               return undefined;
@@ -50,25 +51,25 @@ Client = (options, factory) => {
       return _caller(timeout);
     };
     
-    return (idempotent ? _retry(3) : _action)(action, params, timeout)
+    return (factory.Flags.log("API | Library [Request]", action), (idempotent ? _retry(3) : _action)(action, params, timeout)
       .then(response => response.json())
-      .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
+      .then(value => (factory.Flags.log("API | Library [Response]", value), value)));
     
   };
   
   FN.endpoints = () => factory.Google.scripts.execute(options.directory, "list")
     .then(value => (value && value.done ? 
           value.error ? 
-                    factory.Flags.error("Directory Error", value = value.error) :
+                    factory.Flags.error("API | Directory [Error]", value = value.error) :
           value.response && value.response.result ? 
-                    factory.Flags.log("API Response", value = value.response.result) : null : null, value));
+                    factory.Flags.log("API | Directory [Response]", value = value.response.result) : null : null, value));
   
   FN.user = () => factory.Google.scripts.execute(options.directory, "list", "user")
     .then(value => (value && value.done ? 
           value.error ? 
                     factory.Flags.error("Directory Error", value = value.error) :
           value.response && value.response.result ? 
-                    factory.Flags.log("API Response", value = value.response.result) : null : null, value));
+                    factory.Flags.log("API | Directory [Response]", value = value.response.result) : null : null, value));
   /* <!-- Public Functions --> */
   
   return FN;

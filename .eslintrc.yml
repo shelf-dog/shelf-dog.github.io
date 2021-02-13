@@ -176,3 +176,4 @@ globals:
   EPUB: true
   PDF: true
   PWA: true
+  Books: true
