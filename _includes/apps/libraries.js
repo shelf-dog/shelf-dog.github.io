@@ -6,16 +6,19 @@ App = function() {
 	/* <!-- Returns an instance of this if required --> */
 	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
+  
 	/* <!-- Internal Constants --> */
   const FN = {};
 	/* <!-- Internal Constants --> */
 
+  
 	/* <!-- Internal Variables --> */
 	var ಠ_ಠ, /* <!-- Context --> */
       ರ‿ರ = {}, /* <!-- Session State --> */
       ಱ = {}; /* <!-- Persistant State --> */
 	/* <!-- Internal Variables --> */
 
+  
 	/* <!-- Internal Functions --> */
   var _load = (number, force) => {
     var _libraries = $(".libraries"),
@@ -47,9 +50,12 @@ App = function() {
   };
 	/* <!-- Internal Functions --> */
   
+  
   /* <!-- Setup Functions --> */
   FN.setup = {
 
+    modules: ["Common", "Cache", "Client", "Demo", "Libraries", "PWA"],
+    
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
 
@@ -80,8 +86,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Demo", "Libraries", "PWA"], 
-             module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(FN.setup.modules, module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -111,6 +116,45 @@ App = function() {
   };
   /* <!-- Setup Functions --> */
 
+  
+  /* <!-- Route Handlers --> */
+  FN.routes = () => ({
+    
+    refresh_all: {
+      matches: /REFRESH/i,
+      length: 0,
+      fn: () => {
+        ಠ_ಠ.Display.tidy();
+        _load($(".libraries .library").length, true);
+      }
+    },
+    
+    refresh_library: {
+      matches: /REFRESH/i,
+      length: 1,
+      fn: command => {
+        ಠ_ಠ.Display.tidy();
+        ಠ_ಠ.Display.template.show({
+          template: "library",
+          loading: true,
+          id: command,
+          target: $(`.libraries .library[data-index='${command}']`),
+          replace: true
+        });
+        FN.libraries.refresh(command)
+          .then(result => ಠ_ಠ.Display.template.show(_.extend({
+            template: "library",
+            id: command,
+            target: $(`.libraries .library[data-index='${command}']`),
+            replace: true
+          }, _.omit(result, ["api", "cache"]))));
+      },
+    }
+    
+  });
+  /* <!-- Route Handlers --> */
+    
+  
 	/* <!-- External Visibility --> */
 	return {
 
@@ -132,37 +176,7 @@ App = function() {
         state: ರ‿ರ,
         states: FN.states.all,
         start: FN.setup.routed,
-        routes: {
-          refresh_all: {
-            matches: /REFRESH/i,
-            length: 0,
-            fn: () => {
-              ಠ_ಠ.Display.tidy();
-              _load($(".libraries .library").length, true);
-            }
-          },
-          refresh_library: {
-            matches: /REFRESH/i,
-            length: 1,
-            fn: command => {
-              ಠ_ಠ.Display.tidy();
-              ಠ_ಠ.Display.template.show({
-                template: "library",
-                loading: true,
-                id: command,
-                target: $(`.libraries .library[data-index='${command}']`),
-                replace: true
-              });
-              FN.libraries.refresh(command)
-                .then(result => ಠ_ಠ.Display.template.show(_.extend({
-                  template: "library",
-                  id: command,
-                  target: $(`.libraries .library[data-index='${command}']`),
-                  replace: true
-                }, _.omit(result, ["api", "cache"]))));
-            },
-          }
-        },
+        routes: FN.routes(),
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });
 
@@ -186,7 +200,8 @@ App = function() {
     persistent: ಱ,
     
     /* <!-- Logged Out / Clean --> */
-    clean: () => FN.cache && FN.cache.clear ? FN.cache.clear() : false,
+    clean: () => _.each(FN.setup.modules, module => FN[module.toLowerCase()] && FN[module.toLowerCase()].clean ?
+                        FN[module.toLowerCase()].clean() : false),
     
 	};
 

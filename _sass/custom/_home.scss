@@ -24,27 +24,8 @@ p {margin: 0.5em 0.5em;}
 
 a {text-decoration: none; color: inherit;}
 
-h1, h2, h3, h4, h5, h6 {text-align: center;}
+h1, h2, h3, h4, h5, h6, ul, nav.menu {text-align: center;}
 // -- Regular Elements -- //
-
-// -- Scrollbars -- //
-::-webkit-scrollbar {
-    width: 0.5em;
-}
-
-::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.8);
-}
-
-::-webkit-scrollbar-corner,
-::-webkit-scrollbar-thumb:window-inactive {
-    background: rgba(100, 100, 100, 0.4);
-}
-// -- Scrollbars -- //
 
 // -- Content Area -- //
 .content {
@@ -60,11 +41,19 @@ h1, h2, h3, h4, h5, h6 {text-align: center;}
 
 // -- Font Sizes -- //
 h6 {font-size: 100%};
-h5 {font-size: 105%};
-h4 {font-size: 110%};
-h3 {font-size: 120%};
-h2 {font-size: 160%};
-h1 {font-size: 300%};
+h5 {font-size: 110%};
+h4 {font-size: 125%};
+h3 {font-size: 150%};
+h2 {font-size: 200%};
+h1 {font-size: 500%};
+
+h1 {
+  font-weight: bold;
+}
+
+h2, h3, h4, h5, h6 {
+  color: #ffffff;
+}
 // -- Fonts -- //
 
 // -- Centering Element -- //
@@ -73,6 +62,9 @@ h1 {font-size: 300%};
   position:absolute;
   height:100%;
   width:100%;
+  overflow: hidden;
+  border-left: 8px solid darken($colour-highlight, 10%);
+  border-right: 8px solid darken($colour-foreground, 10%);
 }
 
 .c {
@@ -86,3 +78,24 @@ h1 {font-size: 300%};
   max-width: 600px;
 }
 // -- Centering Element -- //
+
+// -- Ribbons -- //
+.corner-ribbon {
+  text-transform: uppercase;
+  color: $colour-background;
+}
+
+.app-ribbon {
+  background-color: $colour-highlight;
+  &:hover {
+    background-color: darken($colour-highlight, 20%);
+  }
+}
+
+.about-ribbon {
+  background-color: $colour-foreground;
+  &:hover {
+    background-color: darken($colour-foreground, 20%);
+  }
+}
+// -- Ribbons -- //

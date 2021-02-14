@@ -1,9 +1,13 @@
 ### Terms of Service
 {:.anchor .mt-2 .text-highlight .font-weight-bold}
 
-Firstly, thank you for using our app! By accessing or using our app, you agree to the terms set out below, so please __read them carefully__. These terms refer to, and govern, your use of this app, and of this website in general. The code used on this site (and your rights to view and modify it) is subject to copyright and governed by a separate [license agreement](/license/){:.text-highlight-mid .link-jump}. Under these terms, we may refer to this app ([Shelf-Dog](https://shelf.dog){:.text-highlight-mid .link-jump .font-weight-bold}) as _we_, _our_, or _us_.
+Firstly, thank you for using our app! By accessing or using our app, you agree to the terms set out below, so please __read them carefully__{:.text-white .font-weight-normal}. These terms refer to, and govern, your use of this app, and of this website in general. The code used on this site (and your rights to view and modify it) is subject to copyright and governed by a separate [license agreement](/license/){:.text-highlight-mid .link-jump}. Under these terms, we may refer to this app ([Shelf-Dog](https://shelf.dog){:.text-highlight-mid .link-jump .font-weight-bold}) as _we_, _our_, or _us_.
 
 We use a small number of cookies and store some local data in your browser cache. In using this site, and apps, you, therefore, consent to our use of cookies under the terms set out in our [privacy](/privacy/){:.text-highlight-mid .link-jump} and __cookie__{:.text-white .font-weight-normal} policies.
+
+We believe in __transparency__{:.text-white .font-weight-normal}, __free speech__{:.text-white .font-weight-normal} and the importance of __respecting the rights of all__{:.text-white .font-weight-normal}. We will __not tolerate__{:.text-white .font-weight-normal} racism, sexism, prejudice, or any discriminatory behaviour. By making use of our platform you agree not to engage in hateful activities or use our service to facilitate hateful activities engaged in elsewhere, whether online or offline.
+
+We __reserve__{:.text-white .font-weight-normal} the right to __refuse use of our services__{:.text-white .font-weight-normal} to individuals or organisations that do not share, or respect, our values.
 
 ####  No Warranties
 {:.mt-2 .text-highlight .font-weight-bold}

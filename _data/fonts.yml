@@ -7,7 +7,19 @@
 "Poppins":
   weights: "400;700"
   for: [all]
-"Amatic SC":
-  safe: "Amatic+SC"
-  weights: "400;700"
-  for: [home.md, +ABOUT.md, +PRIVACY.md]
+"Reggae One":
+  safe: "Reggae+One"
+  weights: "400"
+  for: [+ABOUT.md, +PRIVACY.md, subscriptions.md]
+"Henny Penny":
+  safe: "Henny+Penny"
+  weights: "400"
+  for: [home.md]
+"Barrio":
+  safe: "Barrio"
+  weights: "400"
+  for: [home.md]
+"Irish Grover":
+  safe: "Irish+Grover"
+  weights: "400"
+  for: []

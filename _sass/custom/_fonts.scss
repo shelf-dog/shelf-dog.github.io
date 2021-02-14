@@ -22,7 +22,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: $fonts-branding;
   }
   font-family: $fonts-heading;
-  &.price, .price {
+  &.price, .price, &.plain {
     font-family: $fonts-general;
   }
   font-weight: $font-weight-heading;
@@ -31,6 +31,10 @@ h1, h2, h3, h4, h5, h6 {
 		color: $colour-emphasis;
 		&:hover {color: $colour-highlight;}
 	}
+}
+
+.sub-brand {
+  font-family: $fonts-subbranding;
 }
 
 .bg-page {

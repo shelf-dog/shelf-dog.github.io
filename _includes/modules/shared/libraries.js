@@ -228,6 +228,8 @@ Libraries = (options, factory) => {
   
   FN.users = value => FN.select(value).then(library => options.functions.cache.get(library.cache("USERS"), options.users_cache,
                                                   () => library.api("USERS", null, null, true)));
+  
+  FN.clean = () => ರ‿ರ = {};
   /* <!-- Public Functions --> */
   
   return FN;

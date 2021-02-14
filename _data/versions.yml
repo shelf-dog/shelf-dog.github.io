@@ -1,4 +1,15 @@
 site :
+  0.0.9 :
+    name : Site v0.0.9
+    desc : General Improvements
+    numeric : 0.0.9.0
+    type:
+      - alpha
+    changes :
+      - Home Page
+      - Brand Updates
+      - Documentation Pages
+      - BUG FIXED - Settings with Cache
   0.0.8f :
     name : Site v0.0.8f
     desc : Performance Improvements

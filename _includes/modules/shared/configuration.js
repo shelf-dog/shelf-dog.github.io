@@ -68,9 +68,13 @@ Configuration = (options, factory) => {
   
   var _get = () => ರ‿ರ.missing ? false : ರ‿ರ.config;
   
-  var _set = values => ರ‿ರ.file ? _update(ರ‿ರ.file.id, values) : _create(values);
+  var _set = values => ರ‿ರ.file ? 
+      _update(ರ‿ರ.file.id, values) : 
+      ರ‿ರ.fn.find().then(file => file && file.id ? _update((ರ‿ರ.file = file).id, values) : _create(values));
   
-  var _clear = id => id ? ರ‿ರ.fn.clear(id).then(result => result ? _cache(options.missing) : result) : Promise.resolve(false);
+  var _clear = id => id ? 
+      ರ‿ರ.fn.clear(id).then(result => result ? _cache(options.missing).then(result => (_process(options.missing), result)) : result) :
+      Promise.resolve(false);
   
   var _start = force => ರ‿ರ.promise = options.functions.cache.get(options.key, options.age, _load, force)
                                         .then(_process);
@@ -83,7 +87,7 @@ Configuration = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.start = _start;
   
-  FN.clear = id => id || ರ‿ರ.file ? _clear(id || ರ‿ರ.file.id) : Promise.resolve(false);
+  FN.clear = id => id || ರ‿ರ.file ? _clear(id || ರ‿ರ.file.id) : Promise.resolve(true);
   
   FN.get = () => (ರ‿ರ.promise || _start()).then(_get);
   

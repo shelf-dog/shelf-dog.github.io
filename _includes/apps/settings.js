@@ -12,6 +12,12 @@ App = function() {
 	/* <!-- Internal Constants --> */
 
   
+  /* <!-- Scope Constants --> */
+  const SCOPE_DRIVE_FILE = "https://www.googleapis.com/auth/drive.file",
+        SCOPE_DRIVE_APPDATA = "https://www.googleapis.com/auth/drive.appdata";
+  /* <!-- Scope Constants --> */
+  
+  
 	/* <!-- Internal Variables --> */
 	var ಠ_ಠ, /* <!-- Context --> */
       ರ‿ರ = {}, /* <!-- Session State --> */
@@ -40,7 +46,8 @@ App = function() {
   /* <!-- Show Functions --> */
   FN.show = {
     
-    personal : () => FN.configuration.get()
+    personal : () => ಠ_ಠ.Main.authorise(SCOPE_DRIVE_APPDATA)
+    .then(result => result === true ? FN.configuration.get() : false)
     .then(settings => {
       
       ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.personal);
@@ -83,10 +90,17 @@ App = function() {
         
         ಠ_ಠ.Flags.log(`Personal Settings to Save [Empty=${_isEmpty}]`, _settings);
 
-        (_isEmpty ? FN.configuration.clear() : FN.configuration.set(_settings))
-          .then(FN.common.result($(e.currentTarget)))
-          .then(ಠ_ಠ.Main.busy("Saving Settings", true));
-
+        ಠ_ಠ.Main.authorise(SCOPE_DRIVE_APPDATA)
+          .then(result => {
+            if (result === true) {
+              (_isEmpty ? FN.configuration.clear() : FN.configuration.set(_settings))
+                .then(FN.common.result($(e.currentTarget)))
+                .then(ಠ_ಠ.Main.busy("Saving Settings", true));
+            } else {
+              ಠ_ಠ.Flags.log("App Data Scope not granted");
+            }
+          });
+          
       });
     }).then(ಠ_ಠ.Main.busy("Loading Settings", true)),
     
@@ -166,6 +180,15 @@ App = function() {
   /* <!-- Show Functions --> */
   
   
+  /* <!-- Creator Functions --> */
+  FN.creator = {
+    
+    log: () => true,
+    
+  };
+  /* <!-- Creator Functions --> */
+  
+  
   /* <!-- Selector Functions --> */
   FN.selector = {
     
@@ -231,9 +254,23 @@ App = function() {
   /* <!-- Selector Functions --> */
   
   
+  /* <!-- Purge Functions --> */
+  FN.purge = {
+    
+    cache: () => FN.common.delay(1000)
+                  .then(FN.cache.clean)
+                  .then(ಠ_ಠ.Main.busy("Purging Cache", true))
+                  .then(FN.common.result($("a[data-purge='cache']"))),
+    
+  };
+  /* <!-- Purge Functions --> */
+  
+  
   /* <!-- Setup Functions --> */
   FN.setup = {
 
+    modules: ["Common", "Cache", "Client", "Configuration", "Select", "Libraries", "Catalog", "PWA"],
+    
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
 
@@ -263,8 +300,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Configuration", "Select", "Libraries", "Catalog"], 
-             module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(FN.setup.modules, module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Create Schema Reference --> */
       ಱ.schema = ಠ_ಠ.Schema().latest();
@@ -290,9 +326,8 @@ App = function() {
       }
       
       /* <!-- Default Route used in case we arrived here directly (instead of from another page) --> */
-      if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Display.state().in(FN.states.settings.working)) 
+      if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Flags.initial() && !ಠ_ಠ.Display.state().in(FN.states.settings.working)) 
         window.location.hash = `#${DEFAULT_ROUTE}`;
-      
     },
 
   };
@@ -302,37 +337,62 @@ App = function() {
   /* <!-- Route Handlers --> */
   FN.routes = () => ({
     
+    create: {
+      matches: /CREATE/i,
+      routes: {
+        
+        log: {
+          matches: /LOG/i,
+          state: FN.states.settings.personal,
+          scopes: SCOPE_DRIVE_FILE,
+          requires: ["google"],
+          length: 0,
+          fn: FN.creator.log,
+        },
+        
+      }
+    },
+    
     select: {
       matches: /SELECT/i,
       routes: {
+        
         logo: {
           matches: /LOGO/i,
-          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          state: FN.states.settings.specific,
+          scopes: SCOPE_DRIVE_FILE,
           requires: ["google"],
           length: 0,
           fn: FN.selector.logo,
         },
+        
         database: {
           matches: /DATABASE/i,
-          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          state: FN.states.settings.specific,
+          scopes: SCOPE_DRIVE_FILE,
           requires: ["google"],
           length: 0,
           fn: FN.selector.database,
         },
+        
         folder: {
           matches: /FOLDER/i,
-          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          state: FN.states.settings.specific,
+          scopes: SCOPE_DRIVE_FILE,
           requires: ["google"],
           length: 0,
           fn: FN.selector.folder,
         },
+        
         log: {
           matches: /LOG/i,
-          scopes: ["https://www.googleapis.com/auth/drive.file"],
+          state: FN.states.settings.personal,
+          scopes: SCOPE_DRIVE_FILE,
           requires: ["google"],
           length: 0,
           fn: FN.selector.log,
         },
+        
       }
     },
     
@@ -370,6 +430,23 @@ App = function() {
           fn: () => ಠ_ಠ.Display.state().enter(FN.states.libraries.selecting),
         },
         
+      },
+      
+    },
+    
+    purge: {
+      matches: /PURGE/i,
+      state: FN.states.settings.personal,
+      tidy: true,
+      
+      routes: {
+
+        cache: {
+          matches: /CACHE/i,
+          length: 0,
+          fn: FN.purge.cache
+        },
+
       },
       
     },
@@ -423,7 +500,8 @@ App = function() {
     persistent: ಱ,
     
     /* <!-- Logged Out / Clean --> */
-    clean: () => FN.cache && FN.cache.clear ? FN.cache.clear() : false,
+    clean: () => _.each(FN.setup.modules, module => FN[module.toLowerCase()] && FN[module.toLowerCase()].clean ?
+                        FN[module.toLowerCase()].clean() : false),
     
 	};
 

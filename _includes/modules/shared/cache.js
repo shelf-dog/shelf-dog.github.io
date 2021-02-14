@@ -101,7 +101,7 @@ Cache = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.clear = () => ರ‿ರ.db.clear();
+  FN.clean = () => ರ‿ರ.db.clear().then(() => true).catch(() => false);
   
   FN.get = (key, age, fn, force, hit) => {
     age = !age ? factory.Dates.duration(options.age) : _.isNumber(age) ? factory.Dates.duration(age) : age;

@@ -108,6 +108,8 @@ App = function() {
   /* <!-- Setup Functions --> */
   FN.setup = {
 
+    modules: ["Common", "Cache", "Client", "Subscribe", "Create"],
+    
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
 
@@ -138,7 +140,7 @@ App = function() {
         }
       };
       
-      _.each(["Client", "Subscribe", "Create"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(FN.setup.modules, module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -202,9 +204,7 @@ App = function() {
           subscription: {
             matches: /ID/i,
             length: 1,
-            scopes: [
-              "https://www.googleapis.com/auth/drive.file"
-            ],
+            scopes: ["https://www.googleapis.com/auth/drive.file"],
             trigger : FN.states.subscribed.working,
             fn: id => ಠ_ಠ.me ? FN.subscriptions(id) : ಱ.id = id,
           },
@@ -327,6 +327,10 @@ App = function() {
     
     /* <!-- Present Persistent State (for debugging etc) --> */
     persistent: ಱ,
+    
+    /* <!-- Logged Out / Clean --> */
+    clean: () => _.each(FN.setup.modules, module => FN[module.toLowerCase()] && FN[module.toLowerCase()].clean ?
+                        FN[module.toLowerCase()].clean() : false),
     
 	};
 

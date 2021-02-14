@@ -1,4 +1,5 @@
 ---
-question: How does I manage a Calibre Library?
+question: How do I manage a Calibre Library?
+order: 3
 ---
-Answer __will__ go here!
+To manage your library catalog, you need to use the free __Calibre software__{:.text-white .font-weight-normal}. This can be run on PC, Mac or Linux and also on Cloudready Chromebooks / Chromeboxes.

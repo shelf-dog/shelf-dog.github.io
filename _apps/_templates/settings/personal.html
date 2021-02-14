@@ -38,18 +38,38 @@
     
   </div>
   
-  <!-- SAVE BUTTON -->
-  <button type="submit" class="btn btn-lg btn-success waves-effect">
-    <i class="material-icons md-24 ml-2 float-right result result-success font-weight-bold d-none">check</i>
-    <i class="material-icons md-24 ml-2 float-right result result-failure d-none">error</i>
-    <span class="text">Save</span>
-  </button>
-  
-  <!-- CLEAR BUTTON -->
-  <button type="clear" class="btn btn-outline-danger ml-2 waves-effect">Clear</button>
-  
-  <!-- CANCEL BUTTON -->
-  <a class="btn btn-outline-warning ml-2 waves-effect" href="/app/" role="button">Cancel</a>
+  <div class="d-flex flex-column flex-md-row justify-content-md-between">
+    
+    <div>
+      
+      <!-- SAVE BUTTON -->
+      <button type="submit" class="btn btn-lg btn-success waves-effect">
+        <i class="material-icons md-24 ml-2 float-right result result-success font-weight-bold d-none">check</i>
+        <i class="material-icons md-24 ml-2 float-right result result-failure d-none">error</i>
+        <span class="text">Save</span>
+      </button>
+
+      <!-- CLEAR BUTTON -->
+      <button type="clear" class="btn btn-outline-danger ml-2 waves-effect">Clear</button>
+
+      <!-- CANCEL BUTTON -->
+      <a class="btn btn-outline-warning ml-2 waves-effect" data-decorate href="/app/" role="button">Cancel</a>
+      
+    </div>
+    
+    <div class="d-flex justify-content-md-end align-items-center">
+      
+      <!-- PURGE CACHE BUTTON -->
+      <a data-purge="cache" class="btn btn-dark waves-effect" href="#purge.cache" role="button"
+         data-toggle="tooltip" data-html="true" title="<strong class='text-primary'>Clear</strong> the App Cache, forcing all data to be reloaded!">
+        <i class="material-icons md-18 ml-2 float-right result result-success font-weight-bold d-none">check</i>
+        <i class="material-icons md-24 ml-2 float-right result result-failure d-none">error</i>
+        <span class="text">Purge Cache</span>
+      </a>
+      
+    </div>
+    
+  </div>
   
 </form>
 {% endraw %}

@@ -44,6 +44,7 @@ collections:
     output: true
   questions:
     output: false
+    sort_by: order
   tutorials:
     output: true
 

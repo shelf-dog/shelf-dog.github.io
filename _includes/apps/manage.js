@@ -1278,6 +1278,8 @@ App = function() {
   /* <!-- Setup Functions --> */
   FN.setup = {
 
+    modules: ["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer", "PWA", "Books"],
+    
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
 
@@ -1311,8 +1313,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer", "PWA", "Books"], 
-             module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(FN.setup.modules, module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -1770,7 +1771,8 @@ App = function() {
     persistent: ಱ,
 
     /* <!-- Logged Out / Clean --> */
-    clean: () => FN.cache && FN.cache.clear ? FN.cache.clear() : false,
+    clean: () => _.each(FN.setup.modules, module => FN[module.toLowerCase()] && FN[module.toLowerCase()].clean ?
+                        FN[module.toLowerCase()].clean() : false),
 
   };
   /* <!-- External Visibility --> */

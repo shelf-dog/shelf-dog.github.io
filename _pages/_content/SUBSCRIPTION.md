@@ -1,4 +1,4 @@
-To use this app personally, or in your organisation, you will need a __subscription__{:.text-white .font-weight-normal}. If you want to make this app (and library) available to __all users__{:.text-white .font-weight-normal} in your domain (e.g. a school library), you will need an __organisation subscription__{:.text-white .font-weight-normal}.
+To use this app personally, or in your organisation, you will need a [subscription](/subscriptions){:.text-highlight-mid .link-jump}. If you want to make this app (and library) available to __all users__{:.text-white .font-weight-normal} in your domain (e.g. a school library), you will need an __organisation subscription__{:.text-white .font-weight-normal}.
 
 To enable us to offer the most __cost-effective pricing__{:.text-white .font-weight-normal}, all subscriptions are offered on a __yearly__{:.bg-info .text-body .px-1 .rounded-lg} basis. As an organisation, you can choose to subscribe on a __monthly__{:.bg-warning .text-body .px-1 .rounded-lg} if that suits your needs better.
 

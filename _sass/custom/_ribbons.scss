@@ -7,6 +7,12 @@
   text-align: center;
   line-height: 30px;
   letter-spacing: 1px;
+  &.large-ribbon {
+    line-height: 45px;
+    letter-spacing: 1.4px;
+    font-size: 150%;
+    font-weight: bold;
+  }
   @include rotate(-45);
   &.top-left {
     top: 30px;

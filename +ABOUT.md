@@ -11,6 +11,11 @@ sitemap:
 * * *
 {:.border-highlight}
 
+{% include section.html content="REQUIREMENTS" title="Requirements" class="m-2" %}
+
+* * *
+{:.border-highlight}
+
 {% include section.html content="README" title="Details" class="m-2" %}
 
 * * *

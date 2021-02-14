@@ -36,6 +36,8 @@ imports:
     load: last
   - name: uri-js
     load: last
+  - name: screenfull
+    load: last
   - name: bootstrap-js
     load: last
   - name: loki
@@ -89,6 +91,7 @@ modules:
   - shared/libraries
   - shared/schema
   - shared/common
+  - shared/pwa
   - library/catalog
 scripts: 
   - extends/string
