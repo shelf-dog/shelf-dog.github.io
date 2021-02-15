@@ -87,6 +87,7 @@ EPUB = (options, factory) => {
         ರ‿ರ.element.style["background-color"] = _theme.body["background-color"];
         ರ‿ರ.rendition.themes.select(theme);
         ರ‿ರ.rendition.themes.override("color", _theme.body.color, true);
+        ರ‿ರ.rendition.themes.override("background-color", _theme.body["background-color"], true);
       }
 
     },
@@ -97,8 +98,11 @@ EPUB = (options, factory) => {
     
     size : size => {
       ರ‿ರ.rendition.themes.override("font-size", `${size}em`, true);
-    }
+    },
     
+    line_height : size => {
+      ರ‿ರ.rendition.themes.override("line-height", `${size}em`, true);
+    }
     
   };
   

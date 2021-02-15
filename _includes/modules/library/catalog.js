@@ -29,6 +29,8 @@
   var _scalar = results => results && results.length === 1 ? results[0].values[0][0] : null;
   
   var _data = results => results && results.length === 1 ? results[0] : null;
+    
+  var _list = results => results && results.length === 1 ? _.map(results[0].values, value => value[0]) : null;
   
   var _run = (query, db) => (factory.Flags.log("Running QUERY:", query), (db || ರ‿ರ.db).exec(query));
   
@@ -532,6 +534,8 @@
     fields : () => ರ‿ರ.fields,
     
     identifiers : () => ರ‿ರ.identifiers,
+    
+    tags : () => _list(_run("SELECT DISTINCT name Name FROM tags ORDER BY name;")),
       
     search : {
       

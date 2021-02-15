@@ -66,7 +66,7 @@ App = function() {
                                 _download(library, book.ID, book.Formats, book.Path.text || book.Path, book.Format_Files, book.Format_Sizes) :
                               book.Formats;
   
-  var _paths = (library, book) => book.Path = ರ‿ರ.library.meta.claims.manage ? {
+  var _paths = (library, book) => book.Path = ರ‿ರ.library.meta.claims.admin ? {
     action: `folder.${FN.encode(book.Path)}`,
     text: book.Path,
   } : book.Path;
@@ -85,10 +85,19 @@ App = function() {
                 }))
           .then(element => {
             
+            /* <!-- Get Copies (if present | e.g. is a physical book) --> */
+            var _copies = book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"],
+                _hasCopy = _copies && (!_.isArray(_copies) || _copies.length > 0),
+                _isExcluded = ರ‿ರ.library.meta.capabilities.loan_exclusions && _.find(book.Tags,
+                  tag => _.find(ರ‿ರ.library.meta.capabilities.loan_exclusions.split(","), excluded => String.equal(excluded, tag, true)));
+      
+            if (!_hasCopy) ಠ_ಠ.Flags.log("Book has NO physical copies:", book);
+            
             /* <!-- Set Item Selected State and Requestable (if allowed) --> */
             ಠ_ಠ.Display.state().enter(FN.states.library.item);
             ಠ_ಠ.Display.state().set(FN.states.library.requestable, 
-              ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && ರ‿ರ.library.meta.capabilities.loan_requests);
+              ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && 
+                                    ರ‿ರ.library.meta.capabilities.loan_requests && _hasCopy && !_isExcluded);
       
             /* <!-- Start Cover Download --> */
             if (book && book.Cover === 1) {
@@ -108,7 +117,7 @@ App = function() {
                     });
                     ಠ_ಠ.Flags.log("COVER IMAGE FAILED TO LOAD:", img);
                     _load(false)
-                      .catch(e => ( ಠ_ಠ.Flags.error("COVER DOWNLOAD Error:", e), "/images/logo.png"))
+                      .catch(e => (ಠ_ಠ.Flags.error("COVER DOWNLOAD Error:", e), "/images/logo.png"))
                       .then(cover => _show(_holder, cover, "max-width: 200px;"));
                   };
               _load(true)
@@ -151,7 +160,7 @@ App = function() {
             };
       
             /* <!-- Check Availability --> */
-            if (ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan) 
+            if (ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && _hasCopy && !_isExcluded) 
               FN.libraries.available(ರ‿ರ.library, book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
                 .then(ರ‿ರ.available);
 

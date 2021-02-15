@@ -1,4 +1,15 @@
 site :
+  0.0.9a :
+    name : Site v0.0.9a
+    desc : Bug Fixes
+    numeric : 0.0.9.1
+    api : 1.7.2
+    type:
+      - alpha
+    changes :
+      - Excluded Tags from Loanable/Requestable Items
+      - BUG FIXED - EPUB Reader Theme Colous on certain books
+      - BUG FIXED - Libraries with Loan facilities mixing Ebooks and Physical Books (ability to loan)
   0.0.9 :
     name : Site v0.0.9
     desc : General Improvements

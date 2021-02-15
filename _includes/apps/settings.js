@@ -130,9 +130,22 @@ App = function() {
               index: index,
               target: _holder(),
               fields: db.fields().custom,
+              tags: db.tags(),
               clear: true
             }, settings));
-
+        
+        /* <!-- Handle Clear for Tags Filter --> */
+        $(_form.find("button[data-action='clear']"))
+          .on("click.action", e => ಱ.dialog.handlers.clear($(e.currentTarget), _form));
+        
+        /* <!-- Handle Filter for Tags --> */
+        _form.find("input[data-action='filter']")
+          .on("input.action", e => ಱ.dialog.handlers.filter($(e.currentTarget), _form));
+        
+        /* <!-- Handle Filter for Tags --> */
+        _form.find("input[type='checkbox'][data-action='filter-selected']")
+          .on("change.action", e => ಱ.dialog.handlers.filter_selected($(e.currentTarget), _form));
+        
         /* <!-- Handle Database Link Changes --> */
         _link(_form, "input[data-type='file']", id => `https://drive.google.com/file/d/${id}/view`);
 
@@ -149,7 +162,7 @@ App = function() {
             ಠ_ಠ.Flags.log("Library Settings Form Values", _values);
 
             var _settings = _.reduce(_values, (memo, value, key) => {
-              memo[key] = key == "managers" ? value.Value ? value.Value.split("\n") : [] : value.Value;
+              memo[key] = key == "managers" ? value.Value ? value.Value.split("\n") : [] : value.Value === undefined ? value.Values : value.Value;
               return memo;
             }, {});
 
@@ -290,6 +303,8 @@ App = function() {
       /* <!-- Setup Helpers --> */
       _.each([{
         name: "Strings"
+      }, {
+        name: "Dialog"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
       /* <!-- Setup Function Modules --> */

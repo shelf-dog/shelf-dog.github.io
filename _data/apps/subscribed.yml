@@ -51,6 +51,8 @@ imports:
     load: last
   - name: uuid
     load: last
+  - name: localforage
+    load: last
   - name: fetchjsonp
     load: last
 helpers:
@@ -75,6 +77,8 @@ modules:
   - generic/service
   - generic/main
   - generic/router
+  - shared/common
+  - shared/cache
   - shared/client
   - shared/subscribe
   - shared/states
