@@ -68,6 +68,18 @@ body > .alert {
   border-color: $colour-highlight !important;
 }
 
+.border-highlight-mid {
+  border-color: $colour-highlight-mid !important;
+}
+
+.border-highlight-dark {
+  border-color: $colour-highlight-dark !important;
+}
+
+.border-highlight-darkest {
+  border-color: $colour-highlight-darkest !important;
+}
+
 .badge-highlight {
   color: $colour-background !important;
 	background-color: $colour-highlight;

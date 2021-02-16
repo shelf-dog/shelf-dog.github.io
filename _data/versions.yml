@@ -1,4 +1,15 @@
 site :
+  0.0.9b :
+    name : Site v0.0.9b
+    desc : General Improvements
+    numeric : 0.0.9.2
+    type:
+      - alpha
+    changes :
+      - Documentation Improvements for Subscription
+      - Improved Script Creation Process
+      - Improved Handling of Missing DBs
+      - BUG FIXED - Libraries without ISBNs
   0.0.9a :
     name : Site v0.0.9a
     desc : Bug Fixes

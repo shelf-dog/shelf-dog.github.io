@@ -125,7 +125,7 @@ scopes:
     - scope: https://www.googleapis.com/auth/drive.appdata
       name: View and manage its own configuration data in your Google Drive
       reason: In order to record your settings in Google Drive.
-      request: login
+      request: lazy
     - scope: https://www.googleapis.com/auth/drive.file
       name: View and manage Google Drive files and folders that you have opened or created with this app
       reason: To browse for database and folders

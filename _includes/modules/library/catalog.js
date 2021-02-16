@@ -535,7 +535,17 @@
     
     identifiers : () => ರ‿ರ.identifiers,
     
-    tags : () => _list(_run("SELECT DISTINCT name Name FROM tags ORDER BY name;")),
+    tags : () => {
+      /* <!-- If Database not yet loaded, return empty array --> */
+      if (!ರ‿ರ.tables) return [];
+      var _return;
+      try {
+        _return = _list(_run("SELECT DISTINCT name Name FROM tags ORDER BY name;"));   
+      } catch (e) {
+        _return = [];
+      }
+      return _return;
+    },
       
     search : {
       
@@ -572,7 +582,7 @@
       
       modified : (limit, since) => _dated.recent(limit, since, _search.select(), "last_modified"),
       
-      all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT ID, Title, Authors, ISBN, Series, Tags, max(Updated) Updated FROM ("]
+      all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT ID, Title, Authors, Series, Tags, max(Updated) Updated FROM ("]
         .concat(_search.select(null, null, `last_modified AS '${options.updated}'`))
         .concat(["UNION ALL"])
         .concat(_search.select(null, null, `timestamp AS '${options.updated}'`))

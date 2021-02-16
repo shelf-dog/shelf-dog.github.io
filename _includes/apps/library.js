@@ -88,8 +88,9 @@ App = function() {
             /* <!-- Get Copies (if present | e.g. is a physical book) --> */
             var _copies = book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"],
                 _hasCopy = _copies && (!_.isArray(_copies) || _copies.length > 0),
-                _isExcluded = ರ‿ರ.library.meta.capabilities.loan_exclusions && _.find(book.Tags,
-                  tag => _.find(ರ‿ರ.library.meta.capabilities.loan_exclusions.split(","), excluded => String.equal(excluded, tag, true)));
+                _isExcluded = ರ‿ರ.library.meta.capabilities.loan_exclusions && 
+                  ರ‿ರ.library.meta.capabilities.loan_exclusions.length > 0 && _.find(book.Tags,
+                    tag => _.find(ರ‿ರ.library.meta.capabilities.loan_exclusions.split(","), excluded => String.equal(excluded, tag, true)));
       
             if (!_hasCopy) ಠ_ಠ.Flags.log("Book has NO physical copies:", book);
             
@@ -360,7 +361,7 @@ App = function() {
             .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), result && result.data ? FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities) : null))
             .then(db => ರ‿ರ.db = db)
             .then(db => {
-              if (!db) return;
+              if (!db) return (ಠ_ಠ.Display.state().enter(FN.states.library.none), null);
               ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
               $("#explore-library .library-name").text(library.name);
             

@@ -229,41 +229,47 @@ App = function() {
             length: 1,
             tidy: true,
             fn: code => ಱ.subscription && code == ಱ.subscription.code ?
-                          FN.create.log(`SHELF-DOG | ${ಱ.subscription.name}`, ಱ.subscription.id, ಱ.subscription.code)
-                            .then(id => ಠ_ಠ.Google.scripts.create(`SHELF-DOG | ${ಱ.subscription.name} | API`, ಱ.spreadsheet = id))
-                            .then(script => {
-                              ಠ_ಠ.Google.files.update(ಱ.spreadsheet, FN.create.script_id.set(script.scriptId || script));
-                              return script;
-                            })
-                            .then(script => FN.create.script(script, ಱ.subscription.public))
-                            .then(script => FN.create.app(script))
-                            .then(url => {
-                              ಠ_ಠ.Flags.log("Created Endpoint URL:", url);
-                              var _url = url.split("/"),
-                                  _endpoint = _url[_url.length - 2];
-                              ಠ_ಠ.Flags.log("Endpoint:", _endpoint);
-                              var _actions = $(`[data-code='${code}'] [data-action='create']`)
-                                .css("cursor", "none")
-                                .css("pointer-events", "none")
-                                .removeClass("badge-dark")
-                                .addClass("badge-success o-50")
-                                .append($("<span />", {
-                                  class: "md-24 md-light material-icons",
-                                  text: "check_circle"
-                                })).parent("div");
-                              ಠ_ಠ.Display.template.show({
-                                template: "link",
-                                id: ಱ.spreadsheet,
-                                target: _actions,
-                              });
-                              
-                              /* <!-- Update Service with Endpoint --> */
-                              return FN.client.user()
-                                .then(user => FN.subscribe.endpoint(user, ಱ.subscription.id, ಱ.subscription.code, _endpoint));
-                              
-                            })
-                            .catch(e => ಠ_ಠ.Flags.error("Logging Sheet Creation Error:", e))
-                            .then(ಠ_ಠ.Main.busy("Creating Sheet and Script")) : Promise.resolve(false)
+                  FN.create.log(`SHELF-DOG | ${ಱ.subscription.name}`, ಱ.subscription.id, ಱ.subscription.code)
+                    .catch(e => ಠ_ಠ.Flags.error("Logging Sheet Creation Error:", e))
+                    .then(ಠ_ಠ.Main.busy("Creating Log Sheet"))
+                    .then(id => id ? 
+                      ಠ_ಠ.Google.scripts.create(`SHELF-DOG | ${ಱ.subscription.name} | API`, ಱ.spreadsheet = id)
+                        .then(script => (ಠ_ಠ.Google.files.update(ಱ.spreadsheet, FN.create.script_id.set(script.scriptId || script)), script))
+                        .then(script => script ? FN.create.script(script, ಱ.subscription.public) : script)
+                        .then(script => script ? FN.create.app(script) : script)
+                        .then(url => {
+                          if (!url) return;
+                          ಠ_ಠ.Flags.log("Created Endpoint URL:", url);
+                          var _url = url.split("/"),
+                              _endpoint = _url[_url.length - 2];
+                          ಠ_ಠ.Flags.log("Endpoint:", _endpoint);
+                          var _actions = $(`[data-code='${code}'] [data-action='create']`)
+                            .css("cursor", "none")
+                            .css("pointer-events", "none")
+                            .removeClass("badge-dark")
+                            .addClass("badge-success o-50")
+                            .append($("<span />", {
+                              class: "md-24 md-light material-icons",
+                              text: "check_circle"
+                            })).parent("div");
+                          ಠ_ಠ.Display.template.show({
+                            template: "link",
+                            id: ಱ.spreadsheet,
+                            target: _actions,
+                          });
+
+                          /* <!-- Update Service with Endpoint --> */
+                          return FN.client.user()
+                            .then(user => FN.subscribe.endpoint(user, ಱ.subscription.id, ಱ.subscription.code, _endpoint));
+
+                        })
+                        .catch(e => {
+                          ಠ_ಠ.Flags.error("Script Creation Error:", e);
+                          return id ? ಠ_ಠ.Google.files.delete(id) : id;
+                        })
+                        .then(ಠ_ಠ.Main.busy("Creating Script"))
+                        : 
+                      id) : Promise.resolve(false)
           },
           
           update: {
