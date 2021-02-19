@@ -1,4 +1,15 @@
 site :
+  0.0.9c :
+    name : Site v0.0.9c
+    desc : General Improvements
+    numeric : 0.0.9.3
+    api : 1.7.4
+    type:
+      - alpha
+    changes :
+      - Various minor bug fixes
+      - Read-only Library support
+      - Demo Site
   0.0.9b :
     name : Site v0.0.9b
     desc : General Improvements

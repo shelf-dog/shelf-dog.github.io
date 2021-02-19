@@ -1,6 +1,6 @@
 {% raw %}
 <div data-index="{{id}}" class="card bg-dark border border-background overflow-hidden library mb-2 mb-xl-3{{#unless loading}}{{#unless (is state 'READY')}} o-75{{/unless}}{{/unless}}">
-  {{~#unless loading~}}<div class="card-header d-flex align-items-center justify-content-between{{#is state 'OFFLINE'}} bg-danger{{/is}}{{#is state 'NOT_AVAILABLE'}} bg-warning{{/is}}{{#is state 'READY'}} bg-success{{/is}} text-body border border-background">{{#is state "OFFLINE"}}<span>Currently Offline</span><span class="material-icons">sentiment_very_dissatisfied</span>{{/is}}{{#is state "NOT_AVAILABLE"}}<span>Not Yet Available</span><span class="material-icons">construction</span>{{/is}}{{#is state "READY"}}<span class="font-weight-bold"{{#if admin}} data-toggle="tooltip" data-html="true" title="You are an <strong>admin</strong> for this library"{{/if}}>Online</span><span class="material-icons">check_circle</span>{{/is}}</div>{{~/unless~}}
+  {{~#unless loading~}}<div class="card-header d-flex align-items-center justify-content-between{{#is state 'OFFLINE'}} bg-danger{{/is}}{{#is state 'NOT_AVAILABLE'}} bg-warning{{/is}}{{#is state 'READY'}} bg-{{#if code}}{{#is code 'DEMO'}}info text-body{{else}}success text-body{{/is}}{{else}}dark text-light{{/if}}{{/is}} border border-background">{{#is state "OFFLINE"}}<span>Currently Offline</span><span class="material-icons">sentiment_very_dissatisfied</span>{{/is}}{{#is state "NOT_AVAILABLE"}}<span>Not Yet Available</span><span class="material-icons">construction</span>{{/is}}{{#is state "READY"}}<span class="font-weight-bold"{{#if admin}} data-toggle="tooltip" data-html="true" title="You are an <strong>admin</strong> for this library"{{/if}}>Online</span><span class="material-icons">check_circle</span>{{/is}}</div>{{~/unless~}}
   <div class="card-body">
     {{~#if loading~}}
     {{#if name}}<h4 class="card-title mt-0">{{name}}</h4>{{/if}}
@@ -11,10 +11,14 @@
     </div>
     {{~else~}}
     {{#if name}}<h2 class="card-title mt-0 text-highlight">{{name}}</h2>{{/if}}
-    {{#exists meta}}{{#if meta.description}}<p class="card-text mx-0">{{meta.description}}</p>{{/if}}{{/exists}}
-    <hr class="border-secondary my-2">
+    {{#exists meta}}{{#if meta.description}}<p class="card-text mx-0">{{{meta.description}}}</p>{{/if}}{{/exists}}
+    <hr class="border-secondary my-2 my-xl-3">
     <div class="d-flex justify-content-between align-items-center flex-wrap">
+      {{#if code}}
       <a href="library/#library.{{id}}" data-decorate class="btn btn-action mr-1 mt-1 mb-xl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}">Explore</a>
+      {{else}}
+      <a href="/app/?demo" class="btn btn-info mr-1 mt-1 mb-xl-2 waves-effect">Demo</a>
+      {{/if}}
       {{~#is state 'OFFLINE'}}<a href="#refresh.{{id}}" class="d-flex flex-column flex-lg-row btn btn-dark mr-1 mt-1 mb-xl-2 pl-2 waves-effect"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Refresh this Library to check if it is now online">refresh</span>Refresh</a>{{/is~}}
       {{#exists meta}}{{~#if meta.claims~}}
       {{~#if meta.claims.manage}}<a href="manage/#library.{{id}}" data-decorate class="d-flex flex-column flex-lg-row btn btn-outline-primary border border-primary mr-1 mt-1 mb-xl-2 pl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Manage Library (handle loans etc.)">book</span>Manage</a>{{/if~}}
@@ -32,7 +36,7 @@
       </div>
       <div class="library_contents">
         {{~#if meta.contents~}}{{~#if meta.contents.books.audio~}}<span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Library contains <strong>Audio</strong> Books">hearing</span>{{~/if~}}
-        {{~#if meta.contents.books.electronic~}}<span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Library contains <strong>Electronic</strong> Books">chrome_reader_mode</span>{{~/if~}}
+        {{~#if meta.contents.books.electronic~}}<span class="material-icons text-light ml-1" data-toggle="tooltip" data-html="true" title="Library contains <strong>Electronic</strong> Books">chrome_reader_mode</span>{{~/if~}}
         {{~#if meta.contents.books.physical~}}<span class="material-icons ml-1" data-toggle="tooltip" data-html="true" title="Library contains <strong>Physical</strong> Books">menu_book</span>{{~/if~}}{{~/if~}}
       </div>
     {{~/if~}}{{~/present~}}

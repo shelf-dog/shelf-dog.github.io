@@ -48,6 +48,18 @@ body > .alert {
   background-color: $colour-highlight !important;
 }
 
+.bg-highlight-mid {
+  background-color: $colour-highlight-mid !important;
+}
+
+.bg-highlight-dark {
+  background-color: $colour-highlight-dark !important;
+}
+
+.bg-highlight-darkest {
+  background-color: $colour-highlight-darkest !important;
+}
+
 .text-highlight {
   color: $colour-highlight !important;
 }
@@ -90,6 +102,9 @@ body > .alert {
 	background-color: $colour-background;
 }
 
+.text-black {
+  color: $colour-background !important;
+}
 // -- Highlight Elements -- //
 
 // -- Content Area -- //

@@ -92,6 +92,13 @@ h2, h3, h4, h5, h6 {
   }
 }
 
+.demo-ribbon {
+  background-color: $colour-background-lighter;
+  &:hover {
+    background-color: darken($colour-background-lighter, 10%);
+  }
+}
+
 .about-ribbon {
   background-color: $colour-foreground;
   &:hover {

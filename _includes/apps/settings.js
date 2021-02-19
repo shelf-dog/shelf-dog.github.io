@@ -176,11 +176,11 @@ App = function() {
           });
 
         /* <!-- Prepare Selector (if multiple libraries) --> */
-        FN.select.all($(".libraries-selection"), false, true, "Select", "swap.cancel", "library");
+        FN.select.all($(".libraries-selection"), false, true, "Select", "swap.cancel", "library", library.code);
         
         ಠ_ಠ.Display.state().exit([
-          FN.states.library.manageable, FN.states.libraries.single, 
-          FN.states.libraries.multiple, FN.states.libraries.selecting
+          FN.states.library.manageable,
+          FN.states.libraries.single, FN.states.libraries.multiple, FN.states.libraries.selecting,
         ]);
         ಠ_ಠ.Display.state().set(FN.states.library.manageable, library.meta.claims && library.meta.claims.manage);
         ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.library);
@@ -307,6 +307,9 @@ App = function() {
         name: "Dialog"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
+      /* <!-- Check Demo Mode --> */
+      ಱ.demo = ಠ_ಠ.Flags.demo();
+      
       /* <!-- Setup Function Modules --> */
       var _options = {
         functions: FN,
@@ -332,7 +335,7 @@ App = function() {
     routed: () => {
       
       /* <!-- Set the Initial State --> */
-      ಠ_ಠ.Display.state().change(FN.states.views, FN.states.settings.in);
+      ಠ_ಠ.Display.state().change(FN.states.views, ಱ.demo ? [FN.states.demo, FN.states.settings.in] : FN.states.settings.in);
       
       /* <!-- Bind Escape --> */
       if (window.Mousetrap) {

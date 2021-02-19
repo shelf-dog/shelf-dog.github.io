@@ -11,7 +11,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each requests}}<tr data-type="request" data-id="{{id}}" data-user="{{user.id}}">
+    {{#each requests}}<tr data-type="request" data-id="{{id}}" data-user="{{either user.id user}}">
       <th class="align-middle" scope="row">
         <div class="d-flex align-items-center flex-row">
           <a href="{{command}}"{{#if decorate}} data-decorate{{/if}} class="text-decoration-none link-action pr-2 mr-1 border-right" style="line-height: 1em;"{{~#if external}} target="_blank"{{/if~}}{{~#if isbn}} data-toggle="tooltip" data-html="true"
@@ -22,8 +22,9 @@
         </div>
       </th>
       <td class="align-middle">
-        <a href="#search.{{encode user.id}}" class="text-decoration-none link-action"
-           data-toggle="tooltip" data-html="true" title="<span class='font-weight-bold mr-1'>USER:</span>{{user.id}}">{{user.name}}</a>
+        <a href="#search.{{encode (either user.id user)}}" class="text-decoration-none link-action"
+           data-toggle="tooltip" data-html="true" 
+            title="<span class='font-weight-bold mr-1'>USER:</span>{{either user.id user}}">{{either user.name user}}</a>
       </td>
       <td class="small align-middle">
         <span class="o-75 align-middle">{{details}}</span>
@@ -33,17 +34,18 @@
       </td>
       <td class="align-middle commands data-commands" style="padding-top: 10px; padding-bottom: 8px;">
         <div class="d-flex align-items-center">
-          <a href="#item.remove.{{encode id}}.{{encode user.id}}"
+          <a href="#item.remove.{{encode id}}.{{encode (either user.id user)}}"
            class="text-decoration-none link-action mr-1 text-danger" data-toggle="tooltip" data-html="true" 
            title="<strong class='text-danger'>Remove</strong> and delete this request" style="line-height: 1em;">
             <span class="material-icons md-1">cancel</span>
           </a>
-          <a href="#item.change.{{encode id}}.{{encode user.id}}" 
+          <a href="#item.change.{{encode id}}.{{encode (either user.id user)}}" 
              class="text-decoration-none link-action mr-1 text-warning" data-toggle="tooltip" data-html="true" 
              title="<strong class='text-warning'>Change</strong> this request and loan a different item" style="line-height: 1em;">
             <span class="material-icons md-1">published_with_changes</span>
           </a>
-          <a href="#item.loan.{{encode id}}.{{encode user.id}}" class="text-decoration-none link-action" data-toggle="tooltip" data-html="true" 
+          <a href="#item.loan.{{encode id}}.{{encode (either user.id user)}}"
+             class="text-decoration-none link-action" data-toggle="tooltip" data-html="true" 
              title="Log Book as <strong class='text-success'>Loaned</strong>" style="line-height: 1em;">
             <span class="material-icons md-1">check_circle_outline</span>
           </a>

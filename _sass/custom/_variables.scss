@@ -21,6 +21,7 @@ $font-spacing-heading:				0.1rem;
 $colour-background: 					#000000;
 $colour-background-dark:      lighten($colour-background, 5%);
 $colour-background-light:     lighten($colour-background, 10%);
+$colour-background-lighter:   lighten($colour-background, 30%);
 $colour-background-lightest:  lighten($colour-background, 50%);
 
 $colour-navigator:            rgba(#871f52, 0.1);

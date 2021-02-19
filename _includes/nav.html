@@ -43,11 +43,24 @@
     </ul>
   </div>
   
-  {% if page.app and page.layout == "app" %}<div class="d-none show-fullscreen-available ml-xl-3" data-fullscreen>
+  {% if page.app and page.layout == "app" %}<div class="d-none show-demo-mode ml-xl-1" data-toggle="tooltip" data-html="true"
+                                                 title="<strong>Demo Mode!</strong> Click to exit">
+    <a class="text-decoration-none bg-info text-dark rounded font-weight-bold d-none d-md-flex align-items-center" href="/app/">
+      <span class="material-icons">radar</span>
+    </a>
+  </div>
+  <div class="d-none show-library-readonly hide-demo-mode ml-xl-1" data-toggle="tooltip" data-html="true"
+                                                 title="This library is in <strong>read-only</strong> mode">
+    <span class="bg-light text-black rounded font-weight-bold d-none d-md-flex align-items-center p-1 o-80">
+      <span class="material-icons md-1">lock</span>
+    </span>
+  </div>
+  <div class="d-none show-fullscreen-available ml-xl-3" data-fullscreen>
     <a class="text-decoration-none text-highlight font-weight-bold d-none d-md-flex align-items-center" href="#">
       <span class="material-icons">fullscreen</span>
     </a>
-  </div>{% endif %}
+  </div>
+  {% endif %}
   
   {% if page.app and page.layout == "app" %}<div class="ml-md-auto d-flex flex-column flex-sm-row align-items-center">
     

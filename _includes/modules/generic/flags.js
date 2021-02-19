@@ -13,6 +13,7 @@ Flags = function() {
   const MATCH = {
     alert : /^alert$/i,
     debug : /^debug$/i,
+    demo : /^demo$/i,
     development : /^dev$/i,
     experiments : /^experiments$/i,
     highlight : /^highlight$/i,
@@ -30,6 +31,7 @@ Flags = function() {
   /* <!-- Internal Variables --> */
   var _alert = false,
     _debug = false,
+    _demo = false,
     _verbose = false,
     _experiments = false,
     _development = false,
@@ -72,6 +74,8 @@ Flags = function() {
     if (_debug) window.onerror = function(m, u, l, c, o) {
       _err(`Error: ${m} Script: ${u} Line: ${l} Column: ${c} Trace: ${o}`);
     };
+    
+    _demo = _url.hasQuery(MATCH.demo) ? _value(MATCH.demo) === null : false;
     
     _verbose = _debug ? _url.hasQuery(MATCH.verbose) && _value(MATCH.verbose) === null : false;
 
@@ -166,6 +170,10 @@ Flags = function() {
           
           debug: function() {
             return _debug;
+          },
+          
+          demo: function() {
+            return _demo;
           },
 
           development: function() {
@@ -268,6 +276,7 @@ Flags = function() {
             _url.search(data => {
               data.alert = _alert ? null : undefined;
               data.debug = _debug ? null : undefined;
+              data.demo = _demo ? null : undefined;
               data.experiments = _experiments ? null : undefined;
               data.performance = _performance ? null : undefined;
               data.verbose = _verbose ? null : undefined;

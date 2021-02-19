@@ -21,15 +21,13 @@ Demo = (options, factory) => {
   
   /* <!-- Public Functions --> */
   FN.generate = () => ({
-    name: "Demo Library",
-    desc : "Demonstration Library",
+    name: "No Libraries!",
+    meta: {
+      type: "EMPTY",
+      description: factory.Display.doc.get("DEMO", null, true)
+    },
+    state: "READY",
     api : (action, params) => (factory.Flags.log(action, params), null),
-    manageable: true,
-    meta : {
-      type: "DEMO",
-      version: 1,
-      actions: []
-    }
   });
   /* <!-- Public Functions --> */
   

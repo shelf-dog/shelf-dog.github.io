@@ -174,6 +174,9 @@ App = function() {
         name: "Url"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
       
+      /* <!-- Check Demo Mode --> */
+      ಱ.demo = ಠ_ಠ.Flags.demo();
+      
       /* <!-- Setup Function Modules --> */
       var _options = {
         functions: FN,
@@ -196,7 +199,7 @@ App = function() {
     routed: () => {
 
       /* <!-- Set the Initial State --> */
-      ಠ_ಠ.Display.state().change(FN.states.views, FN.states.reader.in);
+      ಠ_ಠ.Display.state().change(FN.states.views, ಱ.demo ? [FN.states.demo, FN.states.reader.in] : FN.states.reader.in);
       
       /* <!-- Bind Escape --> */
       if (window.Mousetrap) {

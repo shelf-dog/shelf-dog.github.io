@@ -19,6 +19,7 @@ navless: true
 ---
 <div class="t">
   <a class="corner-ribbon large-ribbon top-left app-ribbon sub-brand" href="/app/"><span class="font-sensitive">App</span></a>
+  <a class="corner-ribbon large-ribbon top-right demo-ribbon sub-brand" href="/app/?demo"><span class="font-sensitive">Demo</span></a>
   <div class="c">
     <div class="i">
       <a href="/app/">{% include images/logo.svg %}</a>

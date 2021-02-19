@@ -347,10 +347,12 @@ App = function() {
       /* <!-- Set Manageable and Loanable States --> */
       ಠ_ಠ.Display.state().exit([
         FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable,
-        FN.states.libraries.single, FN.states.libraries.multiple, FN.states.libraries.selecting
+        FN.states.libraries.single, FN.states.libraries.multiple, FN.states.libraries.selecting,
+        FN.states.libraries.readonly
       ]);
       ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
       ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
+      ಠ_ಠ.Display.state().set(FN.states.library.readonly, ರ‿ರ.library.meta.readonly);
     })
     .then(_clear);
   
@@ -413,6 +415,9 @@ App = function() {
         name: "Url"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
+      /* <!-- Check Demo Mode --> */
+      ಱ.demo = ಠ_ಠ.Flags.demo();
+      
       /* <!-- Setup Function Modules --> */
       var _options = {
         functions: FN,
@@ -435,7 +440,7 @@ App = function() {
     routed: () => {
       
       /* <!-- Set the Initial State --> */
-      ಠ_ಠ.Display.state().change(FN.states.views, FN.states.library.in);
+      ಠ_ಠ.Display.state().change(FN.states.views, ಱ.demo ? [FN.states.demo, FN.states.library.in] : FN.states.library.in);
       
       /* <!-- Bind Escape --> */
       if (window.Mousetrap) {

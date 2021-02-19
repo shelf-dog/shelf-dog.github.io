@@ -37,7 +37,7 @@ App = function() {
           _placeholder(e.detail);
       
     window.addEventListener(FN.events.endpoints.loaded, _loaded, false);
-    return FN.libraries.all(force)
+    return FN.libraries.all(force, null)
       .then(libraries => ಠ_ಠ.Display.template.show({
           template: "libraries",
           libraries: libraries,
@@ -48,6 +48,8 @@ App = function() {
         window.removeEventListener(FN.events.endpoints.loaded, _loaded, false);
       });
   };
+  
+  var _start = () => _load().then(() => ಠ_ಠ.Display.state().enter(FN.states.landing.libraries));
 	/* <!-- Internal Functions --> */
   
   
@@ -78,6 +80,9 @@ App = function() {
         name: "Strings"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
+      /* <!-- Check Demo Mode --> */
+      ಱ.demo = ಠ_ಠ.Flags.demo();
+      
       /* <!-- Setup Function Modules --> */
       var _options = {
         functions: FN,
@@ -100,7 +105,7 @@ App = function() {
     routed: () => {
 
       /* <!-- Set the Initial State --> */
-      ಠ_ಠ.Display.state().change(FN.states.views, FN.states.landing.in);
+      ಠ_ಠ.Display.state().change(FN.states.views, ಱ.demo ? [FN.states.demo, FN.states.landing.in] : FN.states.landing.in);
       
       /* <!-- Bind Escape --> */
       if (window.Mousetrap) {
@@ -109,7 +114,8 @@ App = function() {
       }
       
       /* <!-- Load the Libraries --> */
-      _load().then(() => ಠ_ಠ.Display.state().enter(FN.states.landing.libraries));
+      /* <!-- Default Route used in case we arrived here directly (instead of from another page) --> */
+      if (ಠ_ಠ.Flags.cleared() && !ಠ_ಠ.Flags.initial() && !ಠ_ಠ.Display.state().in(FN.states.libraries.working)) _start();
       
     },
 

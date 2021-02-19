@@ -93,6 +93,7 @@ docs:
   - shared/INSTRUCTIONS
   - shared/TUTORIALS
   - libraries/README
+  - libraries/DEMO
 scopes:
   google:
     - scope: email

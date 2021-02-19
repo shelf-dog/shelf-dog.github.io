@@ -26,6 +26,8 @@
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
+  var _safe = value => value && value.replace ? value.replace(/'/g,"''") : value;
+  
   var _scalar = results => results && results.length === 1 ? results[0].values[0][0] : null;
   
   var _data = results => results && results.length === 1 ? results[0] : null;
@@ -272,13 +274,13 @@
       
       select : (identifiers, types) => _.reduce(identifiers, (memo, type) => {
         if (type && (type.indexOf("isbn") >= 0 || (types && types.indexOf(type) >= 0))) 
-          memo.push(`(SELECT val from identifiers WHERE identifiers.type = '${type}' and identifiers.book = books.id) ${type.toUpperCase()},`);
+          memo.push(`(SELECT val from identifiers WHERE identifiers.type = '${_safe(type)}' and identifiers.book = books.id) ${type.toUpperCase()},`);
         return memo;
       }, []).join("\n"),
       
       search : (identifiers, terms, exact) => _.reduce(identifiers, (memo, type) => {
         if (type && type.indexOf("isbn") >= 0) 
-          memo.push(` or ID = (SELECT identifiers.book from identifiers WHERE type = '${type}' and val ${exact ? `= '${terms}'` : `like '%${terms}%'`})`);
+          memo.push(` or ID = (SELECT identifiers.book from identifiers WHERE type = '${_safe(type)}' and val ${exact ? `= '${_safe(terms)}'` : `like '%${terms}%'`})`);
         return memo;
       }, []).join(""),
       
@@ -312,11 +314,11 @@
   /* <!-- Group Where Functions --> */
   var _wheres = {
     
-    authors : (term, comparator) => `id IN (SELECT book FROM books_authors_link JOIN authors ON(author ${comparator || "="} authors.id) WHERE authors.name = '${term}')`,
+    authors : (term, comparator) => `id IN (SELECT book FROM books_authors_link JOIN authors ON(author ${comparator || "="} authors.id) WHERE authors.name = '${_safe(term)}')`,
     
-    formats : (term, comparator) => `id IN (SELECT book FROM data WHERE format ${comparator || "="} '${term}')`,
+    formats : (term, comparator) => `id IN (SELECT book FROM data WHERE format ${comparator || "="} '${_safe(term)}')`,
     
-    publisher : (term, comparator) => `id IN (SELECT book FROM books_publishers_link JOIN publishers ON(publisher ${comparator || "="} publishers.id) WHERE publishers.name = '${term}')`,
+    publisher : (term, comparator) => `id IN (SELECT book FROM books_publishers_link JOIN publishers ON(publisher ${comparator || "="} publishers.id) WHERE publishers.name = '${_safe(term)}')`,
     
     rating : (term, comparator) => `id IN (SELECT book FROM books_ratings_link JOIN ratings ON(books_ratings_link.rating ${comparator || "="} ratings.id) WHERE ratings.rating = ${term})`,
     
@@ -566,13 +568,13 @@
       
       book : id => _queries.find.books([id]),
       
-      copies : (ids, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.value = custom_column_1.id WHERE ${_.map(ids, id =>`${_custom(field).table}.value = '${id}'`).join(" OR ")})`),
+      copies : (ids, field) => _find(`WHERE ID IN (SELECT book from ${_custom(field).link_table} INNER JOIN ${_custom(field).table} on ${_custom(field).link_table}.value = custom_column_1.id WHERE ${_.map(ids, id =>`${_custom(field).table}.value = '${_safe(id)}'`).join(" OR ")})`),
       
       copy : (id, field) => _queries.find.copies([id], field),
       
-      isbn : isbn => _find(`WHERE ${_.chain(ರ‿ರ.identifiers).filter(identifier => identifier && identifier.indexOf("isbn") >= 0).map(identifier => `ID IN (SELECT identifiers.book from identifiers WHERE type = '${identifier}' and val = '${isbn}')`).value().join(" or ")}`),
+      isbn : isbn => _find(`WHERE ${_.chain(ರ‿ರ.identifiers).filter(identifier => identifier && identifier.indexOf("isbn") >= 0).map(identifier => `ID IN (SELECT identifiers.book from identifiers WHERE type = '${_safe(identifier)}' and val = '${_safe(isbn)}')`).value().join(" or ")}`),
       
-      identifier : (identifier, type) => _find(`WHERE ID IN (SELECT identifiers.book from identifiers WHERE type = '${type}' and val = '${identifier}')`),
+      identifier : (identifier, type) => _find(`WHERE ID IN (SELECT identifiers.book from identifiers WHERE type = '${_safe(type)}' and val = '${_safe(identifier)}')`),
       
     },
     

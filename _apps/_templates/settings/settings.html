@@ -27,7 +27,16 @@
   <div class="form-group" data-output-field="description">
     <label for="settings_description">Description</label>
     <textarea class="form-control" id="settings_description" rows="3" data-output-name="Value" data-output-always="true">{{#if description}}{{ description }}{{/if}}</textarea>
-    <small id="settings_description_HELP" class="form-text text-muted">Description for this library.</small>
+    <small id="settings_description_HELP" class="form-text">This description will be shown to all users of this library, so keep it short and useful!</small>
+  </div>
+  
+  <!-- LIBRARY READONLY -->
+  <div class="form-group form-check p-2 border rounded {{#if readonly}}bg-highlight-mid border-dark text-black{{else}}border-highlight bg-dark{{/if}}" data-output-field="readonly">
+    <div class="custom-control custom-checkbox mr-sm-2">
+        <input type="checkbox" class="custom-control-input" id="settings_readonly" data-output-name="Value" data-output-always="true"{{#if readonly}} checked{{/if}}>
+        <label class="custom-control-label" for="settings_readonly">Is this Library <strong>read-only</strong>?</label>
+    </div>
+    <small id="settings_readonly_HELP" class="form-text">A read-only library is one where loans / requests / returns are <strong>NOT SAVED</strong>. This should only be used for training and testing purposes, so should not be normally ticked!</small>
   </div>
   
   <!-- LIBRARY CAPABILITIES -->
@@ -47,7 +56,7 @@
             <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan" data-output-name="Value" data-output-always="true"{{#if capabilities_loan}} checked{{/if}}>
             <label class="custom-control-label" for="settings_capabilities_loan">Are loans available with this Library?</label>
         </div>
-        <small id="settings_capabilities_loan_HELP" class="form-text text-muted">Further details.</small>
+        <small id="settings_capabilities_loan_HELP" class="form-text text-muted"></small>
       </div>
       
       <!-- LOAN COPY FIELD IDENTIFIER -->
@@ -57,14 +66,14 @@
           <option{{#unless capabilities_loan_field}} selected{{/unless}} value="">None</option>
           {{#each fields}}<option{{#is ../capabilities_loan_field this}} selected{{/is}} value="{{this}}">{{this}}</option>{{/each}}
         </select>
-        <small id="settings_capabilities_loan_field_HELP" class="form-text text-muted">Name of the field that represents copies to be loaned out (e.g. Accession or Copy Number). If the library doesn't hold multiple copies for any item, leave this as 'None'.</small>
+        <small id="settings_capabilities_loan_field_HELP" class="form-text">Name of the field that represents copies to be loaned out (e.g. Accession or Copy Number). If the library doesn't hold multiple copies for any item, leave this as 'None'.</small>
       </div>
       
       <!-- LOANS LENGTH (DAYS) -->
       <div class="form-group" data-output-field="capabilities_loan_length">
         <label for="settings_capabilities_loan_length">Loan Length</label>
         <input type="number" class="form-control" id="settings_capabilities_loan_length" min="0" aria-describedby="settings_capabilities_loan_length_HELP" data-output-name="Value" data-output-always="true"{{#exists capabilities_loan_length}} value="{{ capabilities_loan_length }}"{{/exists}}>
-        <small id="settings_capabilities_loan_length_HELP" class="form-text text-muted">Length of loans in days (0 = unlimited loan length).</small>
+        <small id="settings_capabilities_loan_length_HELP" class="form-text">Length of loans in days (0 = unlimited loan length).</small>
       </div>
       
       <!-- LOAN TAG EXCLUSIONS -->
@@ -97,7 +106,7 @@
                 data-output-name="Value" multiple data-output-always="true">
           {{#each tags}}<option{{#contains ../capabilities_loan_exclusions this}} selected{{/contains}} value="{{this}}">{{this}}</option>{{/each}}
         </select>
-        <small id="capabilities_loan_exclusions_field_select_HELP" class="form-text text-muted">Items with these Tags (e.g. Reference) are not available for loans.</small>
+        <small id="capabilities_loan_exclusions_field_select_HELP" class="form-text">Items with these Tags (e.g. Reference) are not available for loans.</small>
         
       </div>
       
@@ -107,7 +116,7 @@
             <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan_requests" data-output-name="Value" data-output-always="true"{{#if capabilities_loan_requests}} checked{{/if}}>
             <label class="custom-control-label" for="settings_capabilities_loan_requests">Can requests be made for loans with this Library?</label>
         </div>
-        <small id="settings_capabilities_loan_requests_HELP" class="form-text text-muted">Further details.</small>
+        <small id="settings_capabilities_loan_requests_HELP" class="form-text"></small>
       </div>
       
     </div>
@@ -123,7 +132,7 @@
             <input type="checkbox" class="custom-control-input" id="settings_capabilities_online_items" data-output-name="Value" data-output-always="true"{{#if capabilities_online_items}} checked{{/if}}>
             <label class="custom-control-label" for="settings_capabilities_online_items">Online Access to Items in this Library?</label>
         </div>
-        <small id="settings_capabilities_online_items_HELP" class="form-text text-muted">Further details.</small>
+        <small id="settings_capabilities_online_items_HELP" class="form-text text-muted"></small>
       </div>
      
     </div>
@@ -142,7 +151,7 @@
           <input type="checkbox" class="custom-control-input" id="settings_contents_books_audio" data-output-name="Value" data-output-always="true"{{#if contents_books_audio}} checked{{/if}}>
           <label class="custom-control-label" for="settings_contents_books_audio">Audio Books?</label>
       </div>
-      <small id="settings_contents_books_audio_HELP" class="form-text text-muted">Further details.</small>
+      <small id="settings_contents_books_audio_HELP" class="form-text text-muted"></small>
     </div>
 
     <!-- ELECTRONIC BOOKS -->
@@ -151,7 +160,7 @@
           <input type="checkbox" class="custom-control-input" id="settings_contents_books_electronic" data-output-name="Value" data-output-always="true"{{#if contents_books_electronic}} checked{{/if}}>
           <label class="custom-control-label" for="settings_contents_books_electronic">Electronic Books?</label>
       </div>
-      <small id="settings_contents_books_electronic_HELP" class="form-text text-muted">Further details.</small>
+      <small id="settings_contents_books_electronic_HELP" class="form-text text-muted"></small>
     </div>
 
     <!-- PHYSICAL BOOKS -->
@@ -160,7 +169,7 @@
           <input type="checkbox" class="custom-control-input" id="settings_contents_books_physical" data-output-name="Value" data-output-always="true"{{#if contents_books_physical}} checked{{/if}}>
           <label class="custom-control-label" for="settings_contents_books_physical">Physical Books?</label>
       </div>
-      <small id="settings_contents_books_physical_HELP" class="form-text text-muted">Further details.</small>
+      <small id="settings_contents_books_physical_HELP" class="form-text text-muted"></small>
     </div>
   
   </div>
@@ -169,7 +178,7 @@
   <div class="form-group" data-output-field="recent_items">
     <label for="settings_recent_items">Recent Items</label>
     <input type="number" class="form-control" id="settings_recent_items" min="0" aria-describedby="settings_recent_items_HELP" data-output-name="Value" data-output-always="true"{{#exists recent_items}} value="{{ recent_items }}"{{/exists}}>
-    <small id="settings_recent_items_HELP" class="form-text text-muted">Number of recently added / updated items to display for the library.</small>
+    <small id="settings_recent_items_HELP" class="form-text">Number of recently added / updated items to display for the library.</small>
   </div>
   
   <!-- LIBRARY DATABASE FILE -->
@@ -216,7 +225,7 @@
     <label for="settings_managers">Managers</label>
     <textarea class="form-control" id="settings_managers" rows="4" data-output-name="Value" 
               data-output-always="true">{{#if managers}}{{ managers }}{{/if}}</textarea>
-    <small id="settings_managers_HELP" class="form-text text-muted">Managers for this library.</small>
+    <small id="settings_managers_HELP" class="form-text">Managers for this library, these users can administer loans and returns.</small>
   </div>
   
   <!-- OVERDUE EMAIL -->
@@ -298,7 +307,7 @@
           <a class="btn btn-outline-secondary" href="#google,select.logo" role="button">Select</a>
         </div>
       </div>
-      <small id="settings_email_logo_HELP" class="form-text text-muted">Email Logo File.</small>
+      <small id="settings_email_logo_HELP" class="form-text">Email Logo File.</small>
     </div>
     
   </div>

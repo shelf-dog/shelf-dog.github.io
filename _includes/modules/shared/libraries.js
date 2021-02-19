@@ -66,8 +66,11 @@ Libraries = (options, factory) => {
   var _prepare = (endpoints, force) => Promise.all(_.chain(endpoints)
                                         .map(_endpoint).map(endpoint => _meta(endpoint, force)).value());
   
-  var _all = (force, stale) => options.functions.cache.get("endpoints", 
+  var _all = (force, stale) => options.functions.cache.get(options.state.application.demo ? "endpoints_demo" : "endpoints", 
                                 stale ? options.long_cache : options.cache, options.functions.client.endpoints, force)
+      .then(value => value && value.endpoints ? 
+            (value.endpoints = _.filter(value.endpoints, endpoint => options.state.application.demo ? endpoint.code === "DEMO" : 
+                                          endpoint.admin || endpoint.code !== "DEMO"), value) : value)
       .then(value => {
         if (options.functions.events) factory.Main.event(options.functions.events.endpoints.loaded, 
                             value && value.endpoints ? Math.max(value.endpoints.length, 1) : 1);
@@ -77,15 +80,16 @@ Libraries = (options, factory) => {
       })
       .then(libraries => {
         factory.Flags.log("LIBRARIES:", libraries);
-        return (ರ‿ರ.all = _.sortBy(libraries, "name"));
+        return (ರ‿ರ[options.state.application.demo ? "demo" : "all"] = _.sortBy(libraries, "name"));
       });
   
   var _bytes = data => new Uint8Array(_.isArray(data) ? data : _.isString(data) ? s.base64.bytes(data) : []);
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.all = (force, stale)  => !force && ರ‿ರ.all ? Promise.resolve(ರ‿ರ.all) : _all(force, stale);
-  
+  FN.all = (force, stale)  => !force && ರ‿ರ[options.state.application.demo ? "demo" : "all"] ?
+    Promise.resolve(ರ‿ರ[options.state.application.demo ? "demo" : "all"]) : _all(force, stale);
+
   FN.one = index => FN.all(false, true).then(libraries => _.isNumber(index) ? libraries[index] : /\d+/.test(index) ? 
                                     libraries[parseInt(index)] : _.find(libraries, library => String.equal(library.code, index, true))),
   

@@ -84,6 +84,11 @@ App = function() {
   FN.get = {
 
     requests: filtered => FN.libraries.requests.all(ರ‿ರ.library)
+      .then(requests => _.tap(requests, requests => _.each(requests, request => {
+        request.decorate = true;
+        request.command = `/app/library/#library.${ಱ.index}.${request.id}`;
+        request.when = request.date ? ಠ_ಠ.Dates.parse(request.date) : "";
+      })))
       .then(requests => FN.libraries.users(ರ‿ರ.library)
         .then(users => _.each(users, user => {
           _.chain(requests)
@@ -93,9 +98,6 @@ App = function() {
                 id: request.user,
                 name: user.name
               };
-              request.decorate = true;
-              request.command = `/app/library/#library.${ಱ.index}.${request.id}`;
-              request.when = request.date ? ಠ_ಠ.Dates.parse(request.date) : "";
             });
         }))
         .then(() => {
@@ -1002,7 +1004,7 @@ App = function() {
         _target.css("background-color", COLOUR_REMOVE);
         _target.find(".data-commands").addClass("d-none");
         ಠ_ಠ.Display.template.show({
-          template: "remove-reservation",
+          template: "remove-request",
           user: user,
           id: id,
           target: _target.find(".data-confirm").removeClass("d-none"),
@@ -1256,18 +1258,19 @@ App = function() {
 
       /* <!-- Set Manageable and Loanable States --> */
       ಠ_ಠ.Display.state().exit([
-        FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable,
-        FN.states.libraries.single, FN.states.libraries.multiple, FN.states.libraries.selecting
+        FN.states.library.manageable, FN.states.library.loanable, FN.states.library.requestable, FN.states.library.readonly,
+        FN.states.libraries.single, FN.states.libraries.multiple, FN.states.libraries.selecting,
       ]);
       ಠ_ಠ.Display.state().set(FN.states.library.manageable, ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage);
       ಠ_ಠ.Display.state().set(FN.states.library.loanable, ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan);
       ಠ_ಠ.Display.state().set(FN.states.library.requestable,
         ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && ರ‿ರ.library.meta.capabilities.loan_requests);
-
+      ಠ_ಠ.Display.state().set(FN.states.library.readonly, ರ‿ರ.library.meta.readonly);
+      
       ರ‿ರ.refresh = () => FN.library.show(index, library);
       
       /* <!-- Prepare Selector (if multiple libraries) --> */
-      FN.select.all($(".libraries-selection"), true, false, "Select", "swap.cancel", "library");
+      FN.select.all($(".libraries-selection"), true, false, "Select", "swap.cancel", "library", ರ‿ರ.library.code);
       
     },
 
@@ -1305,6 +1308,9 @@ App = function() {
         name: "Url"
       }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
+      /* <!-- Check Demo Mode --> */
+      ಱ.demo = ಠ_ಠ.Flags.demo();
+      
       /* <!-- Setup Function Modules --> */
       var _options = {
         functions: FN,
@@ -1317,7 +1323,7 @@ App = function() {
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
-
+      
     },
 
     /* <!-- App is ready for action - e.g. is authenticated but no initial routing done! --> */
@@ -1327,7 +1333,7 @@ App = function() {
     routed: () => {
 
       /* <!-- Set the Initial State --> */
-      ಠ_ಠ.Display.state().change(FN.states.views, FN.states.manage.in);
+      ಠ_ಠ.Display.state().change(FN.states.views, ಱ.demo ? [FN.states.demo, FN.states.manage.in] : FN.states.manage.in);
 
       /* <!-- Bind Escape --> */
       if (window.Mousetrap) {
