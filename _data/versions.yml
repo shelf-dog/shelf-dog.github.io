@@ -1,8 +1,8 @@
 site :
-  0.0.9c :
-    name : Site v0.0.9c
+  0.0.9d :
+    name : Site v0.0.9d
     desc : General Improvements
-    numeric : 0.0.9.3
+    numeric : 0.0.9.4
     api : 1.7.4
     type:
       - alpha
@@ -10,6 +10,9 @@ site :
       - Various minor bug fixes
       - Read-only Library support
       - Demo Site
+      - Tutorial Pages
+      - HIDDEN Custom Column Tag Parsing
+      - Visual Updates for Offline Libraries
   0.0.9b :
     name : Site v0.0.9b
     desc : General Improvements

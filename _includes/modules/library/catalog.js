@@ -119,7 +119,7 @@
   };
   
   var _searcher = query => _process(options.arrays.concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
-      if (value.public && value.multiple) memo.push(_name(key, value));
+      if (value.public && value.multiple && !value.hidden) memo.push(_name(key, value));
       return memo;
     }, []) : []), null, _data(_run(query)));
   
@@ -205,6 +205,9 @@
             /* <!-- Check for Public Flag --> */
             _custom_column.public = !!_.find(_custom_column.description, value => /PUBLIC/i.test(value));
             
+            /* <!-- Check for Hidden Flag --> */
+            _custom_column.hidden = !!_.find(_custom_column.description, value => /HIDDEN/i.test(value));
+            
             /* <!-- Check for Display Format --> */
             _custom_column.format = _.reduce(_custom_column.description, (fn, details) => fn || _parse.format(details), null);
             
@@ -253,7 +256,7 @@
     custom : {
       
       select : (properties, separator, public_only, names) => _.reduce(properties, (memo, value, key) => {
-        if (!public_only || value.public || (names && names.indexOf(_name(key, value)) >= 0)) {
+        if ((!public_only || value.public || (names && names.indexOf(_name(key, value)) >= 0)) && !value.hidden) {
           if (value.table && value.link_table) {
             memo.push(`(SELECT ${value.multiple ? `GROUP_CONCAT(value, '${separator || "\n"}')` : "value"} FROM ${value.table} WHERE ${value.table}.id IN (SELECT value from ${value.link_table} WHERE book = books.id)) "${_name(key, value)}",`);
           } else if (value.table) {
@@ -264,7 +267,7 @@
       }, []).join("\n"),
       
       search : (properties, terms, public_only) => _.reduce(properties, (memo, value, key) => {
-        if ((!public_only || value.public) && value.type == "text") memo.push(` or "${_name(key, value)}" like '%${terms}%'`);
+        if ((!public_only || value.public) && !value.hidden && value.type == "text") memo.push(` or "${_name(key, value)}" like '%${terms}%'`);
         return memo;
       }, []).join(""),
       

@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Existing Libraries
+lead: Using your __existing__{:.text-white .font-weight-normal} Calibre Library with the Web App
 permalink: /tutorials/using-an-existing-library
 ---
 

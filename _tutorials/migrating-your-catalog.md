@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Migrating Book Catalogs
+lead: Importing __existing data__{:.text-white .font-weight-normal} into a new Calibre Library
 permalink: /tutorials/migrating-your-catalog
 ---
 

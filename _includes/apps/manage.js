@@ -119,11 +119,11 @@ App = function() {
                 var _count = ರ‿ರ.library.meta.capabilities.loan_field ?
                   _ln(FN.books.get(key, true), ರ‿ರ.library.meta.capabilities.loan_field) : 1;
 
-                values = _.filter(values, value => value.user && memo.users.indexOf(value.user.id) < 0);
+                values = _.filter(values, value => value.user && memo.users.indexOf(value.user.id || value.user) < 0);
                 _.times(_count, index => {
                   if (values && values.length > index) {
                     memo.requests.push(values[index]);
-                    memo.users.push(values[index].user.id);
+                    memo.users.push(values[index].user.id || values[index].user);
                   }
                 });
 

@@ -1,6 +1,6 @@
 <div class="{% if include.class %}{{ include.class }}{% endif %}">
   {%- if include.title -%}{%- capture title -%}
-## __{{ include.title }}__{:.font-larger-120 .bg-dark .text-white .py-1 .px-2 .rounded-lg .font-weight-light .titles}
+## __{{ include.title }}__{:.font-larger-120 .bg-dark .text-{% if include.title_colour %}{{ include.title_colour }}{% else %}white{% endif %} .py-1 .px-2 .rounded-lg .font-weight-light .titles}
 {:.mx-0 .my-2 .my-lg-3}
   {%- endcapture -%}
   {{ title | markdownify | strip }}

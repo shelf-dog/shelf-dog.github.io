@@ -1,4 +1,4 @@
-You will need a __Google account__{:.text-white .font-weight-normal} (for personal subscriptions) or a __G-Suite domain__{:.text-white .font-weight-normal} (for organisations) and access to __Google Drive__{:.text-white .font-weight-normal}.
+_account_box_{:.material-icons .float-left .mr-2 .text-highlight} You will need a __Google account__{:.text-white .font-weight-normal} (for personal subscriptions) or a __G-Suite domain__{:.text-white .font-weight-normal} (for organisations) and access to __Google Drive__{:.text-white .font-weight-normal}.
 {:.alert .bg-dark .mx-0 .font-larger-110}
 
 We __support__{:.text-success} the most recent versions of __all major browsers__{:.text-white .font-weight-normal}:

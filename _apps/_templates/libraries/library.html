@@ -1,6 +1,6 @@
 {% raw %}
-<div data-index="{{id}}" class="card bg-dark border border-background overflow-hidden library mb-2 mb-xl-3{{#unless loading}}{{#unless (is state 'READY')}} o-75{{/unless}}{{/unless}}">
-  {{~#unless loading~}}<div class="card-header d-flex align-items-center justify-content-between{{#is state 'OFFLINE'}} bg-danger{{/is}}{{#is state 'NOT_AVAILABLE'}} bg-warning{{/is}}{{#is state 'READY'}} bg-{{#if code}}{{#is code 'DEMO'}}info text-body{{else}}success text-body{{/is}}{{else}}dark text-light{{/if}}{{/is}} border border-background">{{#is state "OFFLINE"}}<span>Currently Offline</span><span class="material-icons">sentiment_very_dissatisfied</span>{{/is}}{{#is state "NOT_AVAILABLE"}}<span>Not Yet Available</span><span class="material-icons">construction</span>{{/is}}{{#is state "READY"}}<span class="font-weight-bold"{{#if admin}} data-toggle="tooltip" data-html="true" title="You are an <strong>admin</strong> for this library"{{/if}}>Online</span><span class="material-icons">check_circle</span>{{/is}}</div>{{~/unless~}}
+<div data-index="{{id}}" class="card border border-background overflow-hidden library mb-2 mb-xl-3 {{#unless (any loading (is state 'READY'))}}bg-semi-dark{{else}}bg-dark{{/unless}}">
+  {{~#unless loading~}}<div class="card-header d-flex align-items-center justify-content-between{{#is state 'OFFLINE'}} bg-danger text-black{{/is}}{{#is state 'NOT_AVAILABLE'}} bg-warning text-black{{/is}}{{#is state 'READY'}} bg-{{#if code}}{{#is code 'DEMO'}}info text-body{{else}}success text-body{{/is}}{{else}}dark text-light{{/if}}{{/is}} border border-background">{{#is state "OFFLINE"}}<span>Currently Offline</span><span class="material-icons">sentiment_very_dissatisfied</span>{{/is}}{{#is state "NOT_AVAILABLE"}}<span>Not Yet Available</span><span class="material-icons">construction</span>{{/is}}{{#is state "READY"}}<span class="font-weight-bold"{{#if admin}} data-toggle="tooltip" data-html="true" title="You are an <strong>admin</strong> for this library"{{/if}}>Online</span><span class="material-icons">check_circle</span>{{/is}}</div>{{~/unless~}}
   <div class="card-body">
     {{~#if loading~}}
     {{#if name}}<h4 class="card-title mt-0">{{name}}</h4>{{/if}}
@@ -10,7 +10,7 @@
       </div>
     </div>
     {{~else~}}
-    {{#if name}}<h2 class="card-title mt-0 text-highlight">{{name}}</h2>{{/if}}
+    {{#if name}}<h2 class="card-title mt-0 text-highlight{{#unless (is state 'READY')}} o-50{{/unless}}">{{name}}</h2>{{/if}}
     {{#exists meta}}{{#if meta.description}}<p class="card-text mx-0">{{{meta.description}}}</p>{{/if}}{{/exists}}
     <hr class="border-secondary my-2 my-xl-3">
     <div class="d-flex justify-content-between align-items-center flex-wrap">
@@ -19,10 +19,10 @@
       {{else}}
       <a href="/app/?demo" class="btn btn-info mr-1 mt-1 mb-xl-2 waves-effect">Demo</a>
       {{/if}}
-      {{~#is state 'OFFLINE'}}<a href="#refresh.{{id}}" class="d-flex flex-column flex-lg-row btn btn-dark mr-1 mt-1 mb-xl-2 pl-2 waves-effect"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Refresh this Library to check if it is now online">refresh</span>Refresh</a>{{/is~}}
+      {{~#is state 'OFFLINE'}}<a href="#refresh.{{id}}" class="d-flex flex-column flex-lg-row btn btn-lg btn-light text-black mr-1 mt-1 mb-xl-2 pl-lg-2 align-items-center waves-effect"><span class="material-icons mr-lg-1" data-toggle="tooltip" data-html="true" title="Refresh this Library to check if it is now online">refresh</span>Refresh</a>{{/is~}}
       {{#exists meta}}{{~#if meta.claims~}}
-      {{~#if meta.claims.manage}}<a href="manage/#library.{{id}}" data-decorate class="d-flex flex-column flex-lg-row btn btn-outline-primary border border-primary mr-1 mt-1 mb-xl-2 pl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Manage Library (handle loans etc.)">book</span>Manage</a>{{/if~}}
-      {{~#if meta.claims.admin}}<a href="settings/#library.{{id}}" data-decorate class="d-flex flex-column flex-lg-row btn btn-outline-light border border-secondary mt-1 mb-xl-2 pl-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-1" data-toggle="tooltip" data-html="true" title="Configure Library (select database file, managers etc.)">settings</span>Settings</a>{{/if~}}
+      {{~#if meta.claims.manage}}<a href="manage/#library.{{id}}" data-decorate class="d-flex flex-column flex-lg-row btn btn-outline-primary border border-primary mr-1 mt-1 mb-xl-2 pl-lg-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-lg-1" data-toggle="tooltip" data-html="true" title="Manage Library (handle loans etc.)">book</span>Manage</a>{{/if~}}
+      {{~#if meta.claims.admin}}<a href="settings/#library.{{id}}" data-decorate class="d-flex flex-column flex-lg-row btn btn-outline-light border border-secondary mt-1 mb-xl-2 pl-lg-2 waves-effect{{#unless (is state 'READY')}} disabled{{/unless}}"><span class="material-icons mr-lg-1" data-toggle="tooltip" data-html="true" title="Configure Library (select database file, managers etc.)">settings</span>Settings</a>{{/if~}}
       {{~/if~}}{{/exists}}
     </div>
     {{~/if~}}
@@ -41,6 +41,6 @@
       </div>
     {{~/if~}}{{~/present~}}
   </div>
-  {{~#if admin~}}<div class="corner-ribbon top-right bg-light text-body shadow-deep d-flex align-items-center justify-content-center"><span class="material-icons md-18 mr-1">security</span>Admin</div>{{~/if~}}
+  {{~#if admin~}}<div class="corner-ribbon top-right bg-{{#unless (is state 'READY')}}secondary{{else}}light{{/unless}} text-body shadow-deep d-flex align-items-center justify-content-center"><span class="material-icons md-18 mr-1">security</span>Admin</div>{{~/if~}}
 </div>
 {% endraw %}

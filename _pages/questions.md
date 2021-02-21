@@ -11,7 +11,7 @@ title: FAQ
 
 {% for question in site.questions %}
 {% capture TITLE %}{{ question.question | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}{% endcapture %}
-{% include section.html title=TITLE markdown=question.content %}
+{% include section.html title=TITLE title_colour="faded" markdown=question.content %}
 {% unless forloop.last == true %}
 * * *
 {:.border-highlight .o-25}
