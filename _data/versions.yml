@@ -1,8 +1,8 @@
 site :
-  0.0.9d :
-    name : Site v0.0.9d
+  0.0.9e :
+    name : Site v0.0.9e
     desc : General Improvements
-    numeric : 0.0.9.4
+    numeric : 0.0.9.5
     api : 1.7.4
     type:
       - alpha
@@ -13,6 +13,7 @@ site :
       - Tutorial Pages
       - HIDDEN Custom Column Tag Parsing
       - Visual Updates for Offline Libraries
+      - Visual Updates for App home page
   0.0.9b :
     name : Site v0.0.9b
     desc : General Improvements

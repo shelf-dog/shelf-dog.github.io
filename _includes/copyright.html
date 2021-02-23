@@ -1,5 +1,7 @@
-<div class="{% if include.class %}{{include.class}} mb-2 mb-xl-3{% else %}fixed-bottom{% endif %} d-flex justify-content-end" style="z-index: 3 !important;">
-  <div class="p-1 mr-0 bg-dark o-80 rounded-left copyright mb-2 mb-xl-3">
-     <p class="text-secondary">&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a class="text-decoration-none link-jump" href="{{site.baseurl}}license"><strong>{{site.author.name | downcase }}</strong></a> | <a class="text-decoration-none link-jump" href="{{site.baseurl}}privacy">privacy</a></p> 
+<div class="{% if include.class %}{{include.class}} mb-2 mb-xl-3{% else %}fixed-bottom{% endif %}" style="z-index: 3 !important;">
+  <div class="d-flex justify-content-end">
+    <div class="p-1 mr-0 bg-dark o-80 rounded-left copyright mb-2 mb-xl-3">
+      <p class="text-secondary">&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a class="text-decoration-none link-jump" href="{{site.baseurl}}license"><strong>{{site.author.name | downcase }}</strong></a> | <a class="text-decoration-none link-jump" href="{{site.baseurl}}privacy">privacy</a></p> 
+    </div>
   </div>
 </div>

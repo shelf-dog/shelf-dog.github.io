@@ -1,2 +1,5 @@
-To access this web-app, please __sign in with your Google account__{:.text-white .font-weight-normal} using the button at the top! Once you have done this, your __libraries will appear__{:.text-white .font-weight-normal} for you to use.
-{:.alert .bg-dark .mx-2 .mx-xl-4 .font-larger-110}
+Welcome to __Shelf Dog__{:.text-white .font-weight-normal}. We give you __online access__{:.text-white .font-weight-normal} to your own personal, and shared, libraries from any device! If you are new here, you might like to take a look at an [example library](/app/?demo){:.text-highlight-mid .link-jump} or read our [frequently asked questions](/questions/){:.text-highlight-mid .link-jump}!
+{:.bg-dark .rounded .mx-2 .mx-xl-4 .px-3 .py-2 .py-xl-3 .font-larger-125}
+
+To access this web app, please __sign in with your Google account__{:.text-white .font-weight-normal} using the button at the top! Once you have done this, your __libraries will appear__{:.text-white .font-weight-normal} for you to use. We are __absolutely dedicated__{:.text-white .font-weight-normal} to ensuring your privacy, and we do store any of your personal data on our systems. Please take a moment to read about our [approach to privacy](/privacy){:.text-highlight-mid .link-jump} and how you can use this app with confidence. 
+{:.bg-dark .rounded .mx-2 .mx-xl-4 .px-3 .py-2 .py-xl-3 .font-larger-110}

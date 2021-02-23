@@ -82,7 +82,7 @@ css:
 	
 	{% include plumbing/head.html %}
 
-	<body class="bg-dark">
+	<body class="bg-dark{% if page.body_class %} {{ page.body_class }}{% endif %}">
     
     {% unless page.simple %}<a class="skippy sr-only sr-only-focusable" href="#{{ site.app.content }}">
       <span class="skippy-text">Skip to main content</span>
