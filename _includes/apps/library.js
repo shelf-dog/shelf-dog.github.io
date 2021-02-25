@@ -75,7 +75,27 @@ App = function() {
                               
   var _book = id => Promise.resolve(ರ‿ರ.db.find.book(id))
     .then(book => book ? _.tap(_.object(book.columns, book.values[0]), book => ಠ_ಠ.Flags.log("BOOK:", book)) : book)
-    .then(book => book && ರ‿ರ.library.meta.capabilities.online_items ? _reader(ರ‿ರ.library.code, book) : book)
+    .then(book => {
+      if (!book) return book;
+      
+      /* <!-- Removes the reference array for copies and removes duplicates --> */
+      book.$copies = book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"];
+      book.$copies = _.isArray(book.$copies) ? _.uniq(book.$copies.slice()) : book.$copies;
+      
+      if (ರ‿ರ.library.meta.capabilities.online_items)  book = _reader(ರ‿ರ.library.code, book);
+      if (ರ‿ರ.library.meta.capabilities.loan && ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage) {
+        var _map = copy => ({
+          text: copy,
+          url: ಠ_ಠ.Flags.decorate(`/app/manage/?demo#library.${ರ‿ರ.library.code}.search.${copy}`),
+        });
+        if (ರ‿ರ.library.meta.capabilities.loan_field) {
+          book[ರ‿ರ.library.meta.capabilities.loan_field] = _.map(book[ರ‿ರ.library.meta.capabilities.loan_field], _map);
+        } else {
+          book.ID = _map(book.ID);
+        }
+      }
+      return book;
+    })
     .then(book => (FN.common.capabilities.touch ? null : $("header.navbar form[data-role='search'] input[role='search']").focus(), book))
     .then(book => book ? Promise.resolve(ಠ_ಠ.Display.template.show({
                   template: "item",
@@ -86,14 +106,14 @@ App = function() {
           .then(element => {
             
             /* <!-- Get Copies (if present | e.g. is a physical book) --> */
-            var _copies = book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"],
+            var _copies = book.$copies,
                 _hasCopy = _copies && (!_.isArray(_copies) || _copies.length > 0),
                 _isExcluded = ರ‿ರ.library.meta.capabilities.loan_exclusions && 
                   ರ‿ರ.library.meta.capabilities.loan_exclusions.length > 0 && _.find(book.Tags,
                     tag => _.find(ರ‿ರ.library.meta.capabilities.loan_exclusions.split(","), excluded => String.equal(excluded, tag, true)));
       
             if (!_hasCopy) ಠ_ಠ.Flags.log("Book has NO physical copies:", book);
-            
+      
             /* <!-- Set Item Selected State and Requestable (if allowed) --> */
             ಠ_ಠ.Display.state().enter(FN.states.library.item);
             ಠ_ಠ.Display.state().set(FN.states.library.requestable, 
@@ -151,8 +171,10 @@ App = function() {
 
               if (ರ‿ರ.library.meta.capabilities.loan_field) {
                 var _row = element.find(`tr[data-field='${ರ‿ರ.library.meta.capabilities.loan_field}']`);
-                _.each(availability, copy => _row.find($(`td .badge:contains('${copy.copy}')`))
-                       .append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, copy), true)));
+                _.each(availability, copy => {
+                  var _copy = _row.find($(`.badge:contains('${copy.copy}')`));
+                  _copy.append(ಠ_ಠ.Display.template.get(_.extend({template: "availability"}, copy), true)); 
+                });
               } else if (availability.length === 1) {
                 element.find("tr[data-field='ID']")
                   .find($(`td div:contains('${availability[0].copy}')`))
@@ -162,7 +184,7 @@ App = function() {
       
             /* <!-- Check Availability --> */
             if (ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && _hasCopy && !_isExcluded) 
-              FN.libraries.available(ರ‿ರ.library, book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"])
+              FN.libraries.available(ರ‿ರ.library, _copies)
                 .then(ರ‿ರ.available);
 
             _reset(true);

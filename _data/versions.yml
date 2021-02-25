@@ -1,4 +1,15 @@
 site :
+  0.0.9f :
+    name : Site v0.0.9f
+    desc : General Improvements
+    numeric : 0.0.9.6
+    type:
+      - alpha
+    changes :
+      - Renew Existing Loans
+      - Jump to management loan history from Book view
+      - Reverse sort for searched loans (by book/copy/user)
+      - Overlaid tooltip of due date on loaned date
   0.0.9e :
     name : Site v0.0.9e
     desc : General Improvements

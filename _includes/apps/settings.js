@@ -185,9 +185,15 @@ App = function() {
         ಠ_ಠ.Display.state().set(FN.states.library.manageable, library.meta.claims && library.meta.claims.manage);
         ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.library);
 
+        /* <!-- Return positive to indicate it has been handled --> */
+        return true;
+        
       })
       .catch(e => ಠ_ಠ.Flags.error("Loading Settings", e))
-      .then(ಠ_ಠ.Main.busy("Loading Settings", true)),
+      .then(ಠ_ಠ.Main.busy("Loading Settings", true))
+    
+      /* <!-- If nothing is returned (e.g. not an admin) - fall back to showing personal settings --> */
+      .then(result => result ? result : FN.show.personal()),
     
   };
   /* <!-- Show Functions --> */

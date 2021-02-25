@@ -16,6 +16,7 @@ App = function() {
   const COLOUR_REMOVE = "#d7262675",
     COLOUR_CHANGE = "#b8952dad",
     COLOUR_RETURN = "#1d551da8",
+    COLOUR_RENEW = "#1d551da8",
     COLOUR_FAILURE = "#6e0a0a8f",
     COLOUR_FAILURE_INPUT_BACK = "#f5141494",
     COLOUR_FAILURE_INPUT_FORE = "#ffffff",
@@ -410,6 +411,8 @@ App = function() {
         missing : !book,
         who: loan.user,
         when: loaned,
+        due: ರ‿ರ.library.meta.capabilities.loan_length && loaned && _.isObject(loaned) ?
+          loaned.add(ರ‿ರ.library.meta.capabilities.loan_length, "days") : null,
         returned: returned,
         last: loan.last,
         duration: returned ? duration : null,
@@ -429,8 +432,10 @@ App = function() {
           movable: true,
           resizable: true,
           count: loans.length,
-          loans: _.map(_.tap(loans, loans => ಠ_ಠ.Flags.log(`LOANS for [${details}]:`, loans)),
-                       FN.loans.process(FN.books.get(_.map(loans, loan => loan.copy || loan.id))))
+          loans: _.tap(
+            _.map(loans, FN.loans.process(FN.books.get(_.map(loans, loan => loan.copy || loan.id)))), 
+            loans => ಠ_ಠ.Flags.log(`PROCESSED LOANS for [${details}]:`, loans)
+          )
         }, "all"));
       } else if (loans === false) {
         return FN.show.details(id, FN.show.error(details, "ERROR_LOANS"));
@@ -496,6 +501,7 @@ App = function() {
           ರ‿ರ.library.meta.capabilities.loan_field ? (_type = "copies", _book[ರ‿ರ.library.meta.capabilities.loan_field]) : _book.ID : terms;
       
       return FN.libraries.loans[_type](ರ‿ರ.library, _loans)
+        .then(loans => loans && loans.length > 1 ? _.chain(loans).sortBy("date").reverse().value() : loans)
         .catch(e => (ಠ_ಠ.Flags.error("Searching Loans Error", e), false))
         .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()),
           `Loans for ${_type == "user" ? terms : _book ? _type == "copy" && ರ‿ರ.library.meta.capabilities.loan_field ? `${_book.Title} | ${terms}`: _book.Title : terms}`, "light"));
@@ -1083,6 +1089,13 @@ App = function() {
               clear: true,
               item: id
             });
+            if (inverse && result) ಠ_ಠ.Display.template.show({
+              template: "renew",
+              target: _element,
+              user: user,
+              prepend: true,
+              item: id
+            });
           })
           .catch(e => ಠ_ಠ.Flags.error("Return Book Error", e));
       } else {
@@ -1201,6 +1214,61 @@ App = function() {
 
     },
 
+    renew: (id, user, confirmation) => {
+      
+      var _target = FN.item.row(id, user, "loan", "outstanding");
+
+      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
+        FN.item.restore(id, user, "loan", "outstanding");
+        var _element = _target.find(".data-commands").empty().addClass("py-0");
+        return FN.libraries.log.returned(ರ‿ರ.library, id)
+          .then(availability => {
+            if (availability && availability.length === 1 && availability[0].available === true) {
+              var item = FN.books.get(availability[0].copy);
+              return FN.libraries.log.loan(ರ‿ರ.library, user, id, item.ISBN, availability[0].copy, FN.common.format.details(item));  
+            } else {
+              return availability;
+            }
+          })
+          .then(ಠ_ಠ.Main.busy_element(_element))
+          .then(availability => availability && availability.length === 1 && availability[0].available === false ? true : false)
+          .then(result => {
+            if (result) {
+              var _when = _target.find(".data-when")
+                .text(new Date().toLocaleString())
+                .addClass("font-weight-bold text-highlight");
+               FN.common.delay(DELAYS.message).then(() => _when.removeClass("font-weight-bold text-highlight"));
+            }
+            _element.removeClass("py-0");
+            ಠ_ಠ.Display.template.show({
+              template: "return",
+              target: _element,
+              user: user,
+              clear: true,
+              item: id
+            });
+            ಠ_ಠ.Display.template.show({
+              template: "renew",
+              target: _element,
+              user: user,
+              prepend: true,
+              item: id
+            });
+          })
+          .catch(e => ಠ_ಠ.Flags.error("Renew Book Error", e));
+      } else {
+        _target.css("background-color", COLOUR_RENEW);
+        _target.find(".data-commands").addClass("d-none");
+        ಠ_ಠ.Display.template.show({
+          template: "confirm-renew",
+          user: user,
+          id: id,
+          target: _target.find(".data-confirm").removeClass("d-none"),
+          clear: true
+        });
+      }
+      
+    }
   };
   /* <!-- Item (Singular) Functions --> */
 
@@ -1604,6 +1672,15 @@ App = function() {
             max: 3
           },
           fn: FN.item.return
+        },
+        
+        renew: {
+          matches: /RENEW/i,
+          length: {
+            min: 2,
+            max: 3
+          },
+          fn: FN.item.renew
         },
 
       }

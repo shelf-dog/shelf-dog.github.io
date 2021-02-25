@@ -117,6 +117,7 @@ templates:
   - manage/detail
   - manage/outstanding
   - manage/statistics
+  - manage/renew
   - manage/return
   - manage/returned
   - manage/loan
@@ -140,6 +141,7 @@ templates:
   - manage/confirmations/remove-request
   - manage/confirmations/change-request
   - manage/confirmations/confirm-loan
+  - manage/confirmations/confirm-renew
   - manage/confirmations/confirm-return
   - manage/confirmations/choose-copy
 docs:

@@ -4,11 +4,17 @@
   <div>
     <table>
       {{#each this}}
-      {{~#unless (any (is @key "Cover") (is @key "Format_Files") (is @key "Format_Sizes"))~}}<tr data-field="{{@key}}">
+      {{~#unless (any (startsWith @key "$") (is @key "Cover") (is @key "Format_Files") (is @key "Format_Sizes"))~}}<tr data-field="{{@key}}">
         <td class="text-right border-dark border-right pr-2 pr-lg-3 pr-xl-4">
           <span class="font-weight-bold text-secondary">{{@key}}</span>
         </td>
-        <td class="pl-2 pl-lg-3 pl-xl-4{{#is @key 'Title'}} font-weight-bold{{/is}}{{#is @key 'Formats'}} font-larger-150{{/is}}">{{#is @index 0}}<div class="d-flex flex-row flex-wrap align-items-center"><span class="font-weight-bold text-white bg-dark rounded py-1 px-2">{{this}}</span></div>{{else}}{{> value}}{{/is}}</td>
+        <td class="pl-2 pl-lg-3 pl-xl-4{{#is @key 'Title'}} font-weight-bold{{/is}}{{#is @key 'Formats'}} font-larger-150{{/is}}">
+          {{~#is @index 0~}}
+            {{> value item=this wrap="align-items-center" class="font-weight-bold text-white bg-dark rounded py-1 px-2 link-action text-decoration-none"}}
+          {{~else~}}
+            {{> value item=this}}
+          {{~/is~}}
+        </td>
       </tr>{{~/unless~}}
       {{/each}}
     </table>
