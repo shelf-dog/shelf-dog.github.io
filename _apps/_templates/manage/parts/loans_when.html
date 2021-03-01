@@ -1,0 +1,5 @@
+{% raw %}
+<td class="small align-middle">
+  <span class="o-75 align-middle data-when{{#if when_class}} {{when_class}}{{/if}}"{{#if due}} data-toggle="tooltip" data-html="true" title="<strong>Due Back: </strong>{{localeDate due true}}"{{/if}}>{{#if show_full}}{{localeDate when}}{{else}}{{fromNow when}}{{/if}}</span>
+</td>
+{% endraw %}

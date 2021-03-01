@@ -144,6 +144,11 @@ templates:
   - manage/confirmations/confirm-renew
   - manage/confirmations/confirm-return
   - manage/confirmations/choose-copy
+  - manage/parts/loans_loan
+  - manage/parts/loans_when
+  - manage/parts/loans_returned
+  - manage/parts/loans_last
+  - manage/parts/loans_who
 docs:
   - shared/PUBLIC
   - shared/FEATURES

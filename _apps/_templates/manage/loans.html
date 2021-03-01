@@ -5,43 +5,13 @@
       <th scope="col" class="border-0">Item</th>
       <th scope="col" class="border-0">Who</th>
       <th scope="col" class="border-0">Loaned</th>
-      {{#if full}}<th scope="col" class="border-0">Returned</th>
-      <th scope="col" class="border-0">Logged By</th>{{/if}}
+      {{#if returned}}<th scope="col" class="border-0">Returned</th>{{/if}}
+      {{#if full}}<th scope="col" class="border-0">Logged By</th>{{/if}}
       <th scope="col" class="border-0"></th>
     </tr>
   </thead>
   <tbody>
-    {{#each loans}}<tr data-type="loan" data-state="{{#if returned}}returned{{else}}outstanding{{/if}}" data-id="{{item}}" data-user="{{who}}">
-      <th class="align-middle" scope="row">
-        {{~#if command}}<div class="d-flex align-items-center flex-row">
-          {{~#if overdue}}<span class="material-icons md-18 text-danger pr-2 o-80" data-toggle="tooltip"
-                                data-html="true" title="{{{overdue}}}">warning</span>{{/if~}}
-          <a href="{{command}}"{{#if decorate}} data-decorate{{/if}} class="text-decoration-none link-action pr-2 mr-1 border-right{{#if missing}} o-25{{/if}}" style="line-height: 1em;"{{#if external}} target="_blank"{{/if}}{{#if description}} data-toggle="tooltip" data-html="true" title="{{{description}}}"{{/if}}>
-            <span class="material-icons md-18">menu_book</span>
-          </a>{{/if~}}
-          <a href="#search.{{encode item}}" class="text-decoration-none link-action ml-1">{{item}}</a>
-        {{~#if command}}</div>{{/if~}}
-      </th>
-      <td class="align-middle">
-        <div class="d-flex align-items-center flex-row" data-who="{{who}}">
-          <a href="#search.{{encode who}}" class="text-decoration-none link-action">{{who}}</a>
-        </div>
-      </td>
-      <td class="small align-middle">
-        <span class="o-75 align-middle data-when"{{#if due}} data-toggle="tooltip" data-html="true" title="<strong>Due Back: </strong>{{localeDate due true}}"{{/if}}>{{#if ../full}}{{localeDate when}}{{else}}{{fromNow when}}{{/if}}</span>
-      </td>
-      {{~#if ../full}}<td class="small align-middle">
-        <span class="o-75 align-middle returned-date"{{#if duration}} data-toggle="tooltip" data-html="true" title="<strong>Duration: </strong>{{humanize duration}}"{{/if}}>{{localeDate returned}}</span>
-      </td>
-      <td class="small align-middle">
-        <span class="o-50 align-middle">{{last}}</span>
-      </td>{{/if~}}
-      <td class="align-middle commands data-commands" style="padding-top: 11x; padding-bottom: 6px;">
-        {{#if returned}}{{> returned}}{{else}}{{> renew user=who}}{{> return user=who}}{{/if}}
-      </td>
-      <td class="d-none data-confirm align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>
-      <td class="d-none data-result align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>
-    </tr>{{/each}}
+    {{#each loans}}{{> loans_loan show_full=../full show_returned=../returned}}{{/each}}
   </tbody>
 </table>
 {% endraw %}

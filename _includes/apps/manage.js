@@ -423,7 +423,7 @@ App = function() {
 
     },
 
-    show: (id, details, background, icon) => loans => {
+    show: (id, details, background, icon, returned) => loans => {
       if (loans && loans.length > 0) {
         return FN.loans.augment(FN.show.details(id, {
           title: details,
@@ -431,6 +431,7 @@ App = function() {
           icon: icon,
           movable: true,
           resizable: true,
+          returned: returned,
           count: loans.length,
           loans: _.tap(
             _.map(loans, FN.loans.process(FN.books.get(_.map(loans, loan => loan.copy || loan.id)))), 
@@ -450,17 +451,17 @@ App = function() {
       }
     },
 
-    generic: (fn, title, background, icon) => fn(ರ‿ರ.library)
+    generic: (fn, title, background, icon, returned) => fn(ರ‿ರ.library)
       .catch(e => (ಠ_ಠ.Flags.error("Fetching Loans Error", e), false))
-      .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()), title, background, icon)),
+      .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()), title, background, icon, returned)),
 
-    all: () => FN.loans.generic(FN.libraries.loans.all, "All Loans", "light"),
+    all: () => FN.loans.generic(FN.libraries.loans.all, "All Loans", "light", null, true),
 
     overdue: () => FN.loans.generic(FN.libraries.loans.overdue, "Overdue Loans", "danger", "check_circle_outline"),
 
     outstanding: () => FN.loans.generic(FN.libraries.loans.outstanding, "Outstanding Loans", "warning", "check_circle_outline"),
 
-    returned: () => FN.loans.generic(FN.libraries.loans.returned, "Returned Loans"),
+    returned: () => FN.loans.generic(FN.libraries.loans.returned, "Returned Loans", null, null, true),
 
   };
   /* <!-- Loans Functions --> */
@@ -493,18 +494,26 @@ App = function() {
       ಠ_ಠ.Flags.log("SEARCHING:", terms);
       if (!terms || terms.length != 1) return;
       
-      var _type = FN.common.check.user(terms) ? "user" : "copy",
+      /* <!-- Get the Book --> */
+      var _override = false,
+        _type = FN.common.check.user(terms) ? "user" : "copy",
         _isbn = _.isString(terms[0]) ? FN.common.check.isbn(terms) : false,
         _book = _type == "copy" ? _.isString(terms[0]) ? FN.books.get(terms[0]) : FN.books.get(terms[0].value, true) : null;
       
-      var _loans = (_isbn || _.isObject(terms[0])) && _book ? 
+      /* <!-- Maybe we have a book id, not a copy id - if so, we want loans for all the copies! --> */
+      if (_type == "copy" && _.isString(terms[0]) && !_book) {
+        _book = FN.books.get(terms[0], true);
+        if (_book) _override = true;
+      }
+      
+      var _loans = (_override || _isbn || _.isObject(terms[0])) && _book ? 
           ರ‿ರ.library.meta.capabilities.loan_field ? (_type = "copies", _book[ರ‿ರ.library.meta.capabilities.loan_field]) : _book.ID : terms;
       
       return FN.libraries.loans[_type](ರ‿ರ.library, _loans)
         .then(loans => loans && loans.length > 1 ? _.chain(loans).sortBy("date").reverse().value() : loans)
         .catch(e => (ಠ_ಠ.Flags.error("Searching Loans Error", e), false))
         .then(FN.loans.show(FN.show.loading(uuid.v4(), FN.show.overview.loans()),
-          `Loans for ${_type == "user" ? terms : _book ? _type == "copy" && ರ‿ರ.library.meta.capabilities.loan_field ? `${_book.Title} | ${terms}`: _book.Title : terms}`, "light"));
+          `Loans for ${_type == "user" ? terms : _book ? _type == "copy" && ರ‿ರ.library.meta.capabilities.loan_field ? `${_book.Title} | ${terms}`: _book.Title : terms}`, "light", null, true));
     },
 
   };
@@ -1234,10 +1243,24 @@ App = function() {
           .then(availability => availability && availability.length === 1 && availability[0].available === false ? true : false)
           .then(result => {
             if (result) {
-              var _when = _target.find(".data-when")
-                .text(new Date().toLocaleString())
-                .addClass("font-weight-bold text-highlight");
-               FN.common.delay(DELAYS.message).then(() => _when.removeClass("font-weight-bold text-highlight"));
+              
+              var _loaned = ಠ_ಠ.Dates.now(),
+                  _due = ರ‿ರ.library.meta.capabilities.loan_length ? _loaned.add(ರ‿ರ.library.meta.capabilities.loan_length, "days") : null;
+              
+              /* <!-- Show and Highlight new Loan Date --> */
+              var _when = ಠ_ಠ.Display.template.show({
+                template: "loans_when",
+                target: _target.find(".data-when").parent("td"),
+                show_full: true,
+                when: _loaned,
+                due: _due,
+                when_class: "font-weight-bold text-highlight",
+                replace: true,
+              });
+              
+              /* <!-- Remove Highlight --> */
+              FN.common.delay(DELAYS.message).then(() => _when.children(".data-when").removeClass("font-weight-bold text-highlight"));
+              
             }
             _element.removeClass("py-0");
             ಠ_ಠ.Display.template.show({

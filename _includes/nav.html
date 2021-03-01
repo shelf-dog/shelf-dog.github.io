@@ -21,17 +21,17 @@
       <li class="nav-item">
         <a class="nav-link disabled state-reader-loaded" href="#expand">Expand</a>
       </li>{% endif %}
-      {% if page.app == "libraries" or page.app == "library" or page.app == "manage" %}<li class="nav-item">
+      {% if page.app == "libraries" or page.app == "library" or page.app == "manage" %}<li class="nav-item{% if page.app == 'libraries'%} d-none show-authenticated{% endif %}">
         <a class="nav-link disabled state-authenticated" href="#refresh">Refresh</a>
       </li>{% endif %}
       {% if page.app == "library" %}<li class="nav-item">
         <a class="nav-link disabled state-library-loaded" href="#search">Search</a>
-      </li>{% else %}<li class="nav-item{% if page.app == 'settings' %} active{% endif %}">
+      </li>{% else %}<li class="nav-item{% if page.app == 'settings' %} active{% else %}{% if page.app == 'libraries'%} d-none show-authenticated{% endif %}{% endif %}">
         <a class="nav-link disabled state-authenticated" data-decorate="true" data-append="library" href="{% if page.app == 'reader' %}#settings{% else %}/app/settings/{% endif %}">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>{% endif %}{% else %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'subscriptions' %} active{% endif %}">
         <a class="nav-link" href="/subscriptions/">Subscriptions{% if page.layout == 'page' and page.permalink contains 'subscriptions' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
-      <li class="nav-item{% if page.layout == 'page' and page.permalink contains 'questions' %} active{% endif %}">
+      <li class="nav-item{% if page.layout == 'page' and page.permalink contains 'questions' %} active{% endif %}{% if page.app == 'libraries'%} hide-authenticated{% endif %}">
         <a class="nav-link" href="/questions/">FAQ{% if page.layout == 'page' and page.permalink contains 'questions' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
       <li class="nav-item{% if page.layout == 'page' and page.permalink contains 'pricing' %} active{% endif %}">

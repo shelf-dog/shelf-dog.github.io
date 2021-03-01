@@ -161,7 +161,7 @@ $opacities: ("10": 0.1, "25": 0.25, "40": 0.40, "50": 0.5, "60": 0.6, "70": 0.7,
 
 // -- Titles and Content -- //
 .features, .titles {
-  width: max-content;
+  max-width: max-content;
 }
 
 .titles, .copyright, .important {

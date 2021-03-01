@@ -71,7 +71,7 @@ icon:                 "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgA
 
 # Extras
 analytics:
-  enable:							false
+  enable:							true
   id:									"UA-53673057-8"
   
 app:
