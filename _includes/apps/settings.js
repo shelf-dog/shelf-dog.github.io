@@ -47,7 +47,11 @@ App = function() {
   FN.show = {
     
     personal : () => ಠ_ಠ.Main.authorise(SCOPE_DRIVE_APPDATA)
-    .then(result => result === true ? FN.configuration.get() : false)
+    
+    .then(result => result === true ? FN.configuration.get()
+          .catch(e => ಠ_ಠ.Flags.error("Loading Personal Settings", e))
+          .then(ಠ_ಠ.Main.busy("Loading Settings", true)) : false)
+    
     .then(settings => {
       
       ಠ_ಠ.Display.state().change(FN.states.settings.specific, FN.states.settings.personal);
@@ -102,7 +106,8 @@ App = function() {
           });
           
       });
-    }).then(ಠ_ಠ.Main.busy("Loading Settings", true)),
+    })
+    .catch(e => ಠ_ಠ.Flags.error("Personal Settings", e)),
     
     library : index => FN.libraries.one(index)
       .then(library => library.admin ? Promise.all(
@@ -189,7 +194,7 @@ App = function() {
         return true;
         
       })
-      .catch(e => ಠ_ಠ.Flags.error("Loading Settings", e))
+      .catch(e => ಠ_ಠ.Flags.error("Loading Library Settings", e))
       .then(ಠ_ಠ.Main.busy("Loading Settings", true))
     
       /* <!-- If nothing is returned (e.g. not an admin) - fall back to showing personal settings --> */

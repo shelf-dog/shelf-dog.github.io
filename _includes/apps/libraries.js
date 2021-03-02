@@ -32,20 +32,43 @@ App = function() {
           clear: true
         }), number),
         _current = _placeholder(number || _.random(4, 10)),
-        _loaded = e => _current > e.detail ? 
+        _loaded = null,
+        _endpoints_loaded = e => _current > (_loaded = e.detail) ? 
           _libraries.find(`.library:gt(${e.detail - 1})`).addClass("hide") :
-          _placeholder(e.detail);
+          _placeholder(e.detail),
+        _library_loaded = e => {
+          var _index = e.detail,
+              _library = FN.libraries.loaded(_index);
+          ಠ_ಠ.Flags.log(`LIBRARY ${_index} LOADED:`, _library);
+          if (_library) {
+            _loaded -= 1;
+            ಠ_ಠ.Display.template.show({
+              template: "library",
+              id: _index,
+              admin: _library.admin,
+              code: _library.code,
+              meta: _library.meta,
+              name: _library.name,
+              state: _library.state,
+              target: _libraries.find(`.library:eq(${_index})`),
+              replace: true
+            });
+          }
+        };
       
-    window.addEventListener(FN.events.endpoints.loaded, _loaded, false);
+    window.addEventListener(FN.events.endpoints.loaded, _endpoints_loaded, false);
+    window.addEventListener(FN.events.library.loaded, _library_loaded, false);
+    
     return FN.libraries.all(force, null)
-      .then(libraries => ಠ_ಠ.Display.template.show({
+      .then(libraries => _loaded === 0 ? ಠ_ಠ.Display.template.show({
           template: "libraries",
           libraries: libraries,
           target: _libraries,
           clear: true
-        }))
+        }) : true)
       .then(() => {
-        window.removeEventListener(FN.events.endpoints.loaded, _loaded, false);
+        window.removeEventListener(FN.events.endpoints.loaded, _endpoints_loaded, false);
+        window.removeEventListener(FN.events.library.loaded, _library_loaded, false);
       });
   };
   

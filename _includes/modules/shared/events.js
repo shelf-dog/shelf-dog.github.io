@@ -8,6 +8,9 @@ Events = () => {
     endpoints: {
       loaded : "endpoints-loaded",
     },
+    library: {
+      loaded : "library-loaded",
+    },
     loans: {
       progress : "loans-progress",
     },

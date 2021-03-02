@@ -38,7 +38,7 @@ Libraries = (options, factory) => {
       () => Promise.resolve(false)
   });
   
-  var _fetch = (endpoint, action, timeout) => endpoint.api(action, null, timeout).catch(e => {
+  var _fetch = (endpoint, action, timeout) => endpoint.api(action, null, timeout, true).catch(e => {
           factory.Flags.error(`Endpoint: ${endpoint.id} ERRORED [${action}]`, e);
           return null;
         });
@@ -63,24 +63,39 @@ Libraries = (options, factory) => {
     
   };
   
+  var _log = (endpoint, index) => {
+    ರ‿ರ[options.state.application.demo ? "demo" : "all"][index] = endpoint;
+    if (options.functions.events) factory.Main.event(options.functions.events.library.loaded, index);
+    return endpoint;
+  };
+  
   var _prepare = (endpoints, force) => Promise.all(_.chain(endpoints)
-                                        .map(_endpoint).map(endpoint => _meta(endpoint, force)).value());
+                    .map(_endpoint)
+                    .map((endpoint, index) => _meta(endpoint, force).then(endpoint => _log(endpoint, index))).value());
   
   var _all = (force, stale) => options.functions.cache.get(options.state.application.demo ? "endpoints_demo" : "endpoints", 
                                 stale ? options.long_cache : options.cache, options.functions.client.endpoints, force)
+  
       .then(value => value && value.endpoints ? 
-            (value.endpoints = _.filter(value.endpoints, endpoint => options.state.application.demo ? endpoint.code === "DEMO" : 
-                                          endpoint.admin || endpoint.code !== "DEMO"), value) : value)
+            (value.endpoints = _.chain(value.endpoints).filter(endpoint => options.state.application.demo ? endpoint.code === "DEMO" : 
+                                          endpoint.admin || endpoint.code !== "DEMO").sortBy("name").value(), value) : value)
+  
       .then(value => {
-        if (options.functions.events) factory.Main.event(options.functions.events.endpoints.loaded, 
-                            value && value.endpoints ? Math.max(value.endpoints.length, 1) : 1);
+        
+        var _count = value && value.endpoints ? Math.max(value.endpoints.length, 1) : 1;
+        if (options.functions.events) factory.Main.event(options.functions.events.endpoints.loaded, _count);
         factory.Flags.log("ENDPOINTS:", value);
-        return value && value.endpoints && value.endpoints.length > 0 ? _prepare(value.endpoints, force) : 
+        
+        return value && value.endpoints && value.endpoints.length > 0 ? 
+          _prepare(value.endpoints, force, ರ‿ರ[options.state.application.demo ? "demo" : "all"] = new Array(_count)) : 
           [options.functions.demo.generate()];
+        
       })
       .then(libraries => {
+        
         factory.Flags.log("LIBRARIES:", libraries);
-        return (ರ‿ರ[options.state.application.demo ? "demo" : "all"] = _.sortBy(libraries, "name"));
+        return (ರ‿ರ[options.state.application.demo ? "demo" : "all"] = libraries);
+        
       });
   
   var _bytes = data => new Uint8Array(_.isArray(data) ? data : _.isString(data) ? s.base64.bytes(data) : []);
@@ -232,6 +247,9 @@ Libraries = (options, factory) => {
   
   FN.users = value => FN.select(value).then(library => options.functions.cache.get(library.cache("USERS"), options.users_cache,
                                                   () => library.api("USERS", null, null, true)));
+  
+  FN.loaded = index => ರ‿ರ[options.state.application.demo ? "demo" : "all"] ? 
+                          ರ‿ರ[options.state.application.demo ? "demo" : "all"][index] : null;
   
   FN.clean = () => ರ‿ರ = {};
   /* <!-- Public Functions --> */

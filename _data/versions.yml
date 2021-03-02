@@ -1,8 +1,8 @@
 site :
-  0.0.9g :
-    name : Site v0.0.9g
+  0.0.9h :
+    name : Site v0.0.9h
     desc : General Improvements
-    numeric : 0.0.9.7
+    numeric : 0.0.9.8
     type:
       - alpha
     changes :
@@ -12,6 +12,7 @@ site :
       - Overlaid tooltip of due date on loaned date
       - Updated view of Loans
       - Improved Loan Search by Book
+      - Improved Initial Library Loading
   0.0.9e :
     name : Site v0.0.9e
     desc : General Improvements
