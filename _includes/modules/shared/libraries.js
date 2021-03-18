@@ -166,6 +166,14 @@ Libraries = (options, factory) => {
       returned: true
     }, null, true)),
     
+    queried: value => FN.select(value).then(library => library.api("LOANS", {
+      queried: true
+    }, null, true)),
+    
+    disputed: value => FN.select(value).then(library => library.api("LOANS", {
+      disputed: true
+    }, null, true)),
+    
     overdue: value => FN.select(value).then(library => library.api("LOANS", {
       overdue: true
     }, null, true)),
@@ -207,8 +215,9 @@ Libraries = (options, factory) => {
     
   };
   
-  FN.statistics = value => FN.select(value).then(library => options.functions.cache.get(library.cache("STATISTICS"), 
-                                                  options.statistics_cache, () => library.api("STATISTICS", null, null, true)));
+  FN.statistics = (value, force) => FN.select(value)
+    .then(library => options.functions.cache.get(library.cache("STATISTICS"), 
+                        options.statistics_cache, () => library.api("STATISTICS", null, null, true), force));
   
   FN.log = {
     
@@ -218,6 +227,14 @@ Libraries = (options, factory) => {
       isbn : isbn || "",
       copy : copy,
       details : details || ""
+    })),
+    
+    disputed : (value, copy) => FN.select(value).then(library => library.api("LOG_DISPUTED", {
+      copy : copy
+    })),
+    
+    queried : (value, copy) => FN.select(value).then(library => library.api("LOG_QUERIED", {
+      copy : copy
     })),
     
     returned : (value, copy) => FN.select(value).then(library => library.api("LOG_RETURNED", {
@@ -231,14 +248,16 @@ Libraries = (options, factory) => {
       until : until,
     })),
     
-    concluded : (value, user, id, copy) => FN.select(value).then(library => {
+    concluded : (value, user, id, copy, loaned, isbn, details) => FN.select(value).then(library => {
       var _data = {
         user : user,
         id : id
       };
       if (copy) {
-        _data.loaned = true;
+        _data.loaned = loaned || true;
         _data.copy = copy;
+        if (isbn) _data.isbn = isbn;
+        if (details) _data.details = details;
       }
       return library.api("LOG_CONCLUDED", _data);
     }),

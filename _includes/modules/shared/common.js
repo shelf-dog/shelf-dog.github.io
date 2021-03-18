@@ -10,7 +10,7 @@ Common = () => {
         EMAIL_CHANGE = /([a-zA-Z0-9._-]+)"([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i;
   
   const REGEX_ISBN = /^(97(8|9))?\d{9}(\d|X)$/,
-        REGEX_ID =  /\d+/,
+        REGEX_ID =  /^\d+$/,
         REGEX_EMAIL = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
   /* <!-- Internal Constants --> */
 

@@ -17,6 +17,8 @@ App = function() {
     COLOUR_CHANGE = "#b8952dad",
     COLOUR_RETURN = "#1d551da8",
     COLOUR_RENEW = "#1d551da8",
+    COLOUR_QUERY = "#1d551da8",
+    COLOUR_DISPUTE = "#1d551da8",
     COLOUR_FAILURE = "#6e0a0a8f",
     COLOUR_FAILURE_INPUT_BACK = "#f5141494",
     COLOUR_FAILURE_INPUT_FORE = "#ffffff",
@@ -163,7 +165,7 @@ App = function() {
         }
       }),
 
-    statistics: () => FN.libraries.statistics(ರ‿ರ.library)
+    statistics: force => FN.libraries.statistics(ರ‿ರ.library, force)
       .catch(e => (ಠ_ಠ.Flags.error("Fetching Requests Error", e), false))
       .then(statistics => {
         if (statistics === false) {
@@ -176,6 +178,7 @@ App = function() {
             movable: true,
             background: "info",
             icon: "insights",
+            refresh: "show.statistics",
             values: (statistics.overdue ? [{
                 name: "Overdue",
                 count: statistics.overdue,
@@ -193,7 +196,7 @@ App = function() {
                 count: statistics.outstanding,
                 route: "show.loans.outstanding",
                 size: "h4",
-                background: "warning"
+                background: "highlight"
               }, {
                 name: "Returned",
                 count: statistics.returned,
@@ -208,6 +211,20 @@ App = function() {
                 name: "Avg. Loan Length",
                 count: statistics.durations ? ಠ_ಠ.Dates.duration(statistics.durations * 60 * 60 * 1000).humanize() : statistics.durations,
               }, ])
+              .concat(statistics.queried ? [{
+                name: "Queried",
+                count: statistics.queried,
+                route: "show.loans.queried",
+                size: "h4",
+                background: "warning"
+              }] : [])
+              .concat(statistics.disputed ? [{
+                name: "Disputed",
+                count: statistics.disputed,
+                route: "show.loans.disputed",
+                size: "h4",
+                background: "danger"
+              }] : [])
               .concat(_.chain(statistics.weeks).map((count, week) => ({
                 prefix: "Loans",
                 name: `Week: ${week}`,
@@ -250,10 +267,11 @@ App = function() {
       return FN.hookup.closer(fixed ? ಠ_ಠ.Display.template.show(value) : FN.hookup.since(ಠ_ಠ.Display.template.show(value)));
     },
 
-    loading: (id, value) => (ಠ_ಠ.Display.template.show(_.extend(value, {
+    loading: (id, value, replace) => (ಠ_ಠ.Display.template.show(_.extend(value, {
       id: id,
       template: "detail",
-      target: $("#details"),
+      target: replace ? $(`#details .detail[data-index=${id}]`) : $("#details"),
+      replace: replace
     })), id),
 
     overview: {
@@ -261,7 +279,7 @@ App = function() {
       contents: name => ({
         title: name || "Contents",
         icon: "library_books",
-        background: "highlight",
+        background: "highlight-lighter",
         admin: ರ‿ರ.library.admin,
         static: true,
         movable: true,
@@ -295,7 +313,8 @@ App = function() {
 
     },
 
-    statistics: () => Promise.all([FN.show.loading(uuid.v4(), FN.show.overview.statistics()), FN.get.statistics()])
+    statistics: refresh => Promise.all([FN.show.loading(refresh || uuid.v4(), 
+          FN.show.overview.statistics(), !!refresh), FN.get.statistics(!!refresh)])
       .then(results => FN.show.details(results[0], results[1])),
 
   };
@@ -397,8 +416,11 @@ App = function() {
       var id = loan.copy || loan.id,
           book = books ? _.find(books, book => ರ‿ರ.library.meta.capabilities.loan_field ? 
                                 book[ರ‿ರ.library.meta.capabilities.loan_field].indexOf(id) >= 0 : book.ID == id) : FN.books.get(id),
+          queried = String.equal(loan.returned, "QUERIED", true),
+          disputed = String.equal(loan.returned, "DISPUTED", true),
           loaned = loan.date ? ಠ_ಠ.Dates.parse(loan.date) : "",
-          returned = loan.returned && _.isString(loan.returned) ? ಠ_ಠ.Dates.parse(loan.returned) : loan.returned,
+          returned = !queried && !disputed && loan.returned && _.isString(loan.returned) ?
+            ಠ_ಠ.Dates.parse(loan.returned) : loan.returned,
           duration = loaned && _.isObject(loaned) ?
             returned && _.isObject(returned) ?
               ಠ_ಠ.Dates.duration(returned - loaned) :
@@ -414,6 +436,8 @@ App = function() {
         due: ರ‿ರ.library.meta.capabilities.loan_length && loaned && _.isObject(loaned) ?
           loaned.add(ರ‿ರ.library.meta.capabilities.loan_length, "days") : null,
         returned: returned,
+        queried: queried,
+        disputed: disputed,
         last: loan.last,
         duration: returned ? duration : null,
         overdue: duration && !returned && ರ‿ರ.library.meta.capabilities.loan_length &&
@@ -459,9 +483,13 @@ App = function() {
 
     overdue: () => FN.loans.generic(FN.libraries.loans.overdue, "Overdue Loans", "danger", "check_circle_outline"),
 
-    outstanding: () => FN.loans.generic(FN.libraries.loans.outstanding, "Outstanding Loans", "warning", "check_circle_outline"),
+    outstanding: () => FN.loans.generic(FN.libraries.loans.outstanding, "Outstanding Loans", "highlight", "check_circle_outline"),
 
     returned: () => FN.loans.generic(FN.libraries.loans.returned, "Returned Loans", null, null, true),
+    
+    queried: () => FN.loans.generic(FN.libraries.loans.queried, "Queried Loans", "warning", "thumb_down_off_alt"),
+    
+    disputed: () => FN.loans.generic(FN.libraries.loans.disputed, "Disputed Loans", "danger", "thumb_down_off_alt"),
 
   };
   /* <!-- Loans Functions --> */
@@ -975,6 +1003,38 @@ App = function() {
   /* <!-- Items (Batch) Functions --> */
 
 
+  /* <!-- Confirmation Functions --> */
+  FN.confirm = {
+    
+    row : (entity, type, colour, template, confirmed) => (id, user, confirmation) => {
+      
+      var _target = FN.item.row(id, user, entity, type);
+
+      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
+        
+        FN.item.restore(id, user, entity, type);
+        return confirmed ? confirmed(_target, id, user) : null;
+        
+      } else {
+        
+        _target.css("background-color", colour);
+        _target.find(".data-commands").addClass("d-none");
+        _.isFunction(template) ? template(_target, id, user) :
+          ಠ_ಠ.Display.template.show(_.extendOwn({
+            user: user,
+            id: id,
+            target: _target.find(".data-confirm").removeClass("d-none"),
+            clear: true
+          }, _.isString(template) ? {
+            template: template,
+          } : template));
+        
+      }
+    }
+  };
+  /* <!-- Confirmation Functions --> */
+  
+  
   /* <!-- Item (Singular) Functions --> */
   FN.item = {
 
@@ -1003,50 +1063,57 @@ App = function() {
     success: (id, user, type, message) => FN.item.notify(id, user, type, message, COLOUR_SUCCESS),
 
     failure: (id, user, type, message) => FN.item.notify(id, user, type, message, COLOUR_FAILURE),
-
-    remove: (id, user, confirmation) => {
-      var _target = FN.item.row(id, user, "request");
-      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
-        return FN.libraries.log.concluded(ರ‿ರ.library, user, id)
-          .then(ಠ_ಠ.Main.busy("Removing Request", true))
-          .then(result => {
-            if (!result) return;
-            ಠ_ಠ.Flags.log("Removal Result", result);
-            _target.remove();
-          })
-          .catch(e => ಠ_ಠ.Flags.error("Removing Request Error", e));
-      } else {
-        _target.css("background-color", COLOUR_REMOVE);
-        _target.find(".data-commands").addClass("d-none");
-        ಠ_ಠ.Display.template.show({
-          template: "remove-request",
-          user: user,
-          id: id,
-          target: _target.find(".data-confirm").removeClass("d-none"),
-          clear: true
-        });
-      }
+    
+    update: target => {
+      var _element = target.find(".data-commands").empty().addClass("py-0");
+      return {
+        element: _element,
+        restore: (id, user, templates) => {
+          _element.removeClass("py-0");
+          _.each(templates, (template, i) => {
+            ಠ_ಠ.Display.template.show({
+              template: template,
+              target: _element,
+              user: user,
+              clear: i === 0,
+              prepend: i > 0,
+              item: id
+            });
+          });
+        }
+      };
+    },
+    
+    status: (fn, id, user, target, templates) => {
+      var _holder = FN.item.update(target);
+      return fn(ರ‿ರ.library, id)
+        .then(ಠ_ಠ.Main.busy_element(_holder.element))
+        .then(() => _holder.restore(id, user, templates))
+        .catch(e => ಠ_ಠ.Flags.error("Loan Status Change Error", e));
     },
 
-    change: (id, user, confirmation, change) => {
-      var _target = FN.item.row(id, user, "request");
-      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
-        return Promise.resolve(FN.item.restore(id, user))
-          .then(() => FN.item.loan(change, user, SparkMD5.hash(`${change}_${user}`), id));
-      } else {
-        _target.css("background-color", COLOUR_CHANGE);
-        _target.find(".data-commands").addClass("d-none");
-
-        var _change = ಠ_ಠ.Display.template.show({
-            template: "change-request",
-            user: user,
-            id: id,
-            target: _target.find(".data-confirm").removeClass("d-none"),
-            clear: true
-          }),
-          _loan = _change.find("a.data-loan"),
-          _cancel = _change.find("a.data-cancel"),
-          _input = _change.find("input");
+    remove: (FN.confirm.row)("request", null, COLOUR_REMOVE, "remove-request", 
+      (target, id, user) => FN.libraries.log.concluded(ರ‿ರ.library, user, id)
+        .then(ಠ_ಠ.Main.busy("Removing Request", true))
+        .then(result => {
+          if (!result) return;
+          ಠ_ಠ.Flags.log("Removal Result", result);
+          target.remove();
+        })
+        .catch(e => ಠ_ಠ.Flags.error("Removing Request Error", e))),
+    
+    change: (id, user, confirmation, change) => FN.confirm.row("request", null, COLOUR_CHANGE, target => {
+      
+      var _change = ಠ_ಠ.Display.template.show({
+          template: "change-request",
+          user: user,
+          id: id,
+          target: target.find(".data-confirm").removeClass("d-none"),
+          clear: true
+        }),
+        _loan = _change.find("a.data-loan"),
+        _cancel = _change.find("a.data-cancel"),
+        _input = _change.find("input");
 
         _input.on("keyup", e => {
           if (e.keyCode == KEY_ENTER) {
@@ -1066,16 +1133,18 @@ App = function() {
           }
         });
         _input.focus();
-      }
-    },
+      
+    }, () => Promise.resolve(FN.item.restore(id, user))
+          .then(() => FN.item.loan(change, user, SparkMD5.hash(`${change}_${user}`), null, id))
+    )(id, user, confirmation),
 
-    return: (id, user, confirmation, inverse, since, until) => {
-
-      var _target = FN.item.row(id, user, "loan", "outstanding");
-
-      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
-        FN.item.restore(id, user, "loan", "outstanding");
-        var _element = _target.find(".data-commands").empty().addClass("py-0"),
+    return: (id, user, confirmation, inverse, since, until) => FN.confirm.row("loan", "outstanding", COLOUR_RETURN, {
+        template: "confirm-return",
+        unreturn: inverse,
+        since: since,
+        until: until
+      }, target => {
+        var _element = target.find(".data-commands").empty().addClass("py-0"),
           _since = ಠ_ಠ.Dates.now().toDate();
         return (inverse ?
             FN.libraries.log.unreturned(ರ‿ರ.library, id, user, since, until) :
@@ -1086,7 +1155,7 @@ App = function() {
           .then(result => {
             var _until = ಠ_ಠ.Dates.now().toDate();
             if (result === true) inverse ?
-              _target.find(".returned-date").empty() : _target.find(".returned-date").text(_until.toLocaleString());
+              target.find(".returned-date").empty() : target.find(".returned-date").text(_until.toLocaleString());
             _element.removeClass("py-0");
             ಠ_ಠ.Display.template.show({
               template: result === (inverse ? false : true) ? "returned" : "return",
@@ -1098,39 +1167,35 @@ App = function() {
               clear: true,
               item: id
             });
-            if (inverse && result) ಠ_ಠ.Display.template.show({
-              template: "renew",
-              target: _element,
-              user: user,
-              prepend: true,
-              item: id
-            });
+            if (inverse && result) _.each(["query", "renew"], template => {
+                ಠ_ಠ.Display.template.show({
+                  template: template,
+                  target: _element,
+                  user: user,
+                  prepend: true,
+                  item: id
+                });
+              });
           })
           .catch(e => ಠ_ಠ.Flags.error("Return Book Error", e));
-      } else {
-        _target.css("background-color", COLOUR_RETURN);
-        _target.find(".data-commands").addClass("d-none");
-        ಠ_ಠ.Display.template.show({
-          template: "confirm-return",
-          user: user,
-          id: id,
-          unreturn: inverse,
-          since: since,
-          until: until,
-          target: _target.find(".data-confirm").removeClass("d-none"),
-          clear: true
-        });
-      }
-
-    },
+      })(id, user, confirmation),
 
     unreturn: (id, user, since, until, confirmation) => FN.item.return(id, user, confirmation, true, since, until),
 
     loan: (id, user, confirmation, copy, target) => {
 
       var book = FN.books.get(id, true);
-      if (!book) return (ಠ_ಠ.Flags.log(`Unable to Find Book for ID=${id}`), null);
-
+      if (!book && ರ‿ರ.library.meta.capabilities.loan_field) book = FN.books.get(id);
+      
+      if (book) {
+        ಠ_ಠ.Flags.log(`Found Book for ID=${id}`, book);
+      } else {
+        return (ಠ_ಠ.Flags.log(`Unable to Find Book for ID=${id}`), null);
+      }
+      
+      if (!copy && ರ‿ರ.library.meta.capabilities.loan_field && 
+          book[ರ‿ರ.library.meta.capabilities.loan_field].indexOf(id) >= 0) copy = id;
+      
       var _target = FN.item.row(target || id, user, "request");
 
       /* <!-- First: Get Availability --> */
@@ -1208,8 +1273,10 @@ App = function() {
 
           if (!copy) return;
           ಠ_ಠ.Flags.log(`Loaning Item ${id} to user ${user}${copy != id ? ` | Copy ${copy}` : ""}`);
-          return FN.libraries.log.concluded(ರ‿ರ.library, user, id, copy)
-            .then(ಠ_ಠ.Main.busy("Loaning Book", true));
+          return (target && target != id ? 
+            FN.libraries.log.concluded(ರ‿ರ.library, user, target, copy, id, book.ISBN, FN.common.format.details(book)) : 
+            FN.libraries.log.concluded(ರ‿ರ.library, user, id, copy))
+          .then(ಠ_ಠ.Main.busy("Loaning Book", true));
 
         })
 
@@ -1223,75 +1290,54 @@ App = function() {
 
     },
 
-    renew: (id, user, confirmation) => {
+    renew: (FN.confirm.row)("loan", "outstanding", COLOUR_RENEW, "confirm-renew", (target, id, user) => {
       
-      var _target = FN.item.row(id, user, "loan", "outstanding");
+      var _holder = FN.item.update(target);
+      return FN.libraries.log.returned(ರ‿ರ.library, id)
+        .then(availability => {
+          if (availability && availability.length === 1 && availability[0].available === true) {
+            var item = FN.books.get(availability[0].copy);
+            return FN.libraries.log.loan(ರ‿ರ.library, user, id, item.ISBN, availability[0].copy, 
+                                         FN.common.format.details(item));  
+          } else {
+            return availability;
+          }
+        })
+        .then(ಠ_ಠ.Main.busy_element(_holder.element))
+        .then(availability => availability && availability.length === 1 && availability[0].available === false ? true : false)
+        .then(result => {
+          if (result) {
 
-      if (confirmation && confirmation == SparkMD5.hash(`${id}_${user}`)) {
-        FN.item.restore(id, user, "loan", "outstanding");
-        var _element = _target.find(".data-commands").empty().addClass("py-0");
-        return FN.libraries.log.returned(ರ‿ರ.library, id)
-          .then(availability => {
-            if (availability && availability.length === 1 && availability[0].available === true) {
-              var item = FN.books.get(availability[0].copy);
-              return FN.libraries.log.loan(ರ‿ರ.library, user, id, item.ISBN, availability[0].copy, FN.common.format.details(item));  
-            } else {
-              return availability;
-            }
-          })
-          .then(ಠ_ಠ.Main.busy_element(_element))
-          .then(availability => availability && availability.length === 1 && availability[0].available === false ? true : false)
-          .then(result => {
-            if (result) {
-              
-              var _loaned = ಠ_ಠ.Dates.now(),
-                  _due = ರ‿ರ.library.meta.capabilities.loan_length ? _loaned.add(ರ‿ರ.library.meta.capabilities.loan_length, "days") : null;
-              
-              /* <!-- Show and Highlight new Loan Date --> */
-              var _when = ಠ_ಠ.Display.template.show({
-                template: "loans_when",
-                target: _target.find(".data-when").parent("td"),
-                show_full: true,
-                when: _loaned,
-                due: _due,
-                when_class: "font-weight-bold text-highlight",
-                replace: true,
-              });
-              
-              /* <!-- Remove Highlight --> */
-              FN.common.delay(DELAYS.message).then(() => _when.children(".data-when").removeClass("font-weight-bold text-highlight"));
-              
-            }
-            _element.removeClass("py-0");
-            ಠ_ಠ.Display.template.show({
-              template: "return",
-              target: _element,
-              user: user,
-              clear: true,
-              item: id
+            var _loaned = ಠ_ಠ.Dates.now(),
+                _due = ರ‿ರ.library.meta.capabilities.loan_length ? _loaned.add(ರ‿ರ.library.meta.capabilities.loan_length, "days") : null;
+
+            /* <!-- Show and Highlight new Loan Date --> */
+            var _when = ಠ_ಠ.Display.template.show({
+              template: "loans_when",
+              target: target.find(".data-when").parent("td"),
+              show_full: true,
+              when: _loaned,
+              due: _due,
+              when_class: "font-weight-bold text-highlight",
+              replace: true,
             });
-            ಠ_ಠ.Display.template.show({
-              template: "renew",
-              target: _element,
-              user: user,
-              prepend: true,
-              item: id
-            });
-          })
-          .catch(e => ಠ_ಠ.Flags.error("Renew Book Error", e));
-      } else {
-        _target.css("background-color", COLOUR_RENEW);
-        _target.find(".data-commands").addClass("d-none");
-        ಠ_ಠ.Display.template.show({
-          template: "confirm-renew",
-          user: user,
-          id: id,
-          target: _target.find(".data-confirm").removeClass("d-none"),
-          clear: true
-        });
-      }
+
+            /* <!-- Remove Highlight --> */
+            FN.common.delay(DELAYS.message).then(() => _when.children(".data-when").removeClass("font-weight-bold text-highlight"));
+
+          }
+          _holder.restore(id, user, ["return", "query", "renew"]);
+        })
+        .catch(e => ಠ_ಠ.Flags.error("Renew Book Error", e));
       
-    }
+    }),
+    
+    query: (FN.confirm.row)("loan", "outstanding", COLOUR_QUERY, "confirm-query", 
+      (target, id, user) => FN.item.status(FN.libraries.log.queried, id, user, target, ["return", "disputed"])),
+    
+    dispute: (FN.confirm.row)("loan", "outstanding", COLOUR_DISPUTE, "confirm-dispute",
+      (target, id, user) => FN.item.status(FN.libraries.log.disputed, id, user, target, ["return"])),
+    
   };
   /* <!-- Item (Singular) Functions --> */
 
@@ -1552,6 +1598,16 @@ App = function() {
               matches: /OVERDUE/i,
               fn: FN.loans.overdue
             },
+            
+            queried: {
+              matches: /QUERIED/i,
+              fn: FN.loans.queried
+            },
+            
+            disputed: {
+              matches: /DISPUTED/i,
+              fn: FN.loans.disputed
+            },
 
           }
 
@@ -1559,8 +1615,20 @@ App = function() {
 
         statistics: {
           matches: /STATISTICS/i,
+          length: 0,
           state: FN.states.manage.loaded,
-          fn: FN.show.statistics
+          fn: FN.show.statistics,
+          
+          routes: {
+            
+            refresh: {
+              matches: /REFRESH/i,
+              length: 1,
+              fn: FN.show.statistics
+            },
+
+          }
+          
         },
 
         requests: {
@@ -1706,6 +1774,25 @@ App = function() {
           fn: FN.item.renew
         },
 
+        query: {
+          matches: /QUERY/i,
+          length: {
+            min: 2,
+            max: 3
+          },
+          fn: FN.item.query
+        },
+        
+        dispute: {
+          matches: /DISPUTE/i,
+          length: {
+            min: 2,
+            max: 3
+          },
+          fn: FN.item.dispute
+        },
+        
+        
       }
 
     },

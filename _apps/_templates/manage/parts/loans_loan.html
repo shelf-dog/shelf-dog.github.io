@@ -1,5 +1,6 @@
 {% raw %}
-<tr data-type="loan" data-state="{{#if returned}}returned{{else}}outstanding{{/if}}" data-id="{{item}}" data-user="{{who}}">
+<tr data-type="loan" data-id="{{item}}" data-user="{{who}}"
+    data-state="{{#unless (any queried disputed)}}{{#if returned}}returned{{else}}outstanding{{/if}}{{else}}outstanding{{/unless}}">
   <th class="align-middle" scope="row">
     {{~#if command}}<div class="d-flex align-items-center flex-row">
       {{~#if overdue}}<span class="material-icons md-18 text-danger pr-2 o-80" data-toggle="tooltip"
@@ -8,6 +9,10 @@
         <span class="material-icons md-18">menu_book</span>
       </a>{{/if~}}
       <a href="#search.{{encode item}}" class="text-decoration-none link-action ml-1">{{item}}</a>
+    {{#if queried}}<span class="material-icons md-18 text-warning ml-2 pl-2 border-left" data-toggle="tooltip"
+                            data-html="true" title="Loan is being <strong class='text-warning'>queried</strong>">thumb_down</span>{{/if~}}
+    {{#if disputed}}<span class="material-icons md-18 text-danger ml-2 pl-2 border-left" data-toggle="tooltip"
+                            data-html="true" title="Loan is <strong class='text-danger'>disputed</strong>">thumb_down</span>{{/if~}}
     {{~#if command}}</div>{{/if~}}
   </th>
   {{> loans_who}}
@@ -15,7 +20,11 @@
   {{~#if show_returned}}{{> loans_returned}}{{/if~}}
   {{~#if show_full}}{{> loans_last}}{{/if~}}
   <td class="align-middle commands data-commands" style="padding-top: 11x; padding-bottom: 6px;">
-    {{#if returned}}{{> returned}}{{else}}{{> renew user=who}}{{> return user=who}}{{/if}}
+    {{~#if (isDate returned)~}}
+      {{> returned}}
+    {{~else~}}
+      {{#unless disputed}}{{> renew user=who}}{{#if queried}}{{> dispute user=who}}{{else}}{{> query user=who}}{{/if}}{{/unless}}{{> return user=who}}
+    {{~/if~}}
   </td>
   <td class="d-none data-confirm align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>
   <td class="d-none data-result align-middle commands" style="padding-top: 5px; padding-bottom: 5px;"></td>

@@ -201,7 +201,7 @@ App = function() {
       
 			/* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
-        name: "Landing",
+        name: "Libraries",
         state: ರ‿ರ,
         states: FN.states.all,
         start: FN.setup.routed,

@@ -1,5 +1,5 @@
 {% raw %}
 <td class="small align-middle">
-  <span class="o-75 align-middle returned-date"{{#if duration}} data-toggle="tooltip" data-html="true" title="<strong>Duration: </strong>{{humanize duration}}"{{/if}}>{{localeDate returned}}</span>
+  <span class="{{#if queried}}text-warning {{/if}}{{#if disputed}}text-danger {{/if}}{{#unless (any queried disputed)}}o-75{{else}}font-weight-bold{{/unless}} align-middle returned-date"{{#if duration}} data-toggle="tooltip" data-html="true" title="<strong>Duration: </strong>{{humanize duration}}"{{/if}}>{{#if (isDate returned)}}{{localeDate returned}}{{else}}{{returned}}{{/if}}</span>
 </td>
 {% endraw %}

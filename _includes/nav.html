@@ -15,6 +15,9 @@
       <li class="nav-item{% if page.app == 'libraries' %} active{% endif %}">
         <a class="nav-link" data-decorate="true" href="/app/">{% if page.app and page.layout == "app" %}Libraries{% else %}App{% endif %}{% if page.app == 'libraries' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
+      {% if page.app == "manage" %}<li class="nav-item">
+        <a class="nav-link disabled state-authenticated" data-decorate="true" data-append="library" href="/app/library/">Library</a>
+      </li>{% endif %}
       {% if page.app and page.layout == "app" %}{% if page.app == "reader" %}<li class="nav-item">
         <a class="nav-link disabled state-reader-loaded" href="#navigate">Navigate</a>
       </li>
@@ -26,6 +29,8 @@
       </li>{% endif %}
       {% if page.app == "library" %}<li class="nav-item">
         <a class="nav-link disabled state-library-loaded" href="#search">Search</a>
+      </li><li class="nav-item">
+        <a class="nav-link d-none show-library-manageable" data-decorate="true" data-append="library" href="/app/manage/">Manage</a>
       </li>{% else %}<li class="nav-item{% if page.app == 'settings' %} active{% else %}{% if page.app == 'libraries'%} d-none show-authenticated{% endif %}{% endif %}">
         <a class="nav-link disabled state-authenticated" data-decorate="true" data-append="library" href="{% if page.app == 'reader' %}#settings{% else %}/app/settings/{% endif %}">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>{% endif %}{% else %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'subscriptions' %} active{% endif %}">

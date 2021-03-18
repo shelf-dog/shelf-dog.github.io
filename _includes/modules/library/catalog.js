@@ -567,7 +567,7 @@
     
     find : {
       
-      books : ids => _find(`WHERE ${_.map(ids, id => `ID = ${id}`).join(" OR ")}`),
+      books : ids => _find(`WHERE ${_.map(ids, id => `ID = ${/^\d+$/.test(id) ? id : `'${id}'`}`).join(" OR ")}`),
       
       book : id => _queries.find.books([id]),
       

@@ -1,0 +1,7 @@
+{% raw %}
+<div class="d-flex align-items-center">
+  <a href="#item.dispute.{{encode id}}.{{encode user}}.{{encode (md5 (concat id '_' user))}}" role="button"
+     class="btn btn-action btn-small text-nowrap" style="line-height: 0.7em;">Dispute</a>
+  {{> cancel type="loan" state="outstanding"}}
+</div>
+{% endraw %}

@@ -380,7 +380,12 @@ App = function() {
   
   var _library = (index, book) => (index === null || index === undefined ? 
       FN.libraries.first().then(library => _.tap(library, library => ರ‿ರ.index = library.code)) : FN.libraries.one(ರ‿ರ.index = index))
-          .then(library => ರ‿ರ.library = library)
+  
+          /* <!-- Process Links and Set Current Library --> */
+          .then(library => ($("[data-append='library'][href]").each(
+            (i, el) => el.href = !el.href || el.href.indexOf("#") >= 0 ? el.href : `${el.href}#library.${library.code}`
+           ), ರ‿ರ.library = library))
+  
           .then(library => FN.libraries.db(library)
             .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), result && result.data ? FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities) : null))
             .then(db => ರ‿ರ.db = db)
@@ -641,12 +646,12 @@ App = function() {
           },
           fn: command => {
             var _result = FN.common.result($("[data-action='request']"));
-            return FN.libraries.request(ರ‿ರ.library, ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, 
+            return FN.libraries.request(ರ‿ರ.library, ರ‿ರ.book.ID.text || ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, 
                                               FN.common.format.details(ರ‿ರ.book), command || ರ‿ರ.library.meta.user)
-                        .then(ಠ_ಠ.Main.busy("Requesting Book", true))
-                        .then(value => value ? ಠ_ಠ.Display.tooltips(_result(value.requested, value.type == "NEW" ? 
-                                        "Created new request" : "You have already requested this item!").tooltip("dispose")) : _result())
-                        .catch(e => (e ? ಠ_ಠ.Flags.error("Request Book Error", e) : ಠ_ಠ.Flags.log("Request Book Cancelled"), _result()));
+              .then(ಠ_ಠ.Main.busy("Requesting Book", true))
+              .then(value => value ? ಠ_ಠ.Display.tooltips(_result(value.requested, value.type == "NEW" ? 
+                      "Created new request" : "You have already requested this item!").tooltip("dispose")) : _result())
+              .catch(e => (e ? ಠ_ಠ.Flags.error("Request Book Error", e) : ಠ_ಠ.Flags.log("Request Book Cancelled"), _result()));
           }
         }
 

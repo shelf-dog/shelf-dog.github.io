@@ -18,7 +18,9 @@
       </a>
       <span class="font-weight-bold">{{either title "Details"}}</span>
     </div>
+    {{~#if refresh~}}<div class="d-flex align-items-center"><span class="material-icons mr-1"><a class="text-decoration-none" href="#{{refresh}}.refresh.{{id}}">refresh</a></span>{{~/if~}}
     <span class="material-icons"{{#unless static}} data-title="loaded-time" style="cursor: pointer;"{{/unless}}>{{either icon 'check_circle'}}</span>
+    {{~#if refresh~}}</div>{{~/if~}}
   </div>
   
   <div class="card-body py-0 px-1 overflow-auto">

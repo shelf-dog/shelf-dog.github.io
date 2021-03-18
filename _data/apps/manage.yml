@@ -117,8 +117,6 @@ templates:
   - manage/detail
   - manage/outstanding
   - manage/statistics
-  - manage/renew
-  - manage/return
   - manage/returned
   - manage/loan
   - manage/loans
@@ -137,12 +135,18 @@ templates:
   - manage/buttons/left-overview
   - manage/buttons/right-sm-overview
   - manage/buttons/right-overview
+  - manage/commands/query
+  - manage/commands/dispute
+  - manage/commands/renew
+  - manage/commands/return
   - manage/confirmations/cancel
   - manage/confirmations/remove-request
   - manage/confirmations/change-request
   - manage/confirmations/confirm-loan
   - manage/confirmations/confirm-renew
   - manage/confirmations/confirm-return
+  - manage/confirmations/confirm-query
+  - manage/confirmations/confirm-dispute
   - manage/confirmations/choose-copy
   - manage/parts/loans_loan
   - manage/parts/loans_when

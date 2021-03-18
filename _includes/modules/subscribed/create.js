@@ -249,6 +249,14 @@ Create = (options, factory) => {
 
           /* <!-- Conditional Formats --> */
           
+          /* <!-- Disputed Loans - whole row light red background colour --> */
+          values[0].helpers.format.conditional(values[0].helpers.grid.range(1, 1000, 0, 9))
+            .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=$F2=\"DISPUTED\""), values[0].helpers.format.background("lightred")),
+          
+          /* <!-- Queried Loans - whole row light yellow background colour --> */
+          values[0].helpers.format.conditional(values[0].helpers.grid.range(1, 1000, 0, 9))
+            .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=$F2=\"QUERIED\""), values[0].helpers.format.text("lightgoldenrodyellow")),
+          
           /* <!-- Returned Loans - whole row lighter font colour --> */
           values[0].helpers.format.conditional(values[0].helpers.grid.range(1, 1000, 0, 9))
             .boolean("CUSTOM_FORMULA", values[0].helpers.format.value("=LEN($F2)>0"), values[0].helpers.format.text("mediumdarkgrey")),

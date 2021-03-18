@@ -1,4 +1,16 @@
 site :
+  0.0.9i :
+    name : Site v0.0.9i
+    desc : General Improvements
+    numeric : 0.0.9.9
+    api : 1.7.7
+    type:
+      - alpha
+    changes :
+      - Various minor bug fixes
+      - Refresh Statistics Button
+      - Query and Disputed Loan Status
+      - Navigation Bar Additions
   0.0.9h :
     name : Site v0.0.9h
     desc : General Improvements

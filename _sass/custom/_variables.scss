@@ -39,6 +39,8 @@ $colour-highlight: 						#fef513;
 $colour-highlight-mid:        darken($colour-highlight, 10%);
 $colour-highlight-dark:       darken($colour-highlight, 20%);
 $colour-highlight-darkest:    darken($colour-highlight, 40%);
+$colour-highlight-light:      lighten($colour-highlight, 10%);
+$colour-highlight-lighter:    lighten($colour-highlight, 20%);
 $colour-debug: 								#888888;
 $colour-busy-line:            #646464;
 $colour-create-fill:          #cc0099;
