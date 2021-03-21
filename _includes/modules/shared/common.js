@@ -1,4 +1,4 @@
-Common = () => {
+Common = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to provide common functionality --> */
@@ -41,13 +41,19 @@ Common = () => {
   
   FN.format = {
     
+    authors : authors => ` by ${_.isArray(authors) ? authors[0] : authors}`,
+    
     book : (book, copy) => `${book.Title}${book.ISBN ? ` [${book.ISBN}]` : ""}${copy !== undefined && copy !== null && copy !== false ? ` [${copy}]` : ""}`,
     
-    details : book => book ? `${book.Title}${book.Authors && book.Authors.length > 0 ? ` by ${_.isArray(book.Authors) ? book.Authors[0] : book.Authors}` : ""}` : "",
+    details : book => book ? `${book.Title}${book.Authors && book.Authors.length > 0 ? FN.format.authors(book.Authors) : ""}` : "",
 
   };
   
   FN.process = {
+    
+    book : book => book && book.values.length >= 0 ? _.object(book.columns, book.values[0]) : book,
+    
+    books :books => books && books.values.length >= 0 ? _.map(books.values, row => _.object(books.columns, row)) : books,
     
     user : user => {
       if (user && EMAIL_CHANGE.test(user)) {
@@ -57,6 +63,41 @@ Common = () => {
         return user;
       }
       
+    },
+    
+    loan: library => loan => {
+
+      var queried = String.equal(loan.returned, "QUERIED", true),
+          disputed = String.equal(loan.returned, "DISPUTED", true),
+          loaned = loan.date ? factory.Dates.parse(loan.date) : "",
+          returned = !queried && !disputed && loan.returned && _.isString(loan.returned) ?
+            factory.Dates.parse(loan.returned) : loan.returned,
+          duration = loaned && _.isObject(loaned) ?
+            returned && _.isObject(returned) ?
+              factory.Dates.duration(returned - loaned) :
+              factory.Dates.duration(factory.Dates.now() - loaned) : null,
+          description = loan.details || "",
+          description_split = description && description.lastIndexOf ? description.lastIndexOf(" by ") : 0;
+      
+      return {
+        identifier: loan.id,
+        who: loan.user,
+        when: loaned,
+        due: library ? library.meta.capabilities.loan_length && loaned && _.isObject(loaned) ?
+          loaned.add(library.meta.capabilities.loan_length, "days") : null : null,
+        returned: returned,
+        queried: queried,
+        disputed: disputed,
+        last: loan.last,
+        duration: returned ? duration : null,
+        overdue: library ? duration && !returned && library.meta.capabilities.loan_length &&
+          duration.as("days") > library.meta.capabilities.loan_length ?
+          `<strong class='text-warning'>Overdue by:</strong> ${duration.subtract({days:library.meta.capabilities.loan_length}).humanize()}` : null : null,
+        description: description || null,
+        title: description_split ? description.substring(0, description_split) : null,
+        authors: description_split ? description.substring(description_split) : null,
+      };
+
     },
     
   };

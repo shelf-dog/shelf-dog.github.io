@@ -47,6 +47,10 @@ imports:
     load: last
   - name: fetchjsonp
     load: last
+  - name: sql-js
+    load: lazy
+  - name: spark-md5
+    load: lazy
   - name: google
     load: lazy
 helpers:
@@ -77,6 +81,9 @@ modules:
   - shared/demo
   - shared/libraries
   - shared/pwa
+  - shared/hookup
+  - library/catalog
+  - library/lexer
 scripts:
   - extends/string
   - extends/regex
@@ -85,8 +92,15 @@ scripts:
 templates:
   - loader
   - generic/alert
+  - shared/placeholder
   - libraries/libraries
   - libraries/library
+  - libraries/overdue
+  - libraries/requests
+  - libraries/loans
+  - libraries/item
+  - libraries/items
+  - library/cover
 docs:
   - shared/PUBLIC
   - shared/FEATURES

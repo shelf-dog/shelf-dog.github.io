@@ -43,46 +43,6 @@ App = function() {
   /* <!-- General Functions --> */
 
 
-  /* <!-- Hookup Functions --> */
-  FN.hookup = {
-
-    closer: element => {
-      element.find("[data-action='close']").on("click.close", e => {
-        e.preventDefault();
-        $(e.target).parents(".card").remove();
-      });
-      return element;
-    },
-
-    links: element => {
-      var _query = "[data-action='click'][data-href]:visible";
-      element.find(_query).off("dblclick.action").on("dblclick.action", e => {
-        var _target = $(e.currentTarget);
-        if (!_target.is("span")) {
-          _target = _target.is(_query) ? _target : _target.parents(_query);
-          window.location.hash = _target.data("href");
-        }
-      });
-      return FN.hookup.closer(element);
-    },
-
-    since: element => {
-      var _current = ಠ_ಠ.Dates.now();
-      element.find("[data-title='loaded-time']").tooltip({
-        html: true,
-        trigger: "click",
-        title: function() {
-          _.delay(element => element.tooltip("hide"), 2000, $(this));
-          return `<strong>Data Loaded: </strong>${ಠ_ಠ.Dates.duration(ಠ_ಠ.Dates.now() - _current).humanize()} ago`;
-        }
-      });
-      return element;
-    },
-
-  };
-  /* <!-- Hookup Functions --> */
-
-
   /* <!-- Get Functions --> */
   FN.get = {
 
@@ -264,7 +224,8 @@ App = function() {
       if (fixed) value.static = fixed;
       value.target = _existing.length > 0 ? _existing : $(".details");
       value.replace = _existing.length > 0;
-      return FN.hookup.closer(fixed ? ಠ_ಠ.Display.template.show(value) : FN.hookup.since(ಠ_ಠ.Display.template.show(value)));
+      return FN.hookup.closer(fixed ? 
+        ಠ_ಠ.Display.template.show(value) : FN.hookup.since(ಠ_ಠ.Display.template.show(value)));
     },
 
     loading: (id, value, replace) => (ಠ_ಠ.Display.template.show(_.extend(value, {
@@ -412,39 +373,16 @@ App = function() {
       })),
 
     process: books => loan => {
-
       var id = loan.copy || loan.id,
           book = books ? _.find(books, book => ರ‿ರ.library.meta.capabilities.loan_field ? 
-                                book[ರ‿ರ.library.meta.capabilities.loan_field].indexOf(id) >= 0 : book.ID == id) : FN.books.get(id),
-          queried = String.equal(loan.returned, "QUERIED", true),
-          disputed = String.equal(loan.returned, "DISPUTED", true),
-          loaned = loan.date ? ಠ_ಠ.Dates.parse(loan.date) : "",
-          returned = !queried && !disputed && loan.returned && _.isString(loan.returned) ?
-            ಠ_ಠ.Dates.parse(loan.returned) : loan.returned,
-          duration = loaned && _.isObject(loaned) ?
-            returned && _.isObject(returned) ?
-              ಠ_ಠ.Dates.duration(returned - loaned) :
-              ಠ_ಠ.Dates.duration(ಠ_ಠ.Dates.now() - loaned) : null;
-      return {
+                                book[ರ‿ರ.library.meta.capabilities.loan_field].indexOf(id) >= 0 : book.ID == id) : 
+                                FN.books.get(id);
+      return _.extend(FN.common.process.loan(ರ‿ರ.library)(loan), {
         decorate: true,
         command: loan.copy || loan.id ? `/app/library/#library.${ಱ.index}.${loan.id ? loan.id : `search.${loan.copy}`}` : "",
         item: loan.copy || loan.id,
-        description: book ? `<strong>${book.Title}</strong>${book.Authors && book.Authors.length ? `<br/>${_.isString(book.Authors) ? book.Authors : book.Authors.join(" | ")}` : ""}` : "",
-        missing : !book,
-        who: loan.user,
-        when: loaned,
-        due: ರ‿ರ.library.meta.capabilities.loan_length && loaned && _.isObject(loaned) ?
-          loaned.add(ರ‿ರ.library.meta.capabilities.loan_length, "days") : null,
-        returned: returned,
-        queried: queried,
-        disputed: disputed,
-        last: loan.last,
-        duration: returned ? duration : null,
-        overdue: duration && !returned && ರ‿ರ.library.meta.capabilities.loan_length &&
-          duration.as("days") > ರ‿ರ.library.meta.capabilities.loan_length ?
-          `<strong class='text-warning'>Overdue by:</strong> ${duration.subtract({days: ರ‿ರ.library.meta.capabilities.loan_length}).humanize()}` : null
-      };
-
+        description: book ? `<strong>${book.Title}</strong>${book.Authors && book.Authors.length ? `<br/>${_.isString(book.Authors) ? book.Authors : book.Authors.join(" | ")}` : ""}` : "",  
+      });
     },
 
     show: (id, details, background, icon, returned) => loans => {
@@ -1418,7 +1356,7 @@ App = function() {
   /* <!-- Setup Functions --> */
   FN.setup = {
 
-    modules: ["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer", "PWA", "Books"],
+    modules: ["Common", "Cache", "Client", "Libraries", "Select", "Catalog", "Lexer", "PWA", "Books", "Hookup"],
     
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {

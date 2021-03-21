@@ -1,15 +1,24 @@
-.library {
+.library, .detail {
   border-width: 2px !important;
-  min-width: 16rem;
-  @include media-breakpoint-up(sm) {
-    max-width: 24rem;
-  }
   &.hide {
     @include animation(fadeOutGracefully 0.6s ease-in-out);
     visibility: hidden;
   }
   .btn-action {
     border: 1px solid $colour-background !important;
+  }
+}
+
+.library {
+  min-width: 16rem;
+  @include media-breakpoint-up(sm) {
+    max-width: 24rem;
+  }
+}
+
+.detail {
+  @include media-breakpoint-up(lg) {
+    max-width: 70rem;
   }
 }
 

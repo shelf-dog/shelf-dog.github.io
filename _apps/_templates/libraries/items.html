@@ -1,0 +1,3 @@
+{% raw %}
+{{#present items}}{{#each items}}{{> item index=@index code=(either code ../code) library=(either library ../library) type=(either type ../type)}}{{/each}}{{/present}}
+{% endraw %}

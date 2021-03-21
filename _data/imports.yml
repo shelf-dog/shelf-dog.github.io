@@ -2190,21 +2190,23 @@ sql-js:
       crossorigin: anonymous
       bulk: 53.7
       id: __sqljs
-    - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm.wasm
-      crossorigin: anonymous
-      bulk: 1120
-      id: __sqljs_wasm
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm.wasm
+          crossorigin: anonymous
+          bulk: 1120
+          id: __sqljs_wasm
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm-debug.js
       integrity: sha512-r8kLpJ3YFFQywGC8w1PH6tPW87FRL+JUrRknZaRPL61YgLj7l4XY2uyF9mZYUuhqdGUiJ2K+moPT+fQh6bCrWg==
       crossorigin: anonymous
       bulk: 282
       id: __sqljs
-    - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm-debug.wasm
-      crossorigin: anonymous
-      bulk: 1195
-      id: __sqljs_wasm
-
+      dependencies:
+      - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm-debug.wasm
+        crossorigin: anonymous
+        bulk: 1195
+        id: __sqljs_wasm
+        
 spark-md5:
   name: JS Hashes
   desc: Lightning fast normal and incremental md5 for javascript

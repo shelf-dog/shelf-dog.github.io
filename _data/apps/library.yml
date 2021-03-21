@@ -89,6 +89,7 @@ modules:
   - shared/libraries
   - shared/select
   - shared/pwa
+  - shared/hookup
   - library/catalog
   - library/lexer
   - library/semiotics
@@ -106,13 +107,13 @@ templates:
   - generic/text
   - shared/dialog
   - shared/selector
+  - shared/placeholder
   - dialogs/search
   - buttons/left-overview
   - library/details
   - library/results
   - library/empty
   - library/item
-  - library/placeholder
   - library/cover
   - library/value
   - library/availability

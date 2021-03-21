@@ -1,0 +1,51 @@
+{% raw %}
+<div data-index="{{index}}"{{#present identifier}} data-identifier="{{identifier}}"{{/present}}
+     {{#present code}} data-library="{{code}}"{{/present}} style="min-height:200px;"
+     class="card detail bg-dark border border-background overflow-hidden medium-card mb-1 mb-xl-2">
+
+  <div class="card-header d-flex align-items-center justify-content-between{{#is type 'loan'}} bg-dark text-light{{/is}}{{#is type 'request'}} bg-secondary text-body{{/is}} mb-1 border border-background">
+    <div class="d-flex align-items-center">
+      <a href="#" data-action="close" 
+         class="d-flex mr-1{{#is type 'loan'}} text-white{{/is}}{{#is type 'request'}} text-dark{{/is}} text-decoration-none o-50">
+        <span class="material-icons">close</span>
+      </a>
+      <span class="font-weight-bold">{{either (either title description) "Details"}}</span>
+      {{#if (all title authors)}}<span class="o-75 ml-1">{{authors}}</span>{{/if}}
+    </div>
+    <span class="material-icons{{#if overdue}} text-danger{{/if}}{{#if queried}} text-warning{{/if}}">{{#is type 'loan'}}check_circle_outline{{/is}}{{#is type 'request'}} shopping_basket{{/is}}</span>
+  </div>
+  
+  <div class="card-body py-0 px-1 overflow-auto">
+    
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 pb-md-2">
+      <div class="m-2 mr-lg-3 mr-xl-4">{{> placeholder height width="100px" height="120px" size="2rem"}}</div>
+      <div>
+        {{~#if overdue}}<div class="bg-dark border border-danger rounded py-1 px-2 mb-2">{{{overdue}}}</div>{{/if~}}
+        <table>
+          <tr>
+            <td class="text-right border-dark border-right pr-2 pr-lg-3 pr-xl-4">
+              <span class="font-weight-bold text-secondary">{{#is type 'loan'}}Loaned{{/is}}{{#is type 'request'}}Requested{{/is}}</span>
+            </td>
+            <td class="pl-2 pl-lg-3 pl-xl-4">{{localeDate when}}</td>
+          </tr>
+          {{#if (all due (is type 'loan'))}}<tr>
+            <td class="text-right border-dark border-right pr-2 pr-lg-3 pr-xl-4">
+              <span class="font-weight-bold text-{{#if overdue}}danger{{else}}success{{/if}}">Due Back</span>
+            </td>
+            <td class="pl-2 pl-lg-3 pl-xl-4 text-light">{{localeDate due true}}</td>
+          </tr>{{/if}}
+        </table>
+        {{~#if queried}}<div class="bg-dark border border-warning rounded py-1 px-2 mt-2">Loan has been <span class="font-weight-bold text-white">queried</span></div>{{/if~}}
+      </div>
+    </div>
+    
+  </div>
+  
+  <div class="card-footer text-muted d-flex justify-content-end pt-1 pb-0 px-1 align-items-center">
+    <span>{{#present library}}<span>Library: </span><span class="text-light">{{library}}</span>{{/present}}</span>
+  </div>
+  
+  {{~#if overdue~}}<div class="corner-ribbon top-right text-white shadow-deep d-flex align-items-center justify-content-center font-weight-light border-white border-top border-bottom bg-danger-dark">Overdue</div>{{~/if~}}
+  
+</div>
+{% endraw %}

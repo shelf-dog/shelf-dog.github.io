@@ -600,16 +600,16 @@
   
   /* <!-- Initial Functions --> */
   var _files = () => {
+    if (options.sql_config.locateFile) return;
     var files = Array.from(document.querySelectorAll("[data-filename]")),
         names = files.map(element => `${element.dataset.filename}`),
         contents = files.map(file => file.textContent);
     options.sql_config.locateFile = file => contents[names.indexOf(file)];
   };
-  _files();
   /* <!-- Initial Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.load = (data, capabilities) => (ರ‿ರ.capabilities = capabilities, initSqlJs(options.sql_config)
+  FN.load = (data, capabilities) => (_files(), ರ‿ರ.capabilities = capabilities, initSqlJs(options.sql_config)
     .then(sql => ರ‿ರ.db = new sql.Database(data))
     .then(_interrogate)
     .then(() => _queries));

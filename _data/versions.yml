@@ -1,4 +1,14 @@
 site :
+  0.0.9j :
+    name : Site v0.0.9j
+    desc : General Improvements
+    numeric : 0.0.9.10
+    api : 1.8.0
+    type:
+      - alpha
+    changes :
+      - Loans and Requests on Libraries Landing Page
+      - Overdue Loans Ribbon on Libraries Landing Page
   0.0.9i :
     name : Site v0.0.9i
     desc : General Improvements

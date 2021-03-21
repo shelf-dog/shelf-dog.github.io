@@ -20,21 +20,17 @@ Books = options => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
-  var _single = (id, force_by_id) => {
-      var book = options.functions.common.check.isbn(id) ?
+  var _single = (id, force_by_id) => options.functions.common.process.book(
+      options.functions.common.check.isbn(id) ?
         options.state.session.db.find.isbn(id) :
         options.state.session.library.meta.capabilities.loan_field && !force_by_id ?
           options.state.session.db.find.copy(id, options.state.session.library.meta.capabilities.loan_field) : 
-          options.functions.common.check.id(id) ? options.state.session.db.find.book(id) : null;
-      return book && book.values.length >= 0 ? _.object(book.columns, book.values[0]) : book;
-    };
+          options.functions.common.check.id(id) ? options.state.session.db.find.book(id) : null);
   
-  var _multiple = (ids, force_by_id) => {
-    var books = options.state.session.library.meta.capabilities.loan_field && !force_by_id ?
-          options.state.session.db.find.copies(ids, options.state.session.library.meta.capabilities.loan_field) : 
-          options.state.session.db.find.books(ids);
-    return books && books.values.length >= 0 ? _.map(books.values, row => _.object(books.columns, row)) : books;
-  };
+  var _multiple = (ids, force_by_id) => options.functions.common.process.books(
+      options.state.session.library.meta.capabilities.loan_field && !force_by_id ?
+        options.state.session.db.find.copies(ids, options.state.session.library.meta.capabilities.loan_field) : 
+        options.state.session.db.find.books(ids));
   
   var _chunk = (ids, force_by_id) => _.chain(ids).chunk(options.chunk)
     .reduce((memo, ids) => memo.concat(_multiple(ids, force_by_id)), []).value();

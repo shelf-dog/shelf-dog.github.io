@@ -7,6 +7,7 @@ Libraries = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
+    short_cache: factory.Dates.duration("30", "minutes"),
     cache: factory.Dates.duration("2", "hours"),
     long_cache: factory.Dates.duration("30", "days"),
     db_cache: factory.Dates.duration("4", "hours"),
@@ -117,7 +118,7 @@ Libraries = (options, factory) => {
     
   FN.hash = value => FN.select(value).then(library => library.api("HASH"));
   
-  FN.db = value => FN.select(value)
+  FN.db = (value, lazy) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache("DB"), {
       age: options.db_cache,
       fn: (stored, data) => library.api("HASH").then(hash => hash == data.hash).catch(() => null),
@@ -128,7 +129,7 @@ Libraries = (options, factory) => {
       spark_md5.append(result.data);
       result.local_hash = spark_md5.end();
       return result;
-    })));
+    }), null, null, lazy));
   
   FN.folder = (value, path) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`FOLDER_${SparkMD5.hash(path)}`), options.folder_cache,
@@ -190,6 +191,11 @@ Libraries = (options, factory) => {
       user: user
     }, null, true)),
     
+    mine: (value, force) => FN.select(value).then(library => options.functions.cache.get(library.cache("LOANS_MINE"),
+      options.short_cache, () => library.api("LOANS", {
+        mine: true
+      }, null, true), force)),
+    
   };
   
   FN.request = (value, id, isbn, details, user) => FN.select(value).then(library => library.api("REQUEST", {
@@ -212,6 +218,11 @@ Libraries = (options, factory) => {
     user: (value, user) => FN.select(value).then(library => library.api("REQUESTS", {
       user: user
     }, null, true)),
+    
+    mine: (value, force) => FN.select(value).then(library => options.functions.cache.get(library.cache("REQUESTS_MINE"), 
+      options.short_cache, () => library.api("REQUESTS", {
+        mine: true
+      }, null, true), force)),
     
   };
   

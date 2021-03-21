@@ -60,26 +60,127 @@ App = function() {
     window.addEventListener(FN.events.library.loaded, _library_loaded, false);
     
     return FN.libraries.all(force, null)
-      .then(libraries => _loaded === 0 ? ಠ_ಠ.Display.template.show({
+    
+      .then(libraries => _loaded === 0 ? (ಠ_ಠ.Display.template.show({
           template: "libraries",
           libraries: libraries,
           target: _libraries,
           clear: true
-        }) : true)
+        }), libraries) : libraries)
+    
+      .then(libraries => {
+        _.each(libraries, (library, index) => Promise.all([
+          library.meta.capabilities && library.meta.capabilities.loan ? FN.libraries.loans.mine(library) : [],
+          library.meta.capabilities && library.meta.capabilities.loan_requests ? FN.libraries.requests.mine(library) : []
+        ]).then(results => {
+          
+          var _map = FN.common.process.loan(library),
+              _loans = results[0] ? _.map(results[0], _map) : null,
+              _requests = results[1];
+          
+          if (_loans) ಠ_ಠ.Flags.log(`My Loans: ${library.code} | ${library.name}`, _loans);
+          if (_requests) ಠ_ಠ.Flags.log(`My Requests: ${library.code} | ${library.name}`, _requests);
+          
+          var _target = _libraries.find(`.library[data-index='${index}`),
+              _commands = _target.find(".library-commands");
+          
+          if (_requests && _requests.length > 0) ಠ_ಠ.Display.template.show({
+            template: "requests",
+            library: index,
+            count: _requests.length,
+            target: _commands
+          });
+          
+          if (_loans && _loans.length > 0) {
+            ಠ_ಠ.Display.template.show({
+              template: "loans",
+              library: index,
+              count: _loans.length,
+              target: _commands
+            }); 
+            var _overdue = _.filter(_loans, loan => loan.overdue);
+            if (_overdue.length > 0) ಠ_ಠ.Display.template.show({
+              template: "overdue",
+              library: index,
+              count: _overdue.length,
+              target: _target
+            });
+          }
+          
+        }));
+      })
+    
       .then(() => {
         window.removeEventListener(FN.events.endpoints.loaded, _endpoints_loaded, false);
         window.removeEventListener(FN.events.library.loaded, _library_loaded, false);
       });
+    
   };
   
   var _start = () => _load().then(() => ಠ_ಠ.Display.state().enter(FN.states.landing.libraries));
 	/* <!-- Internal Functions --> */
   
   
+  /* <!-- Show Functions --> */
+  FN.show = {
+    
+    generic: (type, items, library) => {
+      var _items = FN.hookup.closer(ಠ_ಠ.Display.template.show({
+        template: "items",
+        type: type,
+        code: library ? library.code : null,
+        name: library ? library.name : null,
+        items: items,
+        target: $("#content .details"),
+        clear: true
+      }));
+      
+      if (!ರ‿ರ.libraries) ರ‿ರ.libraries = {};
+      _.each(_items.filter(".detail[data-identifier]"), element => {
+        
+          var _element = $(element),
+              _code = library ? library.code : _element.data("library"),
+              _id = _element.data("identifier");
+        
+          if (FN.common.check.id(_id)) (ರ‿ರ.libraries[_code] === undefined ? 
+            FN.libraries.db(_code, true)
+            .then(result => (ರ‿ರ.libraries[_code] = result && result.data ? FN.catalog.load(result.data, 
+              library ? library.meta.capabilities : {}) : null)) : Promise.resolve(ರ‿ರ.libraries[_code]))
+              .then(db => FN.hookup.cover(_code, db ? FN.common.process.book(db.find.book(_id)) : null, _element, "100px"));
+        
+      });
+      
+    },
+    
+    loans: value => _.isObject(value) && value.code && value.name ? 
+                        items => FN.show.generic("loan", items, value) : 
+                        FN.show.generic("loan", value),
+    
+    requests: value => _.isObject(value) && value.code && value.name ? 
+                        items => FN.show.generic("request", items, value) : 
+                        FN.show.generic("request", value),
+    
+  };
+  /* <!-- Show Functions --> */
+  
+  
+  /* <!-- Process Functions --> */
+  FN.process = {
+    
+    loans : (library, loans, type, filter) => _.chain(loans)
+      .map(FN.common.process.loan(library))
+      .filter(loan => filter ? filter(loan) : loan)
+      .tap(loans => ಠ_ಠ.Flags.log(`My ${type} (${library.code}):`, loans))
+      .value(),
+    
+  };
+  /* <!-- Process Functions --> */
+
+  
   /* <!-- Setup Functions --> */
   FN.setup = {
 
-    modules: ["Common", "Cache", "Client", "Demo", "Libraries", "PWA"],
+    modules: ["Common", "Cache", "Client", "Demo", "Libraries", "PWA", "Hookup", "Catalog"],
     
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
@@ -149,36 +250,150 @@ App = function() {
   /* <!-- Route Handlers --> */
   FN.routes = () => ({
     
-    refresh_all: {
+    refresh: {
+      
       matches: /REFRESH/i,
       length: 0,
-      fn: () => {
-        ಠ_ಠ.Display.tidy();
-        _load($(".libraries .library").length, true);
+      tidy: true,
+      fn: () => _load($(".libraries .library").length, true),
+      
+      routes : {
+        
+        library: {
+          matches: /LIBRARY/i,
+          length: 1,
+          fn: command => {
+            ಠ_ಠ.Display.template.show({
+              template: "library",
+              loading: true,
+              id: command,
+              target: $(`.libraries .library[data-index='${command}']`),
+              replace: true
+            });
+            FN.libraries.refresh(command)
+              .then(result => ಠ_ಠ.Display.template.show(_.extend({
+                template: "library",
+                id: command,
+                target: $(`.libraries .library[data-index='${command}']`),
+                replace: true
+              }, _.omit(result, ["api", "cache"]))));
+          },
+        }
+        
       }
     },
     
-    refresh_library: {
-      matches: /REFRESH/i,
-      length: 1,
-      fn: command => {
-        ಠ_ಠ.Display.tidy();
-        ಠ_ಠ.Display.template.show({
-          template: "library",
-          loading: true,
-          id: command,
-          target: $(`.libraries .library[data-index='${command}']`),
-          replace: true
-        });
-        FN.libraries.refresh(command)
-          .then(result => ಠ_ಠ.Display.template.show(_.extend({
-            template: "library",
-            id: command,
-            target: $(`.libraries .library[data-index='${command}']`),
-            replace: true
-          }, _.omit(result, ["api", "cache"]))));
-      },
-    }
+    loans: {
+      
+      matches: /LOANS/i,
+      length: 0,
+      tidy: true,
+      requires: ["sql-js", "spark-md5"],
+      fn: () => FN.libraries.all()
+        .then(libraries => _.filter(libraries, library => library.meta.capabilities && library.meta.capabilities.loan))
+        .then(libraries => Promise.all(_.map(libraries, 
+          library => FN.libraries.loans.mine(library)
+            .then(loans => FN.process.loans(library, loans, "Loans"))
+            .then(loans => _.tap(loans, loans => _.each(loans, loan => {
+              loan.library = library.name;
+              loan.code = library.code;
+            }))))))
+        .then(_.flatten)
+        .then(loans => FN.show.loans(loans))
+        .catch(e => ಠ_ಠ.Flags.error("Loading Loans Error", e))
+        .then(ಠ_ಠ.Main.busy("Loading Loans", true)),
+      
+      routes : {
+        
+        library: {
+          matches: /LIBRARY/i,
+          length: 1,
+          fn: command => FN.libraries.one(command)
+            .then(library => FN.libraries.loans.mine(library)
+                  .then(loans => FN.process.loans(library, loans, "Loans"))
+                  .then(FN.show.loans(library)))
+            .catch(e => ಠ_ಠ.Flags.error("Loading Loans Error", e))
+            .then(ಠ_ಠ.Main.busy("Loading Loans", true))
+        }
+        
+      }
+      
+    },
+    
+    overdue: {
+      
+      matches: /OVERDUE/i,
+      length: 0,
+      tidy: true,
+      requires: ["sql-js", "spark-md5"],
+      fn: () => FN.libraries.all()
+        .then(libraries => _.filter(libraries, library => library.meta.capabilities && library.meta.capabilities.loan))
+        .then(libraries => Promise.all(_.map(libraries, 
+          library => FN.libraries.loans.mine(library)
+            .then(loans => FN.process.loans(library, loans, "Overdue Loans", loan => loan.overdue))
+            .then(loans => _.tap(loans, loans => _.each(loans, loan => {
+              loan.library = library.name;
+              loan.code = library.code;
+            }))))))
+        .then(_.flatten)
+        .then(loans => FN.show.loans(loans))
+        .catch(e => ಠ_ಠ.Flags.error("Loading Overdue Loans Error", e))
+        .then(ಠ_ಠ.Main.busy("Loading Overdue Loans", true)),
+      
+      routes : {
+        
+        library: {
+          matches: /LIBRARY/i,
+          length: 1,
+          fn: command => FN.libraries.one(command)
+            .then(library => FN.libraries.loans.mine(library)
+                  .then(loans => FN.process.loans(library, loans, "Overdue Loans", loan => loan.overdue))
+                  .then(FN.show.loans(library)))
+            .catch(e => ಠ_ಠ.Flags.error("Loading Overdue Loans Error", e))
+            .then(ಠ_ಠ.Main.busy("Loading Overdue Loans", true))
+        }
+        
+      }
+      
+    },
+    
+    requests: {
+      
+      matches: /REQUESTS/i,
+      length: 0,
+      tidy: true,
+      requires: ["sql-js", "spark-md5"],
+      fn: () => FN.libraries.all()
+        .then(libraries => _.filter(libraries, 
+          library => library.meta.capabilities && library.meta.capabilities.loan_requests))
+        .then(libraries => Promise.all(_.map(libraries, 
+          library => FN.libraries.requests.mine(library)
+            .then(requests => FN.process.loans(library, requests, "Requests"))
+            .then(requests => _.tap(requests, requests => _.each(requests, request => {
+              request.library = library.name;
+              request.code = library.code;
+            }))))))
+        .then(_.flatten)
+        .then(requests => FN.show.requests(requests))
+        .catch(e => ಠ_ಠ.Flags.error("Loading Requests Error", e))
+        .then(ಠ_ಠ.Main.busy("Loading Requests", true)),
+      
+      routes : {
+        
+        library: {
+          matches: /LIBRARY/i,
+          length: 1,
+          fn: command => FN.libraries.one(command)
+            .then(library => FN.libraries.requests.mine(library)
+                  .then(loans => FN.process.loans(library, loans, "Requests"))
+                  .then(FN.show.requests(library)))
+            .catch(e => ಠ_ಠ.Flags.error("Loading Requests Error", e))
+            .then(ಠ_ಠ.Main.busy("Loading Requests", true))
+        }
+        
+      }
+      
+    },
     
   });
   /* <!-- Route Handlers --> */

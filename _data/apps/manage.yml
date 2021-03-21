@@ -96,6 +96,7 @@ modules:
   - shared/select
   - shared/pwa
   - shared/books
+  - shared/hookup
   - library/catalog
   - library/lexer
 scripts: 

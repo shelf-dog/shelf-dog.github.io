@@ -1,5 +1,5 @@
 {% raw %}
-<div class="d-flex justify-content-center h-100 align-items-center" style="width: 200px;">
-  <img src="{{image}}" class="rounded"{{#if style}} style="{{style}}"{{/if}}>
+<div class="d-flex justify-content-center h-100 align-items-center" style="width: {{either width '200px'}};">
+  <img src="{{image}}" class="img-fluid rounded"{{#if style}} style="{{style}}"{{/if}}>
 </div>
 {% endraw %}

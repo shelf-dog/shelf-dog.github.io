@@ -72,6 +72,14 @@ body > .alert {
   background-color: $colour-header !important;
 }
 
+.bg-danger-dark {
+  background-color: rgba(darken($danger, 20%), 0.6) !important;
+}
+
+.bg-warning-dark {
+  background-color: rgba(darken($warning, 20%), 0.6) !important;
+}
+
 .text-highlight {
   color: $colour-highlight !important;
 }

@@ -120,39 +120,7 @@ App = function() {
               ರ‿ರ.library.meta.capabilities && ರ‿ರ.library.meta.capabilities.loan && 
                                     ರ‿ರ.library.meta.capabilities.loan_requests && _hasCopy && !_isExcluded);
       
-            /* <!-- Start Cover Download --> */
-            if (book && book.Cover === 1) {
-              var _load = link => FN.libraries.cover(ರ‿ರ.library, book.Path.text || book.Path, link),
-                  _show = (holder, cover, style) => ಠ_ಠ.Display.template.show({
-                    template: "cover",
-                    target: holder,
-                    image: cover || "",
-                    style: style,
-                    replace: true
-                  }),
-                  _retry = img => {
-                    var _holder = ಠ_ಠ.Display.template.show({
-                      template: "placeholder",
-                      target: $(img).parent(),
-                      replace: true
-                    });
-                    ಠ_ಠ.Flags.log("COVER IMAGE FAILED TO LOAD:", img);
-                    _load(false)
-                      .catch(e => (ಠ_ಠ.Flags.error("COVER DOWNLOAD Error:", e), "/images/logo.png"))
-                      .then(cover => _show(_holder, cover, "max-width: 200px;"));
-                  };
-              _load(true)
-                .then(cover => _show(element.find(".img-placeholder"), cover))
-                .then(value => {
-                  var _img = value.find("img")[0];
-                  return _img.complete ? _img : new Promise((resolve, reject) => {
-                    _img.onload = () => resolve(_img);
-                    _img.onerror = () => reject(_img);
-                  });
-                })
-                .then(img => !img.complete || (typeof img.naturalWidth != "undefined" && img.naturalWidth == 0) ? _retry(img) : img)
-                .catch(_retry);
-            }
+            FN.hookup.cover(ರ‿ರ.library, book, element);
       
             /* <!-- Available Tagging --> */
             ರ‿ರ.available = availability => {
@@ -413,7 +381,7 @@ App = function() {
   /* <!-- Setup Functions --> */
   FN.setup = {
 
-    modules: ["Common", "Cache", "Client", "Demo", "Libraries", "Select", "Catalog", "Lexer", "PWA"],
+    modules: ["Common", "Cache", "Client", "Demo", "Libraries", "Select", "Catalog", "Lexer", "PWA", "Hookup"],
     
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
@@ -649,8 +617,11 @@ App = function() {
             return FN.libraries.request(ರ‿ರ.library, ರ‿ರ.book.ID.text || ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, 
                                               FN.common.format.details(ರ‿ರ.book), command || ರ‿ರ.library.meta.user)
               .then(ಠ_ಠ.Main.busy("Requesting Book", true))
-              .then(value => value ? ಠ_ಠ.Display.tooltips(_result(value.requested, value.type == "NEW" ? 
-                      "Created new request" : "You have already requested this item!").tooltip("dispose")) : _result())
+              .then(value => value ? ಠ_ಠ.Display.tooltips(_result(value.requested, 
+                      value.type == "NEW" ? "Created new request" : 
+                      value.type == "DENIED" ? "You can't request this because you have overdue loans!" : 
+                      "You have already requested this item!").tooltip("dispose")) : _result())
+              .then(() => FN.libraries.requests.mine(ರ‿ರ.library, true))
               .catch(e => (e ? ಠ_ಠ.Flags.error("Request Book Error", e) : ಠ_ಠ.Flags.log("Request Book Cancelled"), _result()));
           }
         }
