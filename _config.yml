@@ -10,7 +10,7 @@ markdown:							kramdown
 # Styling
 sass:
   sass_dir:						_sass
-  load_paths:
+  load_paths:         
                       - _sass
                       - _sass/bootstrap
                       - _sass/material
@@ -47,6 +47,9 @@ collections:
     sort_by: order
   tutorials:
     output: true
+  tests:
+    relative_directory: _includes/modules/test/tests/definition
+    output: false
 
 # Collection Defaults
 defaults:
@@ -58,9 +61,7 @@ defaults:
         exclude: true
         
 # Custom variables
-version:							"0.1.0"
 launched:							"2017"
-fonts:								"Anonymous+Pro:400|Inconsolata:400|Roboto:400,700|Roboto+Mono:400|Fira+Mono:400|Space+Mono:400"
 debug:                "debug"
 performance:          "perf"
 compress:             "compress"

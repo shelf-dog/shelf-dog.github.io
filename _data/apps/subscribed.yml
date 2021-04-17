@@ -12,6 +12,7 @@
 #   "888,,____,dP,d8b,  ,d8b,,d8b,  ,8I,8'_   8) ,d8,_    _,dP     Y8,_,88,_,d8b,  ,8I  `YbadP' ,d8,   ,d8b,   #
 #                                                                                                              #
 ################################################################################################################
+
 name: Subscribed
 link: /subscribed/
 css:
@@ -19,11 +20,12 @@ css:
   secondary:
     - material/menu
     - material/general
+    - material/dialogs
     - custom/mixins/transitions
     - custom/mixins/gradients
     - custom/variables
-    - custom/fonts
     - custom/tables
+    - custom/modals
 imports:
   - name: underscore
     load: first
@@ -49,12 +51,16 @@ imports:
     load: last
   - name: mousetrap
     load: last
+  - name: deepExtend
+    load: last
   - name: uuid
     load: last
   - name: localforage
     load: last
   - name: fetchjsonp
     load: last
+  - name: google
+    load: lazy
 helpers:
   - network
   - strings
@@ -67,6 +73,7 @@ helpers:
   - google
   - colours
   - css
+  - data
   - handlebars
   - backgrounds
 modules:
@@ -82,7 +89,8 @@ modules:
   - shared/client
   - shared/subscribe
   - shared/states
-  - subscribed/create
+  - subscribed/code
+  - subscribed/sheet
 scripts: 
   - extends/regex
   - extends/array
@@ -92,17 +100,21 @@ templates:
   - loader
   - generic/alert
   - generic/text
+  - shared/dialog
   - subscribed/subscribed
   - subscribed/subscriptions
   - subscribed/subscription
   - subscribed/link
   - subscribed/upgrade
   - subscribed/update
+  - subscribed/deployment
+  - subscribed/verify
 docs:
   - subscribed/PUBLIC
   - subscribed/README
   - subscribed/INSTRUCTIONS
   - subscribed/MANAGE
+  - subscribed/VERIFY
   - subscribed/titles/UPGRADE_CLIENT
   - subscribed/titles/UPDATE_CLIENT
   - subscribed/titles/VERSION_CLIENT

@@ -70,8 +70,10 @@ App = function() {
     
       .then(libraries => {
         _.each(libraries, (library, index) => Promise.all([
-          library.meta.capabilities && library.meta.capabilities.loan ? FN.libraries.loans.mine(library) : [],
-          library.meta.capabilities && library.meta.capabilities.loan_requests ? FN.libraries.requests.mine(library) : []
+          library.meta && library.meta.capabilities && library.meta.capabilities.loan ? 
+            FN.libraries.loans.mine(library) : [],
+          library.meta && library.meta.capabilities && library.meta.capabilities.loan_requests ?
+            FN.libraries.requests.mine(library) : []
         ]).then(results => {
           
           var _map = FN.common.process.loan(library),

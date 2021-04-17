@@ -146,7 +146,7 @@ div.loader {
   }
 }
 
-.btn:not([class^="btn-outline-"]):not([class*=" btn-outline-"]):not([class^="btn-light"]):not([class*=" btn-light"]):not([class^="btn-link"]):not([class*=" btn-link"]) {
+.btn:not([class^="btn-outline-"]):not([class*=" btn-outline-"]):not([class^="btn-light"]):not([class*=" btn-light"]):not([class^="btn-link"]):not([class*=" btn-link"]):not([class^="btn-action"]):not([class*=" btn-action"]) {
   i.material-icons {color: $colour-background-menu !important;}
   &.loader {
     .spinner {border-top-color: $colour-background-menu !important;}

@@ -21,7 +21,7 @@ App = function() {
 	/* <!-- Internal Variables --> */
 	var ಠ_ಠ, /* <!-- Context --> */
       ರ‿ರ = {}, /* <!-- Session State --> */
-      ಱ = {}; /* <!-- Persistant State --> */
+      ಱ = {}; /* <!-- Persistant State --> */  
 	/* <!-- Internal Variables --> */
 
   
@@ -127,8 +127,9 @@ App = function() {
         $("#settings-for-library .library-name").text(library.name);
 
         /* <!-- Split/Join Managers into Array --> */
-        if (settings.managers && settings.managers.split) 
-          settings.managers = settings.managers.split(",").join("\n");
+        if (settings.managers) 
+          settings.managers = (typeof settings.managers === "object" && settings.managers.constructor === Array ?
+            settings.managers : settings.managers.split(",")).join("\n");
 
         var _form = ಠ_ಠ.Display.template.show(_.extend({
               template: "settings",
@@ -216,6 +217,7 @@ App = function() {
   /* <!-- Selector Functions --> */
   FN.selector = {
     
+    /* <!-- TODO: Fix this! --> */
     logo : () => ಠ_ಠ.Router.pick.single({
                       title: "Select a Logo Image for Emails",
                       view: "SPREADSHEETS",

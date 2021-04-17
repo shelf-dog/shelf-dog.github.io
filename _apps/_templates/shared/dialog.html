@@ -5,7 +5,7 @@
       <div class="modal-header">
         {{~#if icon}}<i class="mr-2 material-icons md-light md-24 align-self-center">{{icon}}</i>{{/if~}}
         <div class="flex-column">
-          <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
+          <h4 class="modal-title" id="modal_options_title">{{{title}}}</h4>
           {{~#present subtitle}}<h6 class="text-secondary m-0">{{{subtitle}}}</h6>{{/present~}}
         </div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -18,6 +18,7 @@
 			</div>
       <div class="modal-footer">
 				<button type="button" class="btn btn-outline-secondary btn-flat text-light" data-dismiss="modal"{{~#exists tabindex}} tabindex="{{inc (inc tabindex)}}"{{/exists}}>Close</button>
+        {{#if clear}}<button type="clear" class="btn btn-dark" {{~#exists tabindex}} tabindex="{{inc tabindex}}"{{/exists}}{{~#present clear_desc}} data-toggle="tooltip" data-delay="500" data-placement="top" data-html="true" title="{{clear_desc}}"{{/present}}>{{#if (isString clear)}}{{clear}}{{else}}Clear{{/if}}</button>{{/if}}
         {{#unless no_action}}<button type="button" class="btn btn-primary" data-dismiss="modal"{{~#exists tabindex}} tabindex="{{inc tabindex}}"{{/exists}}{{~#present action_desc}} data-toggle="tooltip" data-delay="500" data-placement="top" data-html="true" title="{{action_desc}}"{{/present}}>{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>{{/unless}}
       </div>
     </div>

@@ -1,3 +1,12 @@
+##################################################################
+#                                                                #
+#   @@@ @@@@@@@@@@  @@@@@@@   @@@@@@  @@@@@@@  @@@@@@@  @@@@@@   #
+#   @@! @@! @@! @@! @@!  @@@ @@!  @@@ @@!  @@@   @!!   !@@       #
+#   !!@ @!! !!@ @!@ @!@@!@!  @!@  !@! @!@!!@!    @!!    !@@!!    #
+#   !!: !!:     !!: !!:      !!:  !!! !!: :!!    !!:       !:!   #
+#   :    :      :    :        : :. :   :   : :    :    ::.: :    #
+#                                                                #
+##################################################################
 # Last Updated: 2021-01-20
 
 localstorage:
@@ -2202,11 +2211,11 @@ sql-js:
       bulk: 282
       id: __sqljs
       dependencies:
-      - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm-debug.wasm
-        crossorigin: anonymous
-        bulk: 1195
-        id: __sqljs_wasm
-        
+        - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm-debug.wasm
+          crossorigin: anonymous
+          bulk: 1195
+          id: __sqljs_wasm
+
 spark-md5:
   name: JS Hashes
   desc: Lightning fast normal and incremental md5 for javascript
@@ -2381,3 +2390,24 @@ uri-js:
       crossorigin: anonymous
       bulk: 66.4
       id: __urijs
+      
+jsrsasign:
+  name: JSRSASIGN
+  desc: Pure JavaScript Cryptographic Library
+  url: https://cdnjs.com/libraries/jsrsasign
+  project: https://kjur.github.io/jsrsasign/
+  version: 10.1.13
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.1.13/jsrsasign-all-min.min.js
+      integrity: sha512-WxGhJZz/0Vj6WTWUtzyKNrgKr92lLIIRRQYRm7AnlZ5qaBF7pSks12OyrEBj42g0UN9E20p66/1cn28FyUCL1Q==
+      crossorigin: anonymous
+      bulk: 286
+      id: __jsrsasign
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.1.13/jsrsasign-all-min.js
+      integrity: sha512-XHSYvv5l8XnI24FslIp1utsudd1Ux2AGpGHLnxP2RQDnh63774//j1BC6Atjvezd0ZOA7filnDTonabBtNSW+Q==
+      crossorigin: anonymous
+      bulk: 311
+      id: __jsrsasign

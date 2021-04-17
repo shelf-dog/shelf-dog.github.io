@@ -1,0 +1,1 @@
+__UPGRADES__{:.text-highlight}: If a new version of the sheet code is available from us, an __Upgrade Sheet__{:.badge .badge-success .font-larger-105} button will be visible. Clicking on this will upgrade your existing loan sheet to a new version of the script code.

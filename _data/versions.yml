@@ -1,4 +1,26 @@
+###############################################
+#                                             #
+#   __      __           _                    #
+#   \ \    / /          (_)                   #
+#    \ \  / /__ _ __ ___ _  ___  _ __  ___    #
+#     \ \/ / _ \ '__/ __| |/ _ \| '_ \/ __|   #
+#      \  /  __/ |  \__ \ | (_) | | | \__ \   #
+#       \/ \___|_|  |___/_|\___/|_| |_|___/   #
+#                                             #
+###############################################
+
 site :
+  0.0.9k :
+    name : Site v0.0.9k
+    desc : Client Updates
+    numeric : 0.0.9.11
+    api : 1.9.0
+    type:
+      - alpha
+    changes :
+      - Client API Bug Fixes
+      - Client API Unit Tests
+      - Verify Client API Functionality
   0.0.9j :
     name : Site v0.0.9j
     desc : General Improvements

@@ -1,4 +1,4 @@
-Create = (options, factory) => {
+Sheet = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to provide common functionality --> */
@@ -19,14 +19,7 @@ Create = (options, factory) => {
     },
     script_id : {
       name: "SCRIPT_ID",
-    },
-    regex : {
-      array: {
-        open: /\[\s*{/gi,
-        close: /}\s*\]/gi
-      }
-    },
-    script : "log.json",
+    }
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -48,8 +41,7 @@ Create = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Variables --> */
-  var ರ‿ರ = {}, /* <!-- Session State --> */
-      _colours = factory.Google_Sheets_Format({}, factory),
+  var _colours = factory.Google_Sheets_Format({}, factory),
       _format = factory.Google_Sheets_Format({}, factory);
   /* <!-- Internal Variables --> */
   
@@ -135,53 +127,13 @@ Create = (options, factory) => {
   };
   /* <!-- Sheet Functions --> */
   
-  /* <!-- Main Script Functions --> */
-  FN.main = {
-    
-    version : files => {
-      var _versions = _.find(files, file => file.name == "Versions"),
-          _version;
-      if (_versions) {
-        var _open = options.regex.array.open.exec(_versions.source),
-            _close = options.regex.array.close.exec(_versions.source);
-        if (_open && _close) {
-          var _array = _versions.source.substring(_open.index, _close.index + _close[0].length);
-          if (_array) {
-            _array = JSON.parse(_array.trim());
-            _version = _.isArray(_array) ? _array[0] : null;
-            if (_version && _.isObject(_version)) _version = _.values(_version)[0];
-          }
-        }
-      }
-      factory.Flags.log("LATEST VERSION:", _version);
-      return (ರ‿ರ.latest = _version);
-    },
-    
-    code : () => window.fetch ? window.fetch(`/client/${options.script}?d=${Date.now()}`, {cache: "no-store"})
-      .then(response => response.status == 200 ? response.json() : false) : Promise.resolve(false),
-    
-    key : (files, key) => {
-      var _crypto = _.find(files, file => file.name == "Crypto");
-      if (_crypto && _crypto.source)
-        _crypto.source = _crypto.source.replace(/\{\{\{\s?KEY\s?\}\}\}/gi, _.compact(key.trim().split(/\n|\r|\f/gm)).join("\\\n"));
-      return files;
-    },
-    
-    prepare : key => FN.main.code()
-      .then(code => {
-        if (!ರ‿ರ.latest) FN.main.version(code.files);
-        var _code = FN.main.key(code.files, key);
-        return _.map(_code, file => _.omit(file, "id"));
-      })
-      .catch(e => factory.Flags.error("Fetch Error", e ? e : "No Inner Error"), false),
-  
-  };
-  /* <!-- Main Script Functions --> */
+
   /* <!-- Internal Functions --> */
 
   /* <!-- Public Functions --> */    
   FN.app = (script, version, id) => factory.Google.scripts.versions(script).create(version || 1,
-                                  `Deployment Version${ರ‿ರ.latest ? ` [Version: ${ರ‿ರ.latest.version}]` : ""}`)
+                                  `Deployment Version${options.functions.code.latest ? 
+                                    ` [Version: ${options.functions.code.latest.version}]` : ""}`)
     .then(script => id && version && version > 1 ? factory.Google.scripts.deployments(script).update(id, version) :
           factory.Google.scripts.deployments(script).create(version || 1))
     .then(script => script.entryPoints[0].webApp.url);
@@ -193,7 +145,7 @@ Create = (options, factory) => {
             factory.Google.files.tag(options.property.name, options.property.value),
             factory.Google.files.tags([
               [options.subscription.name, subscription],
-              [options.version.name, ರ‿ರ.latest.version],
+              [options.version.name, options.functions.code.latest.version],
             ], true)
           ))))
     
@@ -468,7 +420,20 @@ Create = (options, factory) => {
       .then(values => values[0]));
   };
 
-  FN.script = (script, key) => FN.main.prepare(key).then(code => factory.Google.scripts.content(script).update(code));
+  FN.details = file => ({
+  
+    endpoint : file.properties && file.properties[options.property.name] == options.property.value,
+    
+    script : file.appProperties && file.appProperties[options.script_id.name],
+    
+    subscription : file.appProperties && file.appProperties[options.subscription.name],
+    
+    version : file.appProperties && file.appProperties[options.version.name],
+    
+  });
+  
+  FN.script = (script, key) => options.functions.code.prepare(key)
+    .then(code => factory.Google.scripts.content(script).update(code));
 
   FN.query = () => `${options.property.name}=${options.property.value}`;
     
@@ -486,11 +451,30 @@ Create = (options, factory) => {
    
     get : file => file.appProperties && file.appProperties[options.version.name],
     
-    set : () => factory.Google.files.tag(options.version.name, ರ‿ರ.latest.version, true),
+    latest : () => factory.Google.files.tag(options.version.name, options.functions.code.latest.version, true),
+    
+    set : version => factory.Google.files.tag(options.version.name, version, true),
+    
+    update : (file, version) => file.appProperties ? 
+      file.appProperties[options.version.name] = version || options.functions.code.latest.version : false,
+    
+  },
+    
+  FN.subscription = {
+    
+    get : file => file.appProperties && file.appProperties[options.subscription.name],
+    
+    set : id => factory.Google.files.tag(options.subscription.name, id, true),
     
   },
   
-  FN.latest = () => ರ‿ರ.latest ? Promise.resolve(ರ‿ರ.latest) : FN.main.code().then(code => FN.main.version(code.files));
+  FN.endpoint = {
+    
+    get : file => file.properties && file.properties[options.property.name] == options.property.value,
+    
+    set : () => factory.Google.files.tag(options.property.name, options.property.value),
+    
+  };
   /* <!-- Public Functions --> */
 
   return FN;

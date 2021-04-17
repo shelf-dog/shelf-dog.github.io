@@ -1,4 +1,4 @@
-<header class="navbar navbar-expand flex-column flex-md-row navbar-dark sd-navbar pt-1 pt-md-2">
+<header class="navbar navbar-expand flex-column flex-md-row navbar-dark sd-navbar pt-1 pt-md-2{% if include.type %} {{ include.type }}{% endif %}">
   
   <a class="navbar-brand logo jump mr-3 d-none d-md-inline-block" href="/" data-toggle="tooltip" title="Return to Home Page">
     <span class="sr-only css-sensitive">Return to Home Page</span>
@@ -32,7 +32,7 @@
       </li><li class="nav-item">
         <a class="nav-link d-none show-library-manageable" data-decorate="true" data-append="library" href="/app/manage/">Manage</a>
       </li>{% else %}<li class="nav-item{% if page.app == 'settings' %} active{% else %}{% if page.app == 'libraries'%} d-none show-authenticated{% endif %}{% endif %}">
-        <a class="nav-link disabled state-authenticated" data-decorate="true" data-append="library" href="{% if page.app == 'reader' %}#settings{% else %}/app/settings/{% endif %}">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
+        <a class="nav-link disabled state-authenticated" data-decorate="true" data-append="library" href="{% if page.app == 'reader' or page.app == 'test'%}#settings{% else %}/app/settings/{% endif %}">Settings{% if page.app == 'setting' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>{% endif %}{% else %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'subscriptions' %} active{% endif %}">
         <a class="nav-link" href="/subscriptions/">Subscriptions{% if page.layout == 'page' and page.permalink contains 'subscriptions' %}<span class="sr-only">(current)</span>{% endif %}</a>
       </li>
@@ -41,6 +41,9 @@
       </li>
       <li class="nav-item{% if page.layout == 'page' and page.permalink contains 'pricing' %} active{% endif %}">
         <a class="nav-link" href="/pricing/">Pricing{% if page.layout == 'page' and page.permalink contains 'pricing' %}<span class="sr-only">(current)</span>{% endif %}</a>
+      </li>{% endif %}
+      {% if page.app == "subscribed" %}<li class="nav-item d-none show-authenticated">
+        <a class="nav-link" href="#verify">Verify</a>
       </li>{% endif %}
       {% unless page.app == "library" or page.app == "manage" or page.app == "reader" %}<li class="nav-item{% if page.layout == 'page' and page.permalink contains 'about' %} active{% endif %}">
         <a class="nav-link" href="/about/">About{% if page.layout == 'page' and page.permalink contains 'about' %}<span class="sr-only">(current)</span>{% endif %}</a>

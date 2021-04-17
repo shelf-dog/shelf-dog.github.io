@@ -23,7 +23,6 @@ css:
     - custom/mixins/transitions
     - custom/mixins/gradients
     - custom/variables
-    - custom/fonts
     - custom/tables
     - custom/modals
     - custom/reader

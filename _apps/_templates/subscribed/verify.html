@@ -1,0 +1,75 @@
+{% raw %}
+{{#> dialog class="modal-xl" }}
+<form class="mt-3">
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}endpoint"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Endpoint</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}endpoint" data-output-field="Endpoint" 
+                 class="form-check-input form-check-input-lg"
+                 type="checkbox"{{#if details}}{{#is details.endpoint true}} checked{{/is}}{{/if}}>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}script"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Script</label>
+        <div class="col-sm-10">
+          <textarea id="{{#if id}}{{id}}_{{/if}}script" data-output-field="Script" rows="2"
+             class="form-control form-control-lg" tabindex="2">{{#if details}}{{details.script}}{{/if}}</textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}subscription"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Subscription</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}subscription" data-output-field="Subscription" type="text" 
+             class="form-control form-control-lg"
+             tabindex="3" {{#if details}}{{#exists details.subscription}} value="{{details.subscription}}"{{/exists}}{{/if}}/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}version"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Version</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}version" data-output-field="Version" type="text" 
+             class="form-control form-control-lg"
+             tabindex="4" {{#if details}}{{#exists details.version}} value="{{details.version}}"{{/exists}}{{/if}}/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</form>
+{{#present deployments}}
+<hr class="border-highlight-darkest">
+<h5 class="text-highlight mb-2">Deployments</h5>
+{{#each deployments}}{{> deployment}}{{/each}}
+{{/present}}
+{{/dialog}}
+{% endraw %}

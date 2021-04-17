@@ -51,9 +51,13 @@ States = () => {
         STATE_FULLSCREEN_CONTENT = "fullscreen-content",
         STATE_FULLSCREEN_ENABLED = "fullscreen-enabled",
         
+        STATE_CLIENT_CONFIGURED = "client-configured",
+        
         STATE_DEMO_MODE = "demo-mode",
         
         STATE_SEARCHED = "searched",
+        
+        STATE_AUTHENTICATIED = "authenticated",
         
         /* <!-- All States is used for testing whether the app has been used! --> */
         STATES = [
@@ -64,7 +68,8 @@ States = () => {
           STATE_SETTINGS, STATE_SETTINGS_PERSONAL, STATE_SETTINGS_LIBRARY, STATE_SETTINGS_WORKING,
           STATE_SUBSCRIBED,
           STATE_READER, STATE_READER_LOADED,
-          STATE_SEARCHED
+          STATE_SEARCHED,
+          STATE_CLIENT_CONFIGURED
         ];
   /* <!-- Internal Constants --> */
 
@@ -84,6 +89,12 @@ States = () => {
   return {
 
     all : STATES,
+    
+    authenticated : STATE_AUTHENTICATIED,
+    
+    client: {
+      configured: STATE_CLIENT_CONFIGURED,  
+    },
     
     config : {
       in : STATE_CONFIG,

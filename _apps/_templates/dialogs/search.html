@@ -8,7 +8,8 @@
       <div class="form-group row">
         <label for="{{#if id}}{{id}}_{{/if}}title" class="col-sm-2 col-form-label col-form-label-lg text-white">Title</label>
         <div class="col-sm-10">
-          <input id="{{#if id}}{{id}}_{{/if}}title" data-output-field="Title" type="text" class="form-control form-control-lg"
+          <input id="{{#if id}}{{id}}_{{/if}}title" data-output-field="Title" type="text"
+                 class="form-control form-control-lg"
                  tabindex="1" {{#if state}}{{#exists state.title}} value="{{state.title}}"{{/exists}}{{/if}}/>
         </div>
       </div>
@@ -42,8 +43,8 @@
                 {{#each identifiers}}<a class="dropdown-item" href="#" data-identifier="{{@key}}">{{uppercase this}}</a>{{/each}}
               </div>
             </div>{{/present}}
-            <input id="{{#if id}}{{id}}_{{/if}}identifier" data-output-name="Value" type="text" class="form-control" tabindex="3"
-                           {{#if state}}{{#exists state.identifier}} value="{{state.identifier}}"{{/exists}}{{/if}}/>
+            <input id="{{#if id}}{{id}}_{{/if}}identifier" data-output-name="Value" type="text" class="form-control"
+                   tabindex="3"{{#if state}}{{#exists state.identifier}} value="{{state.identifier}}"{{/exists}}{{/if}}/>
           {{#present identifiers}}</div>{{/present}}
         </div>
       </div>

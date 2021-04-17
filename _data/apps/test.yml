@@ -1,0 +1,156 @@
+####################################################################################################
+#                                                                                                  #
+#         _____                    _____                    _____                _____             #
+#        /\    \                  /\    \                  /\    \              /\    \            #
+#       /::\    \                /::\    \                /::\    \            /::\    \           #
+#       \:::\    \              /::::\    \              /::::\    \           \:::\    \          #
+#        \:::\    \            /::::::\    \            /::::::\    \           \:::\    \         #
+#         \:::\    \          /:::/\:::\    \          /:::/\:::\    \           \:::\    \        #
+#          \:::\    \        /:::/__\:::\    \        /:::/__\:::\    \           \:::\    \       #
+#          /::::\    \      /::::\   \:::\    \       \:::\   \:::\    \          /::::\    \      #
+#         /::::::\    \    /::::::\   \:::\    \    ___\:::\   \:::\    \        /::::::\    \     #
+#        /:::/\:::\    \  /:::/\:::\   \:::\    \  /\   \:::\   \:::\    \      /:::/\:::\    \    #
+#       /:::/  \:::\____\/:::/__\:::\   \:::\____\/::\   \:::\   \:::\____\    /:::/  \:::\____\   #
+#      /:::/    \::/    /\:::\   \:::\   \::/    /\:::\   \:::\   \::/    /   /:::/    \::/    /   #
+#     /:::/    / \/____/  \:::\   \:::\   \/____/  \:::\   \:::\   \/____/   /:::/    / \/____/    #
+#    /:::/    /            \:::\   \:::\    \       \:::\   \:::\    \      /:::/    /             #
+#   /:::/    /              \:::\   \:::\____\       \:::\   \:::\____\    /:::/    /              #
+#   \::/    /                \:::\   \::/    /        \:::\  /:::/    /    \::/    /               #
+#    \/____/                  \:::\   \/____/          \:::\/:::/    /      \/____/                #
+#                              \:::\    \               \::::::/    /                              #
+#                               \:::\____\               \::::/    /                               #
+#                                \::/    /                \::/    /                                #
+#                                 \/____/                  \/____/                                 #
+#                                                                                                  #
+####################################################################################################
+
+name: Test
+link: /test/
+css:
+  primary:
+  secondary:
+    - material/menu
+    - material/general
+    - material/dialogs
+    - custom/mixins/transitions
+    - custom/mixins/gradients
+    - custom/variables
+    - custom/tables
+    - custom/modals
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: uri-js
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: day
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: mousetrap
+    load: last
+  - name: chai
+    load: last
+  - name: chance
+    load: last
+  - name: uuid
+    load: last
+  - name: localforage
+    load: last
+  - name: fetchjsonp
+    load: last
+  - name: jsrsasign
+    load: last
+  - name: google
+    load: lazy
+helpers:
+  - network
+  - strings
+  - google/sheets/notation
+  - google/sheets/grid
+  - google/sheets/format
+  - google/sheets/properties
+  - google/sheets/metadata
+  - google/sheets/sorts
+  - google
+  - colours
+  - css
+  - data
+  - handlebars
+  - backgrounds
+  - config
+modules:
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
+  - shared/common
+  - shared/states
+  - subscribed/sheet
+  - test/configuration
+  - test/client
+scripts: 
+  - extends/regex
+  - extends/array
+  - extends/math
+  - extends/promises
+templates:
+  - loader
+  - generic/alert
+  - generic/text
+  - shared/dialog
+  - test/host
+  - test/settings
+docs:
+  - test/PUBLIC
+  - test/README
+  - test/INSTRUCTIONS
+  - test/RUN_ALL
+  - test/TESTS
+  - test/SETTINGS
+  - test/titles/SAVE_SETTINGS
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: To create the Loan Spreadsheet in your Google Drive
+      request: lazy
+    - scope: https://www.googleapis.com/auth/drive.appdata
+      name: View and manage its own configuration data in your Google Drive
+      reason: In order to record your settings in Google Drive.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/script.projects
+      name: Create and update Google Apps Script projects
+      reason: In order to create an end point for your service.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/script.deployments
+      name: Create and update Google Apps Script deployments
+      reason: In order to configure an end point for your service.
+      request: lazy
+keys:
+  google:
+      oauth: 360726457079-6a2vd6g9c6rorg72aslrqapqd31tjtm2.apps.googleusercontent.com

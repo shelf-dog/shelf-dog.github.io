@@ -12,7 +12,12 @@ css:
     - custom/fonts
     - custom/ribbons
     - custom/home
-  seondary:
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - custom/mixins/transitions
+    - custom/mixins/filter
+    - custom/variables
     - custom/common
 simple: true
 navless: true

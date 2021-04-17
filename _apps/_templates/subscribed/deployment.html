@@ -1,0 +1,22 @@
+{% raw %}
+<div class="d-flex flex-column mb-3">
+  <div class="d-flex flex-row mb-2">
+    <span class="text-white font-weight-bold mr-1">ID:</span>
+    <a href="{{details.url}}" class="link-action" target="_blank">{{id}}</a>
+  </div>
+  <div class="d-flex flex-row">
+    <span class="badge badge-success mr-lg-2 mr-1 d-flex align-items-center p-2 pr-3">
+      <em><i class="material-icons d-flex pr-1">query_builder</i></em>
+      <span class="font-larger-125" style="line-height: 1.1;">{{localeDate updated}}</span>
+    </span>
+    <span class="badge badge-light mr-lg-2 mr-1 d-flex align-items-center p-2 pr-3">
+      <em><i class="material-icons d-flex pr-1">face</i></em>
+      <span class="font-larger-125" style="line-height: 1.1;">{{details.for}}</span>
+    </span>
+    <span class="badge badge-dark mr-lg-2 mr-1 d-flex align-items-center p-2 pr-3">
+      <em><i class="material-icons d-flex pr-1">manage_accounts</i></em>
+      <span class="font-larger-125" style="line-height: 1.1;">{{details.by}}</span>
+    </span>
+  </div>
+</div>
+{% endraw %}

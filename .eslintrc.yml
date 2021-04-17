@@ -61,6 +61,8 @@ globals:
   Stripe: false
   CryptoJS: false
   screenfull: false
+  KJUR: false
+  KEYUTIL: false
   URI: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
@@ -177,3 +179,6 @@ globals:
   PDF: true
   PWA: true
   Books: true
+  Code: true
+  Sheet: true
+  Simple: true

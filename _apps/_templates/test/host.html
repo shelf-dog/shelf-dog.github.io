@@ -1,0 +1,22 @@
+{% raw %}
+<h1 class="titles display-4 bg-dark text-white mt-2 mt-lg-3 mt-xl-4 mx-1 ml-md-2 ml-lg-3 ml-xl-4 px-2 py-1 rounded-lg">Unit Tests</h1>
+<div {{#if id}}id="{{id}}" {{/if}}class="mx-2 mx-xl-4">
+  <div class="bg-page main p-2 p-xl-3 mb-2 rounded-lg">
+    <div class="m-2">
+      <div class="mx-1 mx-lg-2">
+        {{#if instructions}}{{{ instructions }}}{{/if}}
+          <div class="d-flex justify-content-start align-items-center">
+            {{#if run_all}}{{{ run_all }}}{{/if}}
+            <span id="{{id}}_counter" class="text-muted">
+              <span class="d-inline d-lg-none display-4 content ml-1"></span>
+              <span class="d-none d-lg-inline display-3 content"></span>
+            </span>
+          </div>
+      </div>
+      <hr class="border-highlight">
+      <div class="d-flex flex-column">
+        {{#if tests}}{{{ tests }}}{{/if}}
+      </div>
+  </div>
+</div>
+{% endraw %}

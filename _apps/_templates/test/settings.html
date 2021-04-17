@@ -1,0 +1,108 @@
+{% raw %}
+{{#> dialog class="modal-xl" tabindex=7 clear=true}}
+<form class="mt-3">
+  
+   <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}persist"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Persist?</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}persist" data-output-field="Persist" 
+                 class="form-check-input form-check-input-lg" tabindex="1"
+                 type="checkbox"{{#if settings}} data-default="true" checked{{/if}}>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}client"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Client</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <textarea id="{{#if id}}{{id}}_{{/if}}client" data-output-field="Client" rows="2"
+             class="form-control form-control-lg" tabindex="2" readonly>{{resolve settings 'client'}}</textarea>
+            <span class="input-group-append d-none d-lg-flex">
+              <button type="reset" style="min-width: fit-content;" tabindex="3"
+                      class="btn btn-secondary eraser no-active d-flex mb-0 waves-effect align-items-center"
+                      title="Clear / Reset" data-toggle="tooltip" data-targets="{{#if id}}{{id}}_{{/if}}client">
+                <i class="material-icons md-18 md-dark mb-0">refresh</i></button>
+              <button type="button" id="{{#if id}}{{id}}_{{/if}}client_BUTTON_LG" tabindex="4"
+                      style="min-width: fit-content;" title="Choose from Drive" data-toggle="tooltip"
+                      class="btn btn-success textual-input-button d-flex mb-0 waves-effect align-items-center"
+                      data-targets="{{#if id}}{{id}}_{{/if}}client" data-action="load-g-client">
+                <i class="material-icons md-18 md-dark mb-0"></i>Load</button>
+            </span>
+          </div>
+          <div class="d-flex">
+            <div role="group" class="btn-group float-right my-1 d-inline-flex ml-auto d-lg-none">
+              <button type="clear" style="min-width: fit-content;" tabindex="3"
+                      class="btn btn-secondary eraser no-active d-flex mb-0 waves-effect align-items-center"
+                      title="Clear / Reset" data-toggle="tooltip" data-targets="{{#if id}}{{id}}_{{/if}}client">
+                <i class="material-icons md-24 md-dark mb-0">refresh</i></button>
+              <button type="button" id="{{#if id}}{{id}}_{{/if}}client_BUTTON_SM" tabindex="4" style="min-width: fit-content;"
+                    class="btn btn-success textual-input-button waves-effect align-items-center"
+                    data-targets="{{#if id}}{{id}}_{{/if}}client" data-action="load-g-client">Load</button>
+            </div>
+					</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}script"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Script</label>
+        <div class="col-sm-10">
+          <textarea id="{{#if id}}{{id}}_{{/if}}script" data-output-field="Script" rows="2"
+             class="form-control form-control-lg" tabindex="5">{{resolve settings 'script'}}</textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}algorithm"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Algorithm</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}algorithm" data-output-field="Algorithm" type="text" 
+             class="form-control form-control-lg" tabindex="6" 
+             value="{{either (resolve settings 'algorithm') 'SHA512withRSA'}}"/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="row">
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}key"
+           class="col-sm-2 col-form-label col-form-label-lg text-white">Key</label>
+        <div class="col-sm-10">
+          <textarea id="{{#if id}}{{id}}_{{/if}}script" data-output-field="Key" rows="6"
+             class="form-control form-control-lg" tabindex="7">{{resolve settings 'key'}}</textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+</form>
+{{/dialog}}
+{% endraw %}
