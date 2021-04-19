@@ -260,6 +260,48 @@ jquery:
       bulk: 288
       id: __jquery
 
+jqueryui-js:
+  name: JQuery UI
+  desc: A curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library.
+  url: https://cdnjs.com/libraries/jqueryui
+  project: https://github.com/jquery/jquery-ui
+  version: 1.12.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js
+      integrity: sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==
+      crossorigin: anonymous
+      bulk: 254
+      id: __jqueryui-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js
+      integrity: sha512-JGKswjfABjJjtSUnz+y8XUBjBlwM1UHNlm2ZJN7A2a9HUYT3Mskq+SacsI35k4lok+/zetSxhZjKS3r3tfAnQg==
+      crossorigin: anonymous
+      bulk: 521
+      id: __jqueryui-js
+
+jqueryui-css:
+  name: JQuery UI
+  desc: A curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library.
+  url: https://cdnjs.com/libraries/jqueryui
+  project: https://github.com/jquery/jquery-ui
+  version: 1.12.1
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css
+      integrity: sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==
+      crossorigin: anonymous
+      bulk: 32.1
+      id: __jqueryui-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css
+      integrity: sha512-urpIFwfLI9ZDL81s6eJjgBF7LpG+ROXjp1oNwTj4gSlCw00KiV1rWBrfszV3uf5r+v621fsAwqvy1wRJeeWT/A==
+      crossorigin: anonymous
+      bulk: 37.3
+      id: __jqueryui-css
+      
 tether:
   name: Tether
   desc: This is used for positioning tooltip / dropdown elements on the page.
@@ -2411,3 +2453,131 @@ jsrsasign:
       crossorigin: anonymous
       bulk: 311
       id: __jsrsasign
+      
+roundslider-js:
+  name: roundSlider
+  desc: Round and Multi-Valued Sliders
+  url: https://cdnjs.com/libraries/roundSlider
+  project: https://github.com/soundar24/roundSlider
+  version: 1.6.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/roundSlider/1.6.1/roundslider.min.js
+      integrity: sha512-OztPUuNsmM+BUn6NOM5EVZED6aFf/0P4V+cVwcf5iR5T58hGyIJ8XtWFd5ctuOpGytfCsxy4/9JqxeTLliXrBA==
+      crossorigin: anonymous
+      bulk: 33.6
+      id: __roundslider-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/roundSlider/1.6.1/roundslider.js
+      integrity: sha512-8C4mof12aZm7dm5kdDkw3gv3buTAcVd+mXnjpktTyZZTctElhcOuMivKteYDM2vpJSFzkwACfEN8+HMlit9jjQ==
+      crossorigin: anonymous
+      bulk: 78
+      id: __roundslider-js
+
+roundslider-css:
+  name: roundSlider
+  desc: Round and Multi-Valued Sliders
+  url: https://cdnjs.com/libraries/roundSlider
+  project: https://github.com/soundar24/roundSlider
+  version: 1.6.1
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/roundSlider/1.6.1/roundslider.min.css
+      integrity: sha512-NGDSD+b9ygs7E3Bu7orcEL8DojlfYLZGfNkZpCsFlMs6vEM3Q36iXc1oNOLya5bLWrqD+hHoV1Ii2OMqkYZznw==
+      crossorigin: anonymous
+      bulk: 4.8
+      id: __roundslider-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/roundSlider/1.6.1/roundslider.css
+      integrity: sha512-XO53CaiPx+m4HUiZ02P4OEGLyyT46mJQzWhwqYsdqRR7IOjPuujK0UPAK9ckSfcJE4ED7dT9pF9r78yXoOKeYw==
+      crossorigin: anonymous
+      bulk: 6.8
+      id: __roundslider-css
+
+sliderpips-js:
+  name: jQuery-ui-Slider-Pips
+  desc: A plugin to add little "pips" to the jQuery UI Slider widget
+  url: https://cdnjs.com/libraries/jQuery-ui-Slider-Pips
+  project: https://github.com/simeydotme/jQuery-ui-Slider-Pips
+  version: 1.11.4
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.min.js
+      integrity: sha512-pVQ8Pa4StWWGWldpcG0HiT+wnRJOYi+6jI6wPxKpgCPSJBChB6huhHFYRFXyg3rhbrNs3L/WqpkSppC5oLsnJw==
+      crossorigin: anonymous
+      bulk: 6.6
+      id: __sliderpips-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.js
+      integrity: sha512-RMAZXXExv+fEDNgrTPPEKoAxWSba/QrlfvRc3VXRjD832rVUIjze6vCJrfLAPYaagpWzPy9y41MhU/lGEr7cFQ==
+      crossorigin: anonymous
+      bulk: 24
+      id: __sliderpips-js
+
+sliderpips-css:
+  name: jQuery-ui-Slider-Pips
+  desc: A plugin to add little "pips" to the jQuery UI Slider widget
+  url: https://cdnjs.com/libraries/jQuery-ui-Slider-Pips
+  project: https://github.com/simeydotme/jQuery-ui-Slider-Pips
+  version: 1.11.4
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.min.css
+      integrity: sha512-zDkW+F/j01hJjaL3VpWHNXRj4SlIaPWdo64ELHhqw6bRpoBT2tJ1lOcTnfaaVVief3qrDCfGIDh/5TMhTI7R/Q==
+      crossorigin: anonymous
+      bulk: 6.4
+      id: __sliderpips-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jQuery-ui-Slider-Pips/1.11.4/jquery-ui-slider-pips.css
+      integrity: sha512-tQVH4HASI/A87WlcyRKRjmMVXKV4DAsD5MByjqpDXkeIWHKQAlAHZP6mNFhJIToSON+qSkxp4eJRTC0VhSiNFw==
+      crossorigin: anonymous
+      bulk: 8.8
+      id: __sliderpips-css
+
+nouislider-js:
+  name: noUiSlider
+  desc: A lightweight, highly customizable range slider without bloat. Touch support on all modern devices and responsive design ready!
+  url: https://cdnjs.com/libraries/noUiSlider
+  project: https://github.com/leongersen/noUiSlider
+  documentation: http://refreshless.com/nouislider/
+  version: 14.7.0
+  license: WTFPL
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.js
+      integrity: sha512-jWNpWAWx86B/GZV4Qsce63q5jxx/rpWnw812vh0RE+SBIo/mmepwOSQkY2eVQnMuE28pzUEO7ux0a5sJX91g8A==
+      crossorigin: anonymous
+      bulk: 25.4
+      id: __nouislider-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.js
+      integrity: sha512-TL5A285sI9ihbWGterIw/8T1EosEaxW03ZMfjMeJGBSYHeK+i8mFw3BnqBky5JTBg4grIH3mwPZ4YONz1TSCZQ==
+      crossorigin: anonymous
+      bulk: 98.3
+      id: __nouislider-js
+
+nouislider-css:
+  name: noUiSlider
+  desc: A lightweight, highly customizable range slider without bloat. Touch support on all modern devices and responsive design ready!
+  url: https://cdnjs.com/libraries/noUiSlider
+  project: https://github.com/leongersen/noUiSlider
+  documentation: http://refreshless.com/nouislider/
+  version: 14.7.0
+  license: WTFPL
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.css
+      integrity: sha512-40vN6DdyQoxRJCw0klEUwZfTTlcwkOLKpP8K8125hy9iF4fi8gPpWZp60qKC6MYAFaond8yQds7cTMVU8eMbgA==
+      crossorigin: anonymous
+      bulk: 4.3
+      id: __nouislider-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.css
+      integrity: sha512-zK13DHt+RvOBWVI7UsG9euzg5sl1QUhJKZVu20rrvPLaTito+K9elJBtEPWi3YJ+O6o5tYp6cdOc4lN9ePm9Lw==
+      crossorigin: anonymous
+      bulk: 5.8
+      id: __nouislider-css

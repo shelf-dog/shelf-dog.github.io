@@ -179,6 +179,98 @@ App = function() {
   
   var _search = {
     
+    empty : target => ಠ_ಠ.Display.template.show({
+        template: "empty",
+        target: target,
+        clear: true
+      }),
+    
+    /* <!-- Consider Removing non-Public (e.g. Filter) Fields here --> */
+    process : results => results,
+    
+    results: (target, results) => {
+      var _filters = ರ‿ರ.db.filter(),
+          _hasFilter = _.keys(_filters).length > 0;
+      
+      var _return = ಠ_ಠ.Display.template.show(_.extend({
+        template: "results",
+        filter: _hasFilter ? ಠ_ಠ.Display.template.get({
+          template: "filters",
+          filters: _filters,
+        }) : null,
+        target: target,
+        clear: true
+      }, _search.process(results)));
+      
+      if (_hasFilter) (ಠ_ಠ.Flags.log("Filters:", _filters), _.each(_filters, (filter, key) => {
+        if (filter.range) {
+          
+          var _filter = _return[0].querySelector(`#filter_${key}`),
+              _input = _filter.querySelector(".custom-slider"),
+              _index = results.columns ? results.columns.indexOf(filter.name) : null,
+              _reset = _filter.querySelector("[data-action='reset']"),
+              _values = _return.find(".values");
+          
+          if (_index >= 0) {
+            
+            var _all = _.chain(results.values).pluck(_index).compact().value(),
+                _lower = _.min(_all),
+                _upper = _.max(_all),
+                _min = Math.min(0, _lower),
+                _max = Math.ceil(Math.round(_upper / 10)) * 10,
+                _step = _max / 100;
+            
+            ಠ_ಠ.Flags.log(`Range Filter for ${filter.name}`, {
+              count: _all.length,
+              lower: _lower,
+              upper: _upper,
+              min: _min,
+              max: _max,
+              step: _step
+            });
+            
+            noUiSlider.create(_input, {
+              start: [_lower, _upper],
+              tooltips: [true, true],
+              connect: true,
+              range: {
+                  "min": _min,
+                  "max": _max
+              },
+              step: _step,
+            });
+            
+            var _called = [],
+                _update = _.debounce(values => ಠ_ಠ.Display.template.show({
+                  template: "values",
+                  target: _values,
+                  values: _.filter(_search.process(results).values, v => v[_index] >= values[0] && v[_index] <= values[1]),
+                  clear: true
+                }), 100);
+            
+            $(_reset).on("click.reset", () => {
+              _called = [];
+              _input.noUiSlider.reset();
+              ಠ_ಠ.Display.template.show({
+                template: "values",
+                target: _values,
+                values: _search.process(results).values,
+                clear: true
+              });
+            });
+            
+            _input.noUiSlider.on(`update.${key}`, 
+              (values, handle) => _called[handle] ? _update(values) : (_called[handle] = true));
+            
+          } else {
+            _filter.classList.add("d-none");
+          }
+        }
+      }));
+      
+      return _return;
+    },
+    
     action: (results, element, terms) => {
       var _results_element = _display(element, results, terms);
       ಠ_ಠ.Flags.log("RESULTS:", results);
@@ -187,20 +279,12 @@ App = function() {
       _clear();
 
       results ? results.values.length === 1 ? _book(results.values[0][0]) : 
-      _hookup(ಠ_ಠ.Display.template.show(_.extend({
-        template: "results",
-        target: _results_element,
-        clear: true
-      }, results))) : ಠ_ಠ.Display.template.show({
-        template: "empty",
-        target: _results_element,
-        clear: true
-      });
+        _hookup(_search.results(_results_element, results)) : _search.empty(_results_element);
       _reset(true);
     },
         
     advanced: () => {
-      var _customs = ರ‿ರ.db.custom() || [];
+      var _customs = ರ‿ರ.db.custom() || {};
       return ಠ_ಠ.Display.modal("search", {
         id: "advanced_search",
         target: $("body"),
@@ -219,7 +303,11 @@ App = function() {
           .value(),
         validate: values => _.some(values, 
             value => value.Value || (_.isArray(value.Values) && value.Values.length > 0) || 
-                        (value.Values && value.Values.Value !== undefined && value.Values.Value !== null)),
+                        (value.Values && (
+                          (value.Values.Value !== undefined && value.Values.Value !== null) || 
+                          (value.Values.Value_1 !== undefined && value.Values.Value_1 !== null) ||
+                          (value.Values.Value_2 !== undefined && value.Values.Value_2 !== null)
+                        ))),
         action: "Search",
         enter: true
       }, dialog => {
@@ -242,6 +330,11 @@ App = function() {
           var _custom = _customs[key],
               _return = {
                 comparator: "="
+              },
+              _process = (value, comparator, target) => {
+                if (comparator && comparator != "Equals" && comparator != "=") 
+                  (target || _return).comparator = comparator;
+                (target || _return).value = value;
               };
           if (_custom) {
             _return.field = _custom.name;
@@ -256,10 +349,26 @@ App = function() {
                       value: child,
                     },
                   }));
+              } else if (value.Values.Comparator_1 && value.Values.Comparator_2 && 
+                         (value.Values.Value_1 !== undefined || value.Values.Value_2 !== undefined)) {
+                if (value.Values.Value_1 === undefined) {
+                  _process(value.Values.Value_2, value.Values.Comparator_2);
+                } else {
+                  _process(value.Values.Value_1, value.Values.Comparator_1);
+                  if (value.Values.Value_2 !== undefined) {
+                    var _and = {
+                      operator: "and",
+                      term: {
+                        comparator: "=",
+                        field: _custom.name,
+                      }
+                    };
+                    _process(value.Values.Value_2, value.Values.Comparator_2, _and.term);
+                    _return.children = [_and]; 
+                  }
+                }
               } else {
-                if (value.Values.Comparator && value.Values.Comparator != "Equals" && value.Values.Comparator != "=") 
-                  _return.comparator = value.Values.Comparator;
-                _return.value = value.Values.Value;
+                _process(value.Values.Value, value.Values.Comparator);
               }
             } else {
               _return.value = value.Value;
@@ -354,28 +463,34 @@ App = function() {
             (i, el) => el.href = !el.href || el.href.indexOf("#") >= 0 ? el.href : `${el.href}#library.${library.code}`
            ), ರ‿ರ.library = library))
   
-          .then(library => FN.libraries.db(library)
-            .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", library), result && result.data ? FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities) : null))
-            .then(db => ರ‿ರ.db = db)
-            .then(db => {
-              if (!db) return (ಠ_ಠ.Display.state().enter(FN.states.library.none), null);
-              ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
-              $("#explore-library .library-name").text(library.name);
-            
-              _overview(_holder(), ರ‿ರ.index).then(() => book !== undefined && book !== null ? _book(book) : null);
-            
-              $("header.navbar form[data-role='search'] button[type='submit']")
-                .off("click.search").on("click.search", _search.searcher);
-            
-              $("input[role='search']:visible").focus();
- 
-              ರ‿ರ.refresh = () => _library(index, book);
-            
-              /* <!-- Prepare Selector (if multiple libraries) --> */
-              FN.select.all($(".libraries-selection"), true, false, "Select", "swap.cancel", "library");
-            
-            }))
-            .then(ಠ_ಠ.Main.busy("Opening Library", true));
+          .then(library => FN.libraries.db(library))
+                
+          .then(result => (ಠ_ಠ.Flags.log("LIBRARY:", ರ‿ರ.library), 
+                 result && result.data ? FN.catalog.load(result.data, ರ‿ರ.library.meta.capabilities) : null))
+
+          .then(db => ರ‿ರ.db = db)
+
+          .then(db => {
+
+            if (!db) return (ಠ_ಠ.Display.state().enter(FN.states.library.none), null);
+            ಠ_ಠ.Display.state().change(FN.states.library.specific, FN.states.library.loaded);
+            $("#explore-library .library-name").text(ರ‿ರ.library.name);
+
+            _overview(_holder(), ರ‿ರ.index).then(() => book !== undefined && book !== null ? _book(book) : null);
+
+            $("header.navbar form[data-role='search'] button[type='submit']")
+              .off("click.search").on("click.search", _search.searcher);
+
+            $("input[role='search']:visible").focus();
+
+            ರ‿ರ.refresh = () => _library(index, book);
+
+            /* <!-- Prepare Selector (if multiple libraries) --> */
+            FN.select.all($(".libraries-selection"), true, false, "Select", "swap.cancel", "library");
+
+          })
+  
+          .then(ಠ_ಠ.Main.busy("Opening Library", true));
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */

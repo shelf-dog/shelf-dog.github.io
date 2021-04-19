@@ -38,6 +38,7 @@ $colour-shadow:               transparentize($colour-background, 0.6);
 $colour-highlight: 						#fef513;
 $colour-highlight-mid:        darken($colour-highlight, 10%);
 $colour-highlight-dark:       darken($colour-highlight, 20%);
+$colour-highlight-darker:     darken($colour-highlight, 30%);
 $colour-highlight-darkest:    darken($colour-highlight, 40%);
 $colour-highlight-light:      lighten($colour-highlight, 10%);
 $colour-highlight-lighter:    lighten($colour-highlight, 20%);

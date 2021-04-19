@@ -1,0 +1,11 @@
+{% raw %}
+<div class="bg-dark rounded mx-1 p-1">
+  <button class="btn btn-dark waves-effect mb-1" type="button" data-toggle="collapse" data-target="#filters"
+            aria-expanded="false" aria-controls="filters">Filter Results</button>
+  <div class="collapse" id="filters">
+    <div class="px-1 py-2">
+      {{#each filters}}{{> filter id=@key}}{{/each}}
+    </div>
+  </div>
+</div>
+{% endraw %}

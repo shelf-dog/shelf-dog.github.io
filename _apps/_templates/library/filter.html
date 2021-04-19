@@ -1,0 +1,11 @@
+{% raw %}
+<div id="filter_{{@key}}" data-filter-name="{{@key}}">
+  <div class="{{#if range}}custom-slider{{/if}}">
+  {{~#unless range~}}{{~/unless~}}
+  </div>
+  <div class="mt-2 pt-1 d-flex flex-row align-items-center">
+    <span class="font-larger-110">Filter by: <span class="font-weight-bold text-white">{{name}}</span></span>
+    <button class="btn btn-light waves-effect btn-sm ml-2" data-action="reset" type="button">Reset</button>
+  </div>
+</div>
+{% endraw %}

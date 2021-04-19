@@ -8,6 +8,7 @@ scripts: []
 css:
   primary:
     - custom/mixins/transforms
+    - custom/mixins/box-shadows
     - custom/variables
     - custom/fonts
     - custom/ribbons
@@ -17,6 +18,7 @@ css:
     - bootstrap/variables
     - custom/mixins/transitions
     - custom/mixins/filter
+    - custom/mixins/box-shadows
     - custom/variables
     - custom/common
 simple: true

@@ -1,0 +1,23 @@
+.custom-slider {
+  
+  &.noUi-target {
+    border: 1px solid $colour-highlight-darkest;
+    background-color: $colour-highlight-darker;
+    @include box-shadow(0 3px 6px -5px rgba($colour-highlight-darkest,0.6), inset 0 1px 1px rgba($colour-highlight-darkest,0.1));
+  }
+  
+  .noUi-handle {
+    background-color: $colour-highlight-lighter;
+    border: 1px solid $colour-highlight-dark;
+    @include box-shadow(inset 0 0 1px rgba($colour-highlight-darkest,0.1), inset 0 1px 7px rgba($colour-highlight-darkest,0.2), 0 2px 4px 1px rgba($colour-highlight-darkest,0.8));
+  }
+  
+  .noUi-connects {
+
+    .noUi-connect {
+      background-color: $colour-highlight;
+    }
+
+  }
+  
+}

@@ -85,8 +85,7 @@
 		background-color: $colour-highlight !important;
 	}
 	&:focus {
-		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
-    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+    @include box-shadow(0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5));
 	}
   &.disabled, &:disabled {
     background-image: none;
@@ -103,8 +102,7 @@
 		background-color: darken($colour-highlight, 10%) !important;
 	}
 	&:focus {
-		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
-    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+    @include box-shadow(0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5));
 	}
   &.disabled, &:disabled {
     background-image: none;
@@ -121,8 +119,7 @@
 		background-color: darken($colour-highlight, 20%) !important;
 	}
 	&:focus {
-		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
-    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
+    @include box-shadow(0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5));
 	}
   &.disabled, &:disabled {
     background-image: none;

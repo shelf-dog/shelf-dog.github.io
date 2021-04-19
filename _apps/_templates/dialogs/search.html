@@ -103,22 +103,16 @@
                  class="form-control form-control-sm" tabindex="{{inc @index inc=7}}"
                  {{#if ../state}}{{#exists (resolve ../state key)}} value="{{resolve ../state key}}"{{/exists}}{{/if}}/>
           {{~else~}}
-          <div class="input-group input-group-sm" data-output-field="{{key}}">
-            <div class="input-group-prepend">
-              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" 
-                      data-output-name="Comparator" data-qualifier="comparator" aria-haspopup="true"
-                      aria-expanded="false">Equals</button>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" href="#" data-comparator="==">EQ =</a>
-                <a class="dropdown-item" href="#" data-comparator="&gt;=">GTE &gt;=</a>
-                <a class="dropdown-item" href="#" data-comparator="&gt;">GT &gt;</a>
-                <a class="dropdown-item" href="#" data-comparator="&lt;">LT &lt;</a>
-                <a class="dropdown-item" href="#" data-comparator="&lt;=">LTE &lt;=</a>
-              </div>
-            </div>
-            <input id="{{#if ../id}}{{../id}}_{{/if}}custom_{{key}}" data-output-name="Value" type="number"
-                 class="form-control form-control-sm" tabindex="{{inc @index inc=7}}"
-                 {{#if ../state}}{{#exists (resolve ../state key)}} value="{{resolve ../state key}}"{{/exists}}{{/if}}/>
+          <div data-output-field="{{key}}"{{#if range}} class="d-flex flex-column flex-lg-row align-items-center"{{/if}}>
+            {{~#if range~}}
+            {{> search_number parent=../id state=(resolve ../state key) comparator-name="Comparator_1" 
+              output-name="Value_1" suffix="1" }}
+            <span class="material-icons d-none d-lg-block mx-1 mx-lg-2 text-highlight-dark">compare_arrows</span>
+            {{> search_number class="mt-1 mt-lg-0" parent=../id state=(resolve ../state key)
+              comparator-name="Comparator_2" output-name="Value_2" suffix="2" }}
+            {{~else~}}
+            {{> search_number parent=../id state=(resolve ../state key) }}
+            {{~/if~}}
           </div>
           {{~/is~}}
           {{~/present~}}

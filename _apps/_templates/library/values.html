@@ -1,0 +1,5 @@
+{% raw %}
+{{#each values}}<tr data-id="{{this.[0]}}" data-href="#book.{{this.[0]}}" data-action="click">
+  {{#each this}}{{#is @index 0}}<th scope="row" class="align-middle bg-dark text-center"><a href="#book.{{this}}" class="bg-primary px-1 py-2 rounded text-decoration-none text-white d-flex justify-content-center ml-auto mr-auto" style="max-width: fit-content;"><span style="min-width: 2em;">{{this}}</span></a></th>{{else}}<td class="align-middle{{#is @index 1}} font-weight-bold{{/is}}">{{> value item=this}}</td>{{/is}}{{/each}}
+</tr>{{/each}}
+{% endraw %}

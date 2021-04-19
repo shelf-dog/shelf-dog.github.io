@@ -119,7 +119,7 @@
   };
   
   var _searcher = query => _process(options.arrays.concat(ರ‿ರ.custom ? _.reduce(ರ‿ರ.custom, (memo, value, key) => {
-      if (value.public && value.multiple && !value.hidden) memo.push(_name(key, value));
+      if ((value.public || value.filter) && value.multiple && !value.hidden) memo.push(_name(key, value));
       return memo;
     }, []) : []), null, _data(_run(query)));
   
@@ -208,6 +208,12 @@
             /* <!-- Check for Hidden Flag --> */
             _custom_column.hidden = !!_.find(_custom_column.description, value => /HIDDEN/i.test(value));
             
+            /* <!-- Check for Filter Flag --> */
+            _custom_column.filter = !!_.find(_custom_column.description, value => /FILTER/i.test(value));
+            
+            /* <!-- Check for Range Flag --> */
+            _custom_column.range = !!_.find(_custom_column.description, value => /RANGE/i.test(value));
+            
             /* <!-- Check for Display Format --> */
             _custom_column.format = _.reduce(_custom_column.description, (fn, details) => fn || _parse.format(details), null);
             
@@ -256,7 +262,7 @@
     custom : {
       
       select : (properties, separator, public_only, names) => _.reduce(properties, (memo, value, key) => {
-        if ((!public_only || value.public || (names && names.indexOf(_name(key, value)) >= 0)) && !value.hidden) {
+        if ((!public_only || value.public || value.filter || (names && names.indexOf(_name(key, value)) >= 0)) && !value.hidden) {
           if (value.table && value.link_table) {
             memo.push(`(SELECT ${value.multiple ? `GROUP_CONCAT(value, '${separator || "\n"}')` : "value"} FROM ${value.table} WHERE ${value.table}.id IN (SELECT value from ${value.link_table} WHERE book = books.id)) "${_name(key, value)}",`);
           } else if (value.table) {
@@ -267,7 +273,7 @@
       }, []).join("\n"),
       
       search : (properties, terms, public_only) => _.reduce(properties, (memo, value, key) => {
-        if ((!public_only || value.public) && !value.hidden && value.type == "text") memo.push(` or "${_name(key, value)}" like '%${terms}%'`);
+        if ((!public_only || value.public || value.filter) && !value.hidden && value.type == "text") memo.push(` or "${_name(key, value)}" like '%${terms}%'`);
         return memo;
       }, []).join(""),
       
@@ -276,7 +282,7 @@
     identifiers : {
       
       select : (identifiers, types) => _.reduce(identifiers, (memo, type) => {
-        if (type && (type.indexOf("isbn") >= 0 || (types && types.indexOf(type) >= 0))) 
+        if (type && (type.indexOf("isbn") === 0 || (types && types.indexOf(type) >= 0))) 
           memo.push(`(SELECT val from identifiers WHERE identifiers.type = '${_safe(type)}' and identifiers.book = books.id) ${type.toUpperCase()},`);
         return memo;
       }, []).join("\n"),
@@ -295,9 +301,9 @@
   /* <!-- Group Functions --> */
   var _groups = {
     
-    extend : (base,extend) => `${base}${extend ? "," : ""}`,
+    extend : (base, extend) => `${base}${extend ? "," : ""}`,
     
-    authors : extend => _groups.extend(`(SELECT GROUP_CONCAT(name, '${options.separators.array}') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id) Authors`, extend),
+    authors : (extend, prune) => _groups.extend(`(SELECT GROUP_CONCAT(name, '${options.separators.array}') FROM books_authors_link AS bal JOIN authors ON(author = authors.id) WHERE book = books.id${prune ? " AND name <> 'Unknown'" : ""}) Authors`, extend),
     
     formats : extend => _groups.extend(`(SELECT GROUP_CONCAT(format||'${options.separators.data}'||name||'.'||LOWER(format)||'${options.separators.data}'||uncompressed_size, '${options.separators.array}') FROM data WHERE data.book = books.id) Formats`, extend),
     
@@ -358,9 +364,9 @@
           "'": "''",
         }),
     
-    select : (identifier_types, custom_names, extras) => [
+    select : (identifier_types, custom_names, extras, prune_authors) => [
         "SELECT id ID, title Title,",
-        _groups.authors(true),
+        _groups.authors(true, prune_authors),
         ರ‿ರ.identifiers ? _builders.identifiers.select(ರ‿ರ.identifiers, identifier_types) : "",
         ರ‿ರ.custom ? _builders.custom.select(ರ‿ರ.custom, null, true, custom_names) : "",
         _groups.series(true),
@@ -534,6 +540,8 @@
       
     },
     
+    filter : () => _.pick(ರ‿ರ.custom, value => value.filter),
+    
     custom : () => ರ‿ರ.custom,
     
     fields : () => ರ‿ರ.fields,
@@ -588,10 +596,11 @@
       modified : (limit, since) => _dated.recent(limit, since, _search.select(), "last_modified"),
       
       all : (limit, since) => _dated.recent(limit, since, ["SELECT DISTINCT ID, Title, Authors, Series, Tags, max(Updated) Updated FROM ("]
-        .concat(_search.select(null, null, `last_modified AS '${options.updated}'`))
+        .concat(_search.select(null, null, `last_modified AS '${options.updated}'`, true))
         .concat(["UNION ALL"])
-        .concat(_search.select(null, null, `timestamp AS '${options.updated}'`))
-        .concat([")", "WHERE Tags IS NULL OR Tags <> 'UNKNOWN_BOOK'", "GROUP BY ID"]), options.updated),
+        .concat(_search.select(null, null, `timestamp AS '${options.updated}'`, true))
+        .concat([")", "WHERE (Tags IS NULL OR Tags <> 'UNKNOWN_BOOK') AND (Authors IS NOT NULL OR Title <> 'Unknown')",
+                 "GROUP BY ID"]), options.updated),
 
     },
     

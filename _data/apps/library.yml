@@ -23,6 +23,7 @@ css:
     - custom/variables
     - custom/tables
     - custom/modals
+    - custom/filters
 imports:
   - name: underscore
     load: first
@@ -53,6 +54,10 @@ imports:
   - name: fetchjsonp
     load: last
   - name: sql-js
+    load: last
+  - name: nouislider-css
+    load: last
+  - name: nouislider-js
     load: last
   - name: spark-md5
     load: last
@@ -107,13 +112,17 @@ templates:
   - shared/dialog
   - shared/selector
   - shared/placeholder
+  - parts/search_number
   - dialogs/search
   - buttons/left-overview
   - library/details
+  - library/filter
+  - library/filters
   - library/results
   - library/empty
   - library/item
   - library/cover
+  - library/values
   - library/value
   - library/availability
   - library/searches

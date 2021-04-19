@@ -1,0 +1,19 @@
+{% raw %}
+<div class="input-group input-group-sm{{#if class}} {{class}}{{/if}}" data-output-field="{{key}}">
+  <div class="input-group-prepend">
+    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" 
+            data-output-name="{{#if comparator-name}}{{comparator-name}}{{else}}Comparator{{/if}}" data-qualifier="comparator"
+            aria-haspopup="true" aria-expanded="false">Equals</button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="#" data-comparator="==">EQ =</a>
+      <a class="dropdown-item" href="#" data-comparator="&gt;=">GTE &gt;=</a>
+      <a class="dropdown-item" href="#" data-comparator="&gt;">GT &gt;</a>
+      <a class="dropdown-item" href="#" data-comparator="&lt;">LT &lt;</a>
+      <a class="dropdown-item" href="#" data-comparator="&lt;=">LTE &lt;=</a>
+    </div>
+  </div>
+  <input id="{{#if parent}}{{parent}}_{{/if}}custom_{{key}}{{#if suffix}}_{{suffix}}{{/if}}" type="number"
+       class="form-control form-control-sm" tabindex="{{inc @index inc=7}}"{{~#is type 'float'~}} step="0.1"{{/is}}
+       data-output-name="{{#if output-name}}{{output-name}}{{else}}Value{{/if}}" {{#exists state}} value="{{state}}"{{/exists}}/>
+</div>
+{% endraw %}

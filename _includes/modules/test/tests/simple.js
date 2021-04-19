@@ -49,12 +49,12 @@ Simple = function(options, factory) {
         options.functions.settings.get()
           .then(config => {
           
-            // <!-- Check Configuration Settings --!> //
+            /* <!-- Check Configuration Settings --> */
             assert.ok(config);
           
             var _client = options.functions.client.client(config.ID, null, config.ALGORITHM, config.KEY);
           
-            // <!-- No need to run sequentially, so don't need to use functions! --!> //
+            /* <!-- No need to run sequentially, so don't need to use functions! --> */
             Promise.each([
               
               _client(config.OWNER, "META")
@@ -121,7 +121,7 @@ Simple = function(options, factory) {
         options.functions.settings.get()
           .then(config => {
           
-            // <!-- Check Configuration Settings --!> //
+            /* <!-- Check Configuration Settings --> */
             assert.ok(config);
           
             var _client = options.functions.client.client(config.ID, null, config.ALGORITHM, config.KEY),
@@ -129,10 +129,10 @@ Simple = function(options, factory) {
                                                               config.ALGORITHM, config.KEY),
                 _impersonate = options.functions.client.client(config.ID, null, config.ALGORITHM, key.private);
           
-            // <!-- No need to run sequentially, so don't need to use functions! --!> //
+            /* <!-- No need to run sequentially, so don't need to use functions! --> */
             Promise.each([
               
-              // <!-- Check Attempt to call the API without a user email is rejected --!> //
+              /* <!-- Check Attempt to call the API without a user email is rejected --> */
               _client("", "META")
                 .then(meta => {
                   
@@ -140,7 +140,7 @@ Simple = function(options, factory) {
                   
                 }),
               
-              // <!-- Check Attempt to call the API with a day old token fails (token replay attack) --!> //
+              /* <!-- Check Attempt to call the API with a day old token fails (token replay attack) --> */
               _yesterday(config.OWNER, "META")
                 .then(meta => {
                   
@@ -148,7 +148,7 @@ Simple = function(options, factory) {
                   
                 }),
               
-              // <!-- Check Attempt to call the API with a different user email (token hijack attack) --!> //
+              /* <!-- Check Attempt to call the API with a different user email (token hijack attack) --> */
               _client(config.OWNER, "META", null, null, chance.email())
                 .then(meta => {
                   
@@ -188,7 +188,7 @@ Simple = function(options, factory) {
         options.functions.settings.get()
           .then(config => {
           
-            // <!-- Check Configuration Settings --!> //
+            /* <!-- Check Configuration Settings --> */
             assert.ok(config);
           
             var _client = options.functions.client.client(config.ID, null, config.ALGORITHM, config.KEY);
@@ -245,21 +245,21 @@ Simple = function(options, factory) {
 
                 assert.ok(settings, "Settings have been returned");
 
-                // <!-- Check Default False Values --!> //
+                /* <!-- Check Default False Values --> */
                 _false.forEach(setting => assert.strictEqual(settings[setting], false, 
                   `${setting}: correctly set as false [${prefix}]`));
 
-                // <!-- Check Default Null Values --!> //
+                /* <!-- Check Default Null Values --> */
                 _null.forEach(setting => assert.strictEqual(settings[setting], null, 
                   `${setting}: correctly set as null [${prefix}]`));
 
-                // <!-- Check Default Empty Array Values --!> //
+                /* <!-- Check Default Empty Array Values --> */
                 _empty.forEach(setting => assert.ok(
                   settings[setting] && typeof settings[setting] === "object" && 
                     settings[setting].constructor === Array && settings[setting].length === 0, 
                   `${setting}: correctly set as empty array [${prefix}]`));
 
-                // <!-- Check Default Values --!> //
+                /* <!-- Check Default Values --> */
                 _default.forEach(setting => assert.equal(settings[setting.name], setting.value, 
                   `${setting.name}: correctly set as ${setting.value} [${prefix}]`));
 
@@ -269,18 +269,18 @@ Simple = function(options, factory) {
 
             };
           
-            // <!-- Use Functions to run sequentially --!> //
+            /* <!-- Use Functions to run sequentially --> */
             Promise.each([
               
-              // <!-- Check Non-Admin Users Cannot Access Settings --!> //
+              /* <!-- Check Non-Admin Users Cannot Access Settings --> */
               () => _client(config.OWNER, "SETTINGS")
                 .then(settings => assert.isUndefined(settings, "Non-Admin user receives no settings")),
               
-              // <!-- Clearing Settings in case of inconsistent previous test state --!> //
+              /* <!-- Clearing Settings in case of inconsistent previous test state --> */
               () => _client(config.OWNER, "SETTINGS", {clear: true}, true)
                 .then(settings => {
                   
-                  // <!-- Check Default Settings --!> //
+                  /* <!-- Check Default Settings --> */
                   _verify(settings, resolve, "DEFAULT");
                   
                   var _settings = {};
@@ -302,7 +302,7 @@ Simple = function(options, factory) {
                         _changes.forEach((change) => assert.equal(_settings[change.name], change.value, 
                           `${change.name}: correctly set as ${change.value}`));
 
-                        // <!-- Use Functions to run sequentially --!> //
+                        /* <!-- Use Functions to run sequentially --> */
                         return Promise.each([
                           
                           () => _client(_manager, "META")
@@ -326,7 +326,7 @@ Simple = function(options, factory) {
                   
                 }),
               
-              // <!-- Check Clear Settings --!> //
+              /* <!-- Check Clear Settings --> */
               () => _client(config.OWNER, "SETTINGS", {clear: true}, true)
                 .then(settings => _verify(settings, resolve, "CLEAR")),
                   
@@ -357,15 +357,15 @@ Simple = function(options, factory) {
         options.functions.settings.get()
           .then(config => {
           
-            // <!-- Check Configuration Settings --!> //
+            /* <!-- Check Configuration Settings --> */
             assert.ok(config);
           
             var _client = options.functions.client.client(config.ID, null, config.ALGORITHM, config.KEY);
           
-            // <!-- Use Functions to run sequentially --!> //
+            /* <!-- Use Functions to run sequentially --> */
             Promise.each([
 
-              // <!-- Check Non-Manager Users Cannot Access Users --!> //
+              /* <!-- Check Non-Manager Users Cannot Access Users --> */
               () => _client(chance.email(), "USERS")
                 .then(settings => assert.isUndefined(settings, "Non-Manager user receives no users")),
               

@@ -39,6 +39,6 @@
     @include rotate(-45);
   }
   &.shadow-deep {
-    box-shadow: 0 0.5rem 2rem $colour-shadow !important;
+    @include box-shadow(0 0.5rem 2rem $colour-shadow !important);
   }
 }
