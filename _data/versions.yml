@@ -10,15 +10,16 @@
 ###############################################
 
 site :
-  0.0.9l :
-    name : Site v0.0.9l
+  0.0.9m :
+    name : Site v0.0.9m
     desc : Search Updates
-    numeric : 0.0.9.12
+    numeric : 0.0.9.13
     api : 1.9.0
     type:
       - alpha
     changes :
       - Search Result Filters
+      - DB Null Caching Bug Fix
   0.0.9k :
     name : Site v0.0.9k
     desc : Client Updates

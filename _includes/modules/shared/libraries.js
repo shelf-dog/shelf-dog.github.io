@@ -123,13 +123,13 @@ Libraries = (options, factory) => {
       age: options.db_cache,
       fn: (stored, data) => library.api("HASH").then(hash => hash == data.hash).catch(() => null),
     }, () => library.api("DB", {base64: true}, 60000, true).then(result => {
-      if (!result) return false;
+      if (!result || !result.data || !result.data.length) return false;
       result.data = _bytes(result.data);
       var spark_md5 = new SparkMD5.ArrayBuffer();
       spark_md5.append(result.data);
       result.local_hash = spark_md5.end();
       return result;
-    }), null, null, lazy));
+    }), null, null, lazy, true));
   
   FN.folder = (value, path) => FN.select(value)
     .then(library => options.functions.cache.get(library.cache(`FOLDER_${SparkMD5.hash(path)}`), options.folder_cache,

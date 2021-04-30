@@ -103,11 +103,12 @@ Cache = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.clean = () => ರ‿ರ.db.clear().then(() => true).catch(() => false);
   
-  FN.get = (key, age, fn, force, hit, cached_only) => {
+  FN.get = (key, age, fn, force, hit, cached_only, values_only) => {
     age = !age ? factory.Dates.duration(options.age) : _.isNumber(age) ? factory.Dates.duration(age) : age;
     return _get(key, age, force, cached_only)
       .then(data => data === false && Navigator.onLine === false && !hit ? FN.get(key, age, fn, force, true) : 
-              !cached_only && (data === false || data === undefined) ? Promise.resolve(fn()).then(value => _set(key, value)) : data);
+              !cached_only && (data === false || data === undefined) ? 
+                Promise.resolve(fn()).then(value => !values_only || value ? _set(key, value) : value) : data);
   };
   
   FN.set = _set;
