@@ -241,16 +241,28 @@ App = function() {
             });
             
             var _called = [],
-                _update = _.debounce(values => ಠ_ಠ.Display.template.show({
-                  template: "values",
-                  target: _values,
-                  values: _.filter(_search.process(results).values, v => v[_index] >= values[0] && v[_index] <= values[1]),
-                  clear: true
-                }), 100);
+                _update = _.debounce(values => {
+                  var _filtered = _.filter(_search.process(results).values, 
+                                      value => value[_index] >= values[0] && value[_index] <= values[1]);
+                  $(".filtered-results").remove();
+                  ಠ_ಠ.Display.template.show({
+                    template: "filter_header",
+                    target: $(".results-header"),
+                    count: _filtered.length,
+                    prepend: true,
+                  });
+                  ಠ_ಠ.Display.template.show({
+                    template: "values",
+                    target: _values,
+                    values: _filtered,
+                    clear: true
+                  });
+                }, 100);
             
             $(_reset).on("click.reset", () => {
               _called = [];
               _input.noUiSlider.reset();
+              $(".filtered-results").remove();
               ಠ_ಠ.Display.template.show({
                 template: "values",
                 target: _values,

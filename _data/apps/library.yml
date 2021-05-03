@@ -127,6 +127,7 @@ templates:
   - library/availability
   - library/searches
   - library/results_header
+  - library/filter_header
   - library/buttons/right-overview
 docs:
   - shared/PUBLIC

@@ -34,4 +34,10 @@ __DISPLAY_FORMAT__{:.text-black .bg-highlight .px-1 .mr-1 .rounded} is used to c
 __ENUMS__{:.text-black .bg-highlight .px-1 .mr-1 .rounded} are used to substitute reader-friendly values in the place of short codes in a custom column. For example, you might use codes like: LY, MY & UY to designate the suitable age/reading level of a book. These might not mean much to the users of your library, so you can specify an enumeration to expand these into more descriptive statements, such as: {% raw  %}`ENUMS:LY=Lower Years (Age 5-8);MY=Middle Years (Age 9-13);MY+=Middle Years Plus (Age 12+);UY=Upper Years (Age 14+)`{:.text-white}{% endraw %}
 {:.alert .bg-dark .mx-0 .font-larger-110 .mb-3}
 
+__RANGE__{:.text-black .bg-highlight .px-1 .mr-1 .rounded} is used to describe custom columns that should be treated as a range for searching. This is particularly useful for data like reading ages, numerical books levels, language complexity or page counts.
+{:.alert .bg-dark .mx-0 .font-larger-110 .mb-3}
+
+__FILTER__{:.text-black .bg-highlight .px-1 .mr-1 .rounded} is used to indicate that a custom column should be available as a filter for search results. Typical uses are reading or lanugage complexity levels, allowing filtering to be done on particular search terms (e.g. show me all books about a particular topic, but then allow me to refine the list by reading level).
+{:.alert .bg-dark .mx-0 .font-larger-110 .mb-3}
+
 It is, of course, possible to __combine__{:.text-white .font-weight-normal} these description flags by using a delineator such as {% raw  %}`|`{:.text-white}{% endraw %} between them, so you might end up with a description flag that reads: {% raw  %}`PUBLIC|ENUMS:LY=Lower Years (Age 5-8);MY=Middle Years (Age 9-13);MY+=Middle Years Plus (Age 12+);UY=Upper Years (Age 14+)`{:.text-white}{% endraw %}
