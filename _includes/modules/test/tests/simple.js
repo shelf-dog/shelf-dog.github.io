@@ -228,6 +228,12 @@ Simple = function(options, factory) {
                 name : "capabilities_loan_length",
                 value : 0
               }, {
+                name : "capabilities_loan_deny_overdue",
+                value : 0
+              }, {
+                name : "capabilities_loan_deny_outstanding",
+                value : 0
+              }, {
                 name : "email_logo",
                 value : "1k4_cGivHqrAKbVadl6bLXOZvFbTvQRa1"
               }, {
@@ -380,6 +386,202 @@ Simple = function(options, factory) {
                   
                 }),
              
+            ])
+            .then(_succeed)
+            .catch(_fail);
+          
+        }).catch(_fail);
+        
+      } catch (err) {
+        
+        _fail(err);
+        
+      }
+      
+    }),
+    
+    loans: () => new Promise(resolve => {
+      
+      var _fail = e => resolve(factory.Flags.error("Loans Test FAILED", e).reflect(false)),
+          _succeed = () => resolve(factory.Flags.log("Loans Test SUCCEEDED").reflect(true));
+      
+      try {
+
+        options.functions.settings.get()
+          .then(config => {
+          
+            /* <!-- Check Configuration Settings --> */
+            assert.ok(config);
+          
+            var _client = options.functions.client.client(config.ID, null, config.ALGORITHM, config.KEY),
+                _me = factory.me.email,
+                _user = (() => {
+                  var _value = _me;
+                  while (_value == _me) {
+                    _value = chance.email();
+                  }
+                  return _value;
+                })(),
+                _create = () => ({
+                  id : chance.integer({
+                    min: 100,
+                    max: 2000
+                  }),
+                  isbn : chance.string({
+                    pool: "0123456789",
+                    length: 13
+                  }),
+                  copy : `00${chance.string({
+                    pool: "0123456789",
+                    length: 5
+                  })}`,
+                  details : chance.sentence({
+                    words: chance.integer({
+                      min: 1,
+                      max: 10
+                    })
+                  })
+                }),
+                _book = _create(),
+                _since = factory.Dates.now().toDate();
+          
+            /* <!-- Use Functions to run sequentially --> */
+            Promise.each([
+
+              /* <!-- Clear Settings to Defaults --> */
+              () => _client(config.OWNER, "SETTINGS", {clear: true}, true)
+                .then(settings => assert.ok(settings, "Default Settings have been returned")),
+              
+              /* <!-- Check Initial Loans are NULL (not configured to allow loans) --> */
+              () => _client(_user, "LOANS", {mine: true})
+                .then(loans => assert.isNull(loans, "Loans are not initial allowed")),
+              
+              () => _client(config.OWNER, "SETTINGS", {capabilities_loan: true}, true)
+                .then(settings => assert.equal(settings.capabilities_loan, true, "Loan Capability is set correctly")),
+              
+              /* <!-- Check No Initial Loans for User --> */
+              () => _client(_user, "LOANS", {mine: true})
+                .then(loans => assert.equal(loans.length, 0, "Correct number (0) of existing loans returned")),
+              
+              /* <!-- Check Current User (non-manager) cannot loan themselves a Book --> */
+              () => _client(_user, "LOG_LOANED", _.extend(_book, {user: _user}))
+                .then(loan => assert.isUndefined(loan, "Loan cannot be made by non-managers")),
+              
+              /* <!-- Loan Example Book for User --> */
+              () => _client(config.OWNER, "LOG_LOANED", _.extend(_book, {user : _user}))
+                .then(loan => {
+                  
+                  assert.equal(loan.length, 1, "Correct number of loans returned");
+                  assert.equal(loan[0].copy, _book.copy, "Loaned Book correct copy");
+                  assert.equal(loan[0].available, false, "Loaned Book correctly marked as now unavailable");
+                  
+                }),
+              
+              /* <!-- Make Temp Settings Change --> */
+              () => _client(config.OWNER, "SETTINGS", {capabilities_loan_deny_outstanding: 1}, true)
+                .then(settings => assert.equal(settings.capabilities_loan_deny_outstanding, 1, "Setting Correct")),
+              
+              /* <!-- Check Further Loans are Blocked --> */
+              () => _client(config.OWNER, "LOG_LOANED", _.extend(_create(), {user : _user}))
+                .then(loan => {
+                  assert.equal(loan.processed, false, "New Loan not processed");
+                  assert.equal(loan.type, "POLICY-DENIED", "New Loan not processed");
+                }),
+              
+              /* <!-- Revert Temp Settings Change --> */
+              () => _client(config.OWNER, "SETTINGS", {capabilities_loan_deny_outstanding: 0}, true)
+                .then(settings => assert.equal(settings.capabilities_loan_deny_outstanding, 0, "Reversion Correct")),
+              
+              
+              /* <!-- Check Loans for 'Me' / User --> */
+              () => Promise.all([
+                  _client(_user, "LOANS", {mine: true}),
+                  _client(config.OWNER, "LOANS", {user: _user}),
+                ]).then(all => {
+                  _.each(all, loans => {
+                    assert.equal(loans.length, 1, "Correct number of user loans returned");
+                    _.chain(_book).each(key => assert.equal(loans[0][key], _book[key], `Loan Property: ${key} correct`));
+                    assert.equal(loans[0].returned, false, "Loaned Book correctly marked as not returned");
+                  });
+                }),
+              
+              /* <!-- Query Example Book for User --> */
+              () => _client(config.OWNER, "LOG_QUERIED", {
+                  copy : _book.copy,
+                })
+                .then(loan => {
+                  assert.equal(loan.length, 1, "Correct number of loans returned");
+                  assert.equal(loan[0].copy, _book.copy, "Queried Book correct copy");
+                  assert.equal(loan[0].available, false, "Queried Book correctly marked as not available");
+                }),
+              
+              /* <!-- Check Queried Loans for User --> */
+              () => _client(config.OWNER, "LOANS", {queried: true}).then(loans => {
+                  assert.equal(loans.length, 1, "Correct number of user loans returned");
+                  _.chain(_book).each(key => assert.equal(loans[0][key], _book[key], `Loan Property: ${key} correct`));
+                  assert.equal(loans[0].returned, "QUERIED", "Loaned Book correctly marked as QUERIED");
+                }),
+              
+              /* <!-- Dispute Example Book for User --> */
+              () => _client(config.OWNER, "LOG_DISPUTED", {
+                  copy : _book.copy,
+                })
+                .then(loan => {
+                  assert.equal(loan.length, 1, "Correct number of loans returned");
+                  assert.equal(loan[0].copy, _book.copy, "Disputed Book correct copy");
+                  assert.equal(loan[0].available, false, "Disputed Book correctly marked as not available");
+                }),
+              
+              /* <!-- Check Queried Loans for User --> */
+              () => _client(config.OWNER, "LOANS", {disputed: true}).then(loans => {
+                  assert.equal(loans.length, 1, "Correct number of user loans returned");
+                  _.chain(_book).each(key => assert.equal(loans[0][key], _book[key], `Loan Property: ${key} correct`));
+                  assert.equal(loans[0].returned, "DISPUTED", "Loaned Book correctly marked as DISPUTED");
+                }),
+              
+              /* <!-- Return Example Book for User --> */
+              () => _client(config.OWNER, "LOG_RETURNED", {
+                  copy : _book.copy,
+                })
+                .then(loan => {
+                  assert.equal(loan.length, 1, "Correct number of loans returned");
+                  assert.equal(loan[0].copy, _book.copy, "Returned Book correct copy");
+                  assert.equal(loan[0].available, true, "Returned Book correctly marked as now available");
+                }),
+              
+              /* <!-- Un-Return Example Book for User --> */
+              () => _client(config.OWNER, "LOG_UNRETURNED", {
+                  copy : _book.copy,
+                  user : _user,
+                  since : _since.toISOString(),
+                  until : factory.Dates.now().toDate().toISOString(),
+                })
+                .then(loan => {
+                  assert.equal(loan.length, 1, "Correct number of loans returned");
+                  assert.equal(loan[0].copy, _book.copy, "Returned Book correct copy");
+                  assert.equal(loan[0].available, false, "Returned Book correctly marked as now available");
+                }),
+              
+              /* <!-- Return Example Book for User --> */
+              () => _client(config.OWNER, "LOG_RETURNED", {
+                  copy : _book.copy,
+                })
+                .then(loan => {
+                  assert.equal(loan.length, 1, "Correct number of loans returned");
+                  assert.equal(loan[0].copy, _book.copy, "Returned Book correct copy");
+                  assert.equal(loan[0].available, true, "Returned Book correctly marked as now available");
+                }),
+              
+              /* <!-- Check Clear Settings --> */
+              () => _client(config.OWNER, "SETTINGS", {clear: true}, true)
+                .then(settings => {
+ 
+                  assert.ok(settings, "Cleared Settings have been returned");
+                  
+                  assert.equal(settings.capabilities_loan, false, "Loan Capability is correctly set back to false");
+ 
+                }),
+
             ])
             .then(_succeed)
             .catch(_fail);

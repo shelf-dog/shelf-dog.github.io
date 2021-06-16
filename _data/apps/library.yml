@@ -109,6 +109,7 @@ templates:
   - generic/confirm
   - generic/choose
   - generic/text
+  - generic/inform
   - shared/dialog
   - shared/selector
   - shared/placeholder
@@ -137,6 +138,7 @@ docs:
   - library/README
   - library/LIBRARY
   - library/ADVANCED_SEARCH
+  - library/POLICY_DENIED
   - library/instructions/SEARCH_INSTRUCTIONS
   - library/instructions/SEARCH_FREETEXT_INSTRUCTIONS
   - library/instructions/SEARCH_STRUCTURED_INSTRUCTIONS
@@ -149,6 +151,7 @@ docs:
   - titles/TITLE_CHOOSE_RETURN
   - titles/TITLE_CONFIRM_LOAN
   - titles/TITLE_CHOOSE_LOAN
+  - titles/TITLE_DENIED_LOAN
 scopes:
   google:
     - scope: email

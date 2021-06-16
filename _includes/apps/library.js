@@ -62,8 +62,8 @@ App = function() {
   
   var _formats = (library, book) => book.Formats = book.Formats && book.Format_Files ? 
                               _.isArray(book.Formats) ? _.map(book.Formats, 
-                                (format, i) => _download(library, book.ID, format, book.Path, book.Format_Files[i], book.Format_Sizes[i])) :
-                                _download(library, book.ID, book.Formats, book.Path.text || book.Path, book.Format_Files, book.Format_Sizes) :
+                                (format, i) => _download(library, book.ID.text || book.ID, format, book.Path, book.Format_Files[i], book.Format_Sizes[i])) :
+                                _download(library, book.ID.text || book.ID, book.Formats, book.Path.text || book.Path, book.Format_Files, book.Format_Sizes) :
                               book.Formats;
   
   var _paths = (library, book) => book.Path = ರ‿ರ.library.meta.claims.admin ? {
@@ -82,7 +82,7 @@ App = function() {
       book.$copies = book[ರ‿ರ.library.meta.capabilities.loan_field || "ID"];
       book.$copies = _.isArray(book.$copies) ? _.uniq(book.$copies.slice()) : book.$copies;
       
-      if (ರ‿ರ.library.meta.capabilities.online_items)  book = _reader(ರ‿ರ.library.code, book);
+      if (ರ‿ರ.library.meta.capabilities.online_items) book = _reader(ರ‿ರ.library.code, book);
       if (ರ‿ರ.library.meta.capabilities.loan && ರ‿ರ.library.meta.claims && ರ‿ರ.library.meta.claims.manage) {
         var _map = copy => ({
           text: copy,
@@ -160,7 +160,7 @@ App = function() {
             var _button = _holder().find(".forward-button"),
                 _url = _button.data("href") || _button.attr("href");
             _button.data("href", _url);
-            _button.attr("href", `${_url}.${book.ID}`);
+            _button.attr("href", `${_url}.${book.ID.text || book.ID}`);
       
             return (ರ‿ರ.book = book);
           }) : (delete ರ‿ರ.book, delete ರ‿ರ.availability, delete ರ‿ರ.available, book));
@@ -641,7 +641,20 @@ App = function() {
 
             /* <!-- Get Available Copies --> */
             var _available = _.filter(ರ‿ರ.availability, available => available.available === true),
-                _process = availability => availability ? ರ‿ರ.available(availability) : false,
+                _denied = message => ಠ_ಠ.Display.inform({
+                  id: "loan_denied",
+                  target: $("body"),
+                  title: ಠ_ಠ.Display.doc.get({
+                    name: "TITLE_DENIED_LOAN",
+                    trim: true
+                  }),
+                  content: message || ಠ_ಠ.Display.doc.get({
+                    name: "POLICY_DENIED",
+                    trim: true
+                  })}),
+                _process = availability => availability ? 
+                  availability.processed === false ? availability.type == "POLICY-DENIED" ? (_denied(), false) : false : 
+                  ರ‿ರ.available(availability) : false,
                 _error = e => e ? ಠ_ಠ.Flags.error("Loan Book Error", e) : ಠ_ಠ.Flags.log("Loan Book Cancelled"),
                 _loan = copy => ಠ_ಠ.Display.text({
                   id: "loan_confirm",
@@ -654,7 +667,7 @@ App = function() {
                   action: "Loan",
                   simple: true
                 })
-                .then(user => FN.libraries.log.loan(ರ‿ರ.library, FN.common.process.user(user), ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, copy,
+                .then(user => FN.libraries.log.loan(ರ‿ರ.library, FN.common.process.user(user), ರ‿ರ.book.ID.text || ರ‿ರ.book.ID, ರ‿ರ.book.ISBN, copy,
                       FN.common.format.details(ರ‿ರ.book))
                       .then(ಠ_ಠ.Main.busy("Loaning Book", true))
                       .then(_process))
@@ -746,7 +759,7 @@ App = function() {
               .then(ಠ_ಠ.Main.busy("Requesting Book", true))
               .then(value => value ? ಠ_ಠ.Display.tooltips(_result(value.requested, 
                       value.type == "NEW" ? "Created new request" : 
-                      value.type == "DENIED" ? "You can't request this because you have overdue loans!" : 
+                      value.type == "POLICY-DENIED" ? "You can't request this because you have overdue loans!" : 
                       "You have already requested this item!").tooltip("dispose")) : _result())
               .then(() => FN.libraries.requests.mine(ರ‿ರ.library, true))
               .catch(e => (e ? ಠ_ಠ.Flags.error("Request Book Error", e) : ಠ_ಠ.Flags.log("Request Book Cancelled"), _result()));

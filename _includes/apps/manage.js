@@ -915,7 +915,7 @@ App = function() {
 
         return Promise.each(_loans)
           .catch(e => ಠ_ಠ.Flags.error("Loan Book/s Error", e))
-          .then(ಠ_ಠ.Main.busy(true, true, FN.events.loans.progress, `Processing ${_total} Loan{_total > 1 ? "s" : ""}`))
+          .then(ಠ_ಠ.Main.busy(true, true, FN.events.loans.progress, `Processing ${_total} Loan${_total > 1 ? "s" : ""}`))
           .then(availability => {
             ಠ_ಠ.Flags.log("LOANED BOOKS:", availability);
             if (_unknown && _unknown.length > 0) ಠ_ಠ.Flags.log("UNKNOWN BOOKS:", _unknown);
@@ -927,9 +927,11 @@ App = function() {
                 name: "LOANS",
                 data: {
                   total: _total,
-                  loaned: _.filter(availability, value => !!value).length,
+                  loaned: _.filter(availability, value => value && value.available === false).length,
                   unknown: _.filter(availability, value => value === false).length,
                   invalid: _.filter(availability, value => value === undefined).length,
+                  denied: _.filter(availability, value => value && value.processed === false && 
+                                    value.type == "POLICY-DENIED").length,
                 }
               })
             }).then(ರ‿ರ.refresh);

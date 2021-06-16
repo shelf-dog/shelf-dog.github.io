@@ -120,12 +120,36 @@
       </div>
       
       <!-- REQUEST DENIED FOR USERS WITH OVERDUE LOANS -->
-      <div class="form-group form-check pl-2" data-output-field="capabilities_loan_requests_deny_overdue">
+      <div class="form-group form-check pl-2 mb-1" data-output-field="capabilities_loan_requests_deny_overdue">
         <div class="custom-control custom-checkbox mr-sm-2">
             <input type="checkbox" class="custom-control-input" id="settings_capabilities_loan_requests_deny_overdue" data-output-name="Value" data-output-always="true"{{#if capabilities_loan_requests_deny_overdue}} checked{{/if}}>
             <label class="custom-control-label" for="settings_capabilities_loan_requests_deny_overdue">Are requests denied for users with overdue loans?</label>
         </div>
         <small id="settings_capabilities_loan_requests_deny_overdue_HELP" class="form-text"></small>
+      </div>
+      
+      <!-- LOANS DENIED FOR USERS WITH OVERDUE LOANS -->
+      <div class="form-group" data-output-field="capabilities_loan_deny_overdue">
+        <label class="col-form-label"
+               for="settings_capabilities_loan_deny_overdue">Deny loans for users with overdue loans?</label>
+        <input type="number" class="form-control" min="0" max="10" step="1"
+               id="settings_capabilities_loan_deny_overdue"
+               data-output-name="Value" data-output-always="true"
+               {{~#if capabilities_loan_deny_overdue}} value="{{capabilities_loan_deny_overdue}}"{{/if~}}>
+        <small id="settings_capabilities_loan_deny_overdue_HELP"
+          class="form-text">Enter the number of overdue loans required for blocking new loans (0/blank = no blocking)</small>
+      </div>
+      
+      <!-- LOANS DENIED FOR USERS WITH OUTSTANDING -->
+      <div class="form-group" data-output-field="capabilities_loan_deny_outstanding">
+        <label class="col-form-label"
+               for="settings_capabilities_loan_deny_outstanding">Deny loans for users with outstanding loans?</label>
+        <input type="number" class="form-control" min="0" max="10" step="1"
+               id="settings_capabilities_loan_deny_outstanding"
+               data-output-name="Value" data-output-always="true"
+               {{~#if capabilities_loan_deny_overdue}} value="{{capabilities_loan_deny_outstanding}}"{{/if~}}>
+        <small id="settings_capabilities_loan_deny_outstanding_HELP"
+          class="form-text">Enter the number of outstanding loans required for blocking new loans (0/blank = no blocking)</small>
       </div>
       
     </div>

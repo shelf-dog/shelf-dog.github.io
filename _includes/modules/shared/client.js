@@ -50,9 +50,25 @@ Client = (options, factory) => {
         });
       return _caller(timeout);
     };
-    
+                       
     return (factory.Flags.log("API | Library [Request]", action), (idempotent ? _retry(3) : _action)(action, params, timeout)
+            
       .then(response => response.json())
+      
+      /* <!-- Do we need to refresh our user token? --> */
+      .then(response => response && response.refresh === true ? FN.endpoints()
+            .then(all => {
+              var _refreshed = _.find(all, single => single && single.id == endpoint);
+              factory.Flags.log("API | Refreshed Endpoint", _refreshed);
+              if (_refreshed) {
+                user = _refreshed.user;
+                user_key = _refreshed.key;
+                return (idempotent ? _retry(3) : _action)(action, params, timeout).then(response => response.json());
+              } else {
+                return response;
+              }
+            }) : response)
+      
       .then(value => (factory.Flags.log("API | Library [Response]", value), value)));
     
   };

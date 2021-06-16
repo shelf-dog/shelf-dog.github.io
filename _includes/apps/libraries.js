@@ -169,8 +169,8 @@ App = function() {
   /* <!-- Process Functions --> */
   FN.process = {
     
-    loans : (library, loans, type, filter) => _.chain(loans)
-      .map(FN.common.process.loan(library))
+    loans : (library, loans, type, filter, processor) => _.chain(loans)
+      .map(processor || FN.common.process.loan(library))
       .filter(loan => filter ? filter(loan) : loan)
       .tap(loans => ಠ_ಠ.Flags.log(`My ${type} (${library.code}):`, loans))
       .value(),
@@ -370,7 +370,7 @@ App = function() {
           library => library.meta.capabilities && library.meta.capabilities.loan_requests))
         .then(libraries => Promise.all(_.map(libraries, 
           library => FN.libraries.requests.mine(library)
-            .then(requests => FN.process.loans(library, requests, "Requests"))
+            .then(requests => FN.process.loans(library, requests, "Requests", null, FN.common.process.request))
             .then(requests => _.tap(requests, requests => _.each(requests, request => {
               request.library = library.name;
               request.code = library.code;
@@ -387,7 +387,7 @@ App = function() {
           length: 1,
           fn: command => FN.libraries.one(command)
             .then(library => FN.libraries.requests.mine(library)
-                  .then(loans => FN.process.loans(library, loans, "Requests"))
+                  .then(loans => FN.process.loans(library, loans, "Requests", null, FN.common.process.request))
                   .then(FN.show.requests(library)))
             .catch(e => ಠ_ಠ.Flags.error("Loading Requests Error", e))
             .then(ಠ_ಠ.Main.busy("Loading Requests", true))

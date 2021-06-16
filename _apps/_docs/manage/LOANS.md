@@ -1,1 +1,1 @@
-__{% raw %}{{total}}{% endraw %}__ item/s processed, __{% raw %}{{loaned}}{% endraw %}__ loaned, __{% raw %}{{unknown}}{% endraw %}__ unknown and __{% raw %}{{invalid}}{% endraw %}__ not currently recorded as available.
+__{% raw %}{{total}}{% endraw %}__{:.text-highlight} item/s processed, __{% raw %}{{loaned}}{% endraw %}__{:.text-success} loaned, __{% raw %}{{denied}}{% endraw %}__{:.text-danger} denied by loan policy, __{% raw %}{{unknown}}{% endraw %}__ unknown and __{% raw %}{{invalid}}{% endraw %}__ not currently recorded as available.

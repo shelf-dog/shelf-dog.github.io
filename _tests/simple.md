@@ -17,5 +17,8 @@ tests:
   - name: Management
     desc: Test API Management Calls
     function: management
+  - name: Loans
+    desc: Test API Loan Calls
+    function: loans
 ---
 To verify the basic functionality of the __client API__ module, which includes authentication, authorisation, settings and metadata

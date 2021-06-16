@@ -10,6 +10,17 @@
 ###############################################
 
 site :
+  0.0.9o :
+    name : Site v0.0.9o
+    desc : Minor Updates
+    numeric : 0.0.9.15
+    api : 1.9.4
+    type:
+      - alpha
+    changes :
+      - Extra Loan Policy Options
+      - Reliability Improvements
+      - Request Bug Fixes
   0.0.9n :
     name : Site v0.0.9n
     desc : Search Updates

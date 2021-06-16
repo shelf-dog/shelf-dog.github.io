@@ -1,0 +1,1 @@
+Sorry - this __isn't allowed__ at the moment. Maybe the user has __too many__ outstanding or overdue loans?
