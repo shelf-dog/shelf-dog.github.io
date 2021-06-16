@@ -1,7 +1,7 @@
 # Global
 safe:									true
 exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock, __tests__]
-include:							[_pages, _apps, _others, _extras, _scripts]
+include:							[_pages, _others, _extras, _scripts]
 timezone:							Europe/London
 
 # Dependencies | kramdown
