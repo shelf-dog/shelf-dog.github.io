@@ -163,13 +163,14 @@ docs:
   - manage/RETURNS
   - manage/LOANS
   - manage/NO_AVAILABLE_COPIES
+  - manage/NOT_LOANABLE
   - manage/BOOK
   - manage/results/BOOK_ALREADY_LOANED
   - manage/results/BOOK_INVALID
+  - manage/results/BOOK_EXCLUDED
   - manage/results/GENERIC_ERROR
   - manage/results/LOAN_FAILED
   - manage/instructions/MANAGE_SEARCH_INSTRUCTIONS
-  - manage/instructions/CREATE_LOANS_INSTRUCTIONS
   - manage/errors/ERROR_LOANS
   - manage/errors/ERROR_REQUESTS
   - manage/errors/ERROR_STATISTICS

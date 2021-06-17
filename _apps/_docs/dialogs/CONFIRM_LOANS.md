@@ -1,1 +1,2 @@
-To do ...
+Please fill in the details of the loans you wish to record below. Press the __green add__{:.text-success} button once you have put in a __ISBN or copy/accession number__ for the book, and user name (e.g. email address) to indicate who it has been loaned to.
+{:.mb-2}

@@ -726,61 +726,72 @@ App = function() {
                     
                   _isCopy = _isCopied && _.find(item[ರ‿ರ.library.meta.capabilities.loan_field], value => value == copy);
 
-                /* <!-- First: Get Availability --> */
-                FN.libraries.available(ರ‿ರ.library, _isCopy ? copy : 
-                                       _isCopied ? item[ರ‿ರ.library.meta.capabilities.loan_field] : item.ID)
+                if (FN.common.check.excluded(item, ರ‿ರ.library)) {
+                  
+                  /* <!-- Excluded From Loaning --> */
+                  failure(ಠ_ಠ.Display.doc.get("BOOK_EXCLUDED", null, true));
+                  
+                } else {
+                  
+                  /* <!-- First: Get Availability --> */
+                  FN.libraries.available(ರ‿ರ.library, _isCopy ? copy : 
+                                         _isCopied ? item[ರ‿ರ.library.meta.capabilities.loan_field] : item.ID)
 
-                  .then(ಠ_ಠ.Main.busy(false, false, null, null, "small", busy.empty()))
+                    .then(ಠ_ಠ.Main.busy(false, false, null, null, "small", busy.empty()))
 
-                  /* <!-- Then, Filter for Available Copies --> */
-                  .then(availability => _.tap(_.filter(availability, available => available.available === true),
-                    available => ಠ_ಠ.Flags.log("Item Availability:", available)))
+                    /* <!-- Then, Filter for Available Copies --> */
+                    .then(availability => _.tap(_.filter(availability, available => available.available === true),
+                      available => ಠ_ಠ.Flags.log("Item Availability:", available)))
 
-                  /* <!-- Make a Decision based on availability --> */
-                  .then(available => {
+                    /* <!-- Make a Decision based on availability --> */
+                    .then(available => {
 
-                    if (available.length === 0) {
+                      if (available.length === 0) {
 
-                      /* <!-- No Availability --> */
-                      failure(ಠ_ಠ.Display.doc.get("BOOK_ALREADY_LOANED", null, true));
+                        /* <!-- No Availability --> */
+                        failure(ಠ_ಠ.Display.doc.get("BOOK_ALREADY_LOANED", null, true));
 
-                    } else if (available.length === 1 && (!_isCopy || (available[0].copy == copy))) {
+                      } else if (available.length === 1 && (!_isCopy || (available[0].copy == copy))) {
 
-                      /* <!-- Copy or Book is Available --> */
-                      _action(copy);
+                        /* <!-- Copy or Book is Available --> */
+                        _action(copy);
 
-                    } else {
+                      } else {
 
-                      /* <!-- Multiple Copies (if copy not specified) or alternative Copy Available, Needs Choice --> */
-                      var _choose = ಠ_ಠ.Display.template.show({
-                          template: "choose-copy",
-                          simple: true,
-                          copies: _.map(available, "copy"),
-                          target: busy.parents("td").find("button[data-action='loan']"),
-                          replace: true
-                        }),
-                        _loan = _choose.find("button[data-action='loan']"),
-                        _input = _choose.find("select"),
-                        _disable = () => _loan.attr("disabled", true).attr("tabindex", "-1").attr("aria-disabled", true),
-                        _enable = () => _loan.attr("disabled", false).attr("tabindex", "").attr("aria-disabled", false);
+                        /* <!-- Multiple Copies (if copy not specified) or alternative Copy Available, Needs Choice --> */
+                        var _choose = ಠ_ಠ.Display.template.show({
+                            template: "choose-copy",
+                            simple: true,
+                            copies: _.map(available, "copy"),
+                            target: busy.parents("td").find("button[data-action='loan']"),
+                            replace: true
+                          }),
+                          _loan = _choose.find("button[data-action='loan']"),
+                          _input = _choose.find("select"),
+                          _disable = () => _loan.attr("disabled", true).attr("tabindex", "-1").attr("aria-disabled", true),
+                          _enable = () => _loan.attr("disabled", false).attr("tabindex", "").attr("aria-disabled", false);
 
-                      _input.on("change", () => {
-                        var _val = _input.val();
-                        !_val || _val == "Select …" ? _disable() : _enable();
-                      });
-                      
-                      _loan.on("click.loan", () => {
-                        _loan.attr("disabled", true).attr("tabindex", "-1").attr("aria-disabled", true);
-                        _action(_input.val());
-                      });
-                      
-                      _input.focus();
+                        _input.on("change", () => {
+                          var _val = _input.val();
+                          !_val || _val == "Select …" ? _disable() : _enable();
+                        });
 
-                    }
+                        _loan.on("click.loan", () => {
+                          _loan.attr("disabled", true).attr("tabindex", "-1").attr("aria-disabled", true);
+                          _action(_input.val());
+                        });
 
-                  })
+                        _input.focus();
 
-                  .catch(() => failure(failure(ಠ_ಠ.Display.doc.get("GENERIC_ERROR", null, true))));
+                      }
+
+                    })
+
+                    .catch(() => failure(failure(ಠ_ಠ.Display.doc.get("GENERIC_ERROR", null, true))));
+                  
+                }
+          
+                
 
 
               } else {
@@ -846,7 +857,7 @@ App = function() {
         id: "loans_create",
         target: $("body"),
         title: ಠ_ಠ.Display.doc.get("TITLE_CREATE_LOANS", null, true),
-        instructions: ಠ_ಠ.Display.doc.get("CREATE_LOANS_INSTRUCTIONS", null, true),
+        instructions: ಠ_ಠ.Display.doc.get("CONFIRM_LOANS", null, true),
         validate: values => values.Loans && values.Loans.Values &&
           ((_.isArray(values.Loans.Values.Entries) && values.Loans.Values.Entries.length > 0) ||
             (values.Loans.Values.Entries && values.Loans.Values.Entries.Item)),
@@ -897,6 +908,7 @@ App = function() {
           _total = _entries.length,
           _count = 0,
           _unknown = [],
+          _excluded = [],
           _loan = loan => {
             var item = FN.books.get(loan.Item),
               action = (id, isbn, copy, item) => FN.libraries.log.loan(ರ‿ರ.library, loan.Who, id, isbn, copy,
@@ -908,6 +920,8 @@ App = function() {
               });
             ಠ_ಠ.Flags.log(`ITEM (${loan.Item}):`, item);
             return item ?
+              FN.common.check.excluded(item, ರ‿ರ.library) ? 
+              (_excluded.push(loan), Promise.resolve(false)) :
               action(item.ID, item.ISBN, ರ‿ರ.library.meta.capabilities.loan_field ? loan.Item : item.ID, item) :
               (_unknown.push(loan), Promise.resolve(false));
           },
@@ -919,6 +933,7 @@ App = function() {
           .then(availability => {
             ಠ_ಠ.Flags.log("LOANED BOOKS:", availability);
             if (_unknown && _unknown.length > 0) ಠ_ಠ.Flags.log("UNKNOWN BOOKS:", _unknown);
+            if (_excluded && _excluded.length > 0) ಠ_ಠ.Flags.log("EXCLUDED BOOKS:", _excluded);
             ಠ_ಠ.Display.inform({
               id: "show_Loans",
               title: "Loaned Items",
@@ -1128,7 +1143,13 @@ App = function() {
       if (!book && ರ‿ರ.library.meta.capabilities.loan_field) book = FN.books.get(id);
       
       if (book) {
-        ಠ_ಠ.Flags.log(`Found Book for ID=${id}`, book);
+        if (FN.common.check.excluded(book, ರ‿ರ.library)) {
+          /* <!-- Excluded From Loaning --> */
+          FN.item.failure(target || id, user, "request", ಠ_ಠ.Display.doc.get("NOT_LOANABLE", book.Title, true));
+          return (ಠ_ಠ.Flags.log(`Book Excluded from Loaning: ID=${id}`, book), null);
+        } else {
+          ಠ_ಠ.Flags.log(`Found Book for ID=${id}`, book);
+        }
       } else {
         return (ಠ_ಠ.Flags.log(`Unable to Find Book for ID=${id}`), null);
       }

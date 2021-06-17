@@ -139,6 +139,13 @@ Common = (options, factory) => {
     isbn : value => REGEX_ISBN.test(value),
     
     user : value => REGEX_EMAIL.test(value),
+    
+    excluded : (book, library) => library.meta.capabilities.loan_exclusions && 
+                  library.meta.capabilities.loan_exclusions.length > 0 && _.find(book.Tags,
+                    tag => _.find(_.isArray(library.meta.capabilities.loan_exclusions) ? 
+                                  library.meta.capabilities.loan_exclusions : 
+                                  library.meta.capabilities.loan_exclusions.split(","), 
+                                    excluded => String.equal(excluded, tag, true))),
   
   };
   /* <!-- Public Functions --> */

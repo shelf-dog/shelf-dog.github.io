@@ -108,9 +108,7 @@ App = function() {
             /* <!-- Get Copies (if present | e.g. is a physical book) --> */
             var _copies = book.$copies,
                 _hasCopy = _copies && (!_.isArray(_copies) || _copies.length > 0),
-                _isExcluded = ರ‿ರ.library.meta.capabilities.loan_exclusions && 
-                  ರ‿ರ.library.meta.capabilities.loan_exclusions.length > 0 && _.find(book.Tags,
-                    tag => _.find(ರ‿ರ.library.meta.capabilities.loan_exclusions.split(","), excluded => String.equal(excluded, tag, true)));
+                _isExcluded = FN.common.check.excluded(book, ರ‿ರ.library);
       
             if (!_hasCopy) ಠ_ಠ.Flags.log("Book has NO physical copies:", book);
       
@@ -499,7 +497,7 @@ App = function() {
 
             /* <!-- Prepare Selector (if multiple libraries) --> */
             FN.select.all($(".libraries-selection"), true, false, "Select", "swap.cancel", "library");
-
+            
           })
   
           .then(ಠ_ಠ.Main.busy("Opening Library", true));
@@ -614,8 +612,9 @@ App = function() {
       tidy : true,
       fn : command => command && _.isArray(command) ? 
           command.length == 2 ? _library(command[0], command[1]) : 
-            command.length == 3 ? _library(command[0]).then(() => command[1] && command[1].toLowerCase() == "search" ?
-                                                            _search.basic(command[2], _holder()) : null) : 
+            command.length == 3 ? _library(command[0])
+              .then(() => command[1] && command[1].toLowerCase() == "search" ?
+                      _search.basic(command[2], _holder()) : null) : 
           _library(command) : _library(command),
     },
 

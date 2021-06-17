@@ -1,0 +1,1 @@
+__Excluded__{:.border-right .pr-2 .mr-1}__Book Not Loanable__{:.font-weight-light .ml-1}
